@@ -35,7 +35,7 @@ let rec words' str i ls acc =
       if String.length acc > 0 then words' str (i + 1) (acc :: ls) ""
       else words' str (i + 1) ls ""
     else
-      acc ^ (new System.String(ch, 1)) |> words' str (i + 1) ls 
+      acc + (new System.String(ch, 1)) |> words' str (i + 1) ls 
       
 (** [words str] spits [str] into a list of non-whitespace words. *)
 let words str = words' str 0 [] ""
@@ -63,5 +63,5 @@ let parse str =
 let main argv =
     let items = parse "go fat fuck"
     printfn "%A" items
+    printfn "%A" (3 % 4)
     0
-

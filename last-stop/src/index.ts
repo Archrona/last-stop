@@ -1,29 +1,120 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, WebContents } from 'electron';
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit();
 }
 
-const createWindow = () => {
-    const mainWindow = new BrowserWindow({
-        height: 600,
-        width: 800,
-    });
 
-    mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+class Model {
+    app: Main;
+    
+    constructor(app: Main) {
+        this.app = app;
+    }
+}
 
-    const mainWindow2 = new BrowserWindow({
-        height: 600,
-        width: 800,
-    });
+class Window {
+    view: View;
+    id: number;
+    window: BrowserWindow;
+    lines: number;
+    columns: number;
 
-    mainWindow2.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-    //mainWindow.webContents.openDevTools();
-};
+    constructor(view: View, id: number) {
+        this.view = view;
+        this.id = id;
+        this.lines = 0;
+        this.columns = 0;
 
-app.on('ready', createWindow);
+        this.window = new BrowserWindow({
+            height: 1200,
+            width: 900,
+            webPreferences: {
+                nodeIntegration: true
+            }
+        });
+
+        this.window.on("close", (event) => {
+            console.log("Window id " + this.id + " closed!");
+            view.windowClosed(this.id);
+        });
+
+        this.window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY).then((success) => {
+            console.log("Window id " + this.id + " loaded!");
+            this.window.webContents.send("setId", this.id);
+        }, (error) => {
+            console.log("Window id " + this.id + " COULD NOT LOAD");
+        });
+    }
+
+    onResize(lines: number, columns: number) {
+        this.lines = lines;
+        this.columns = columns;
+
+        console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
+    }
+}
+
+class View {
+    app: Main;
+    windows: Array<Window>;
+    nextWindowId: number;
+
+    constructor(app: Main) {
+        this.app = app;
+        this.windows = [];
+        this.nextWindowId = 11;
+
+        this.createWindow();
+    }
+
+    createWindow() {
+        const id = this.nextWindowId;
+        this.nextWindowId++;
+        
+        this.windows.push(new Window(this, id));
+        return id;
+    }
+
+    windowClosed(id: number) {
+        this.windows = this.windows.filter(w => w.id !== id);
+        console.log("Remaining window IDs: " + this.windows.map(x => x.id));
+    }
+
+    getWindow(id: number) {
+        for (const w of this.windows) {
+            if (w.id === id) {
+                return w;
+            }
+        }
+        return null;
+    }
+}
+
+
+class Main {
+    view: View;
+    model: Model;
+
+    constructor() {
+        this.registerCallbacks();
+
+        this.model = new Model(this);
+        this.view = new View(this);
+    }
+
+    registerCallbacks() {
+        ipcMain.on("resize", (event, info) => {
+            this.view.getWindow(info.id).onResize(info.lines, info.columns);
+        });
+    }
+}
+
+
+app.on('ready', () => {
+    new Main();
+});
 
 app.on('window-all-closed', () => {
     app.quit();

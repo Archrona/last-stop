@@ -12,7 +12,7 @@ open System.Runtime.InteropServices
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
 [<assembly: AssemblyProduct("LastStop")>]
-[<assembly: AssemblyCopyright("Copyright ©  2020")>]
+[<assembly: AssemblyCopyright("Copyright © 2020")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]
 

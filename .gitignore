@@ -54,3 +54,7 @@ $RECYCLE.BIN/
 .vscode/
 
 ~$*.docx
+~WRL*.tmp
+
+node_modules/
+.webpack/

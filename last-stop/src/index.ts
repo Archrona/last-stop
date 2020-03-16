@@ -2,7 +2,7 @@
 //   Main server-side entry point.
 
 import { app, BrowserWindow, ipcMain, WebContents, ipcRenderer } from 'electron';
-import { Color, DrawableText } from "./shared";
+import { getRGB, DrawableText } from "./shared";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
@@ -58,10 +58,10 @@ class Window {
     }
 
     onResize(lines: number, columns: number) {
-        console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
-
         this.lines = lines;
         this.columns = columns;
+
+        console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
 
         this.doUpdate();
     }
@@ -74,12 +74,23 @@ class Window {
     }
 
     doUpdate() {
-        this.window.webContents.send("update", {
-            subscription: "random",
-            text: [], 
-            lines: this.lines,
-            columns: this.columns            
-        });
+        if (this.isReady) {
+            let text = [];
+            for (let r = 0; r < this.lines; r++) {
+                for (let c = 0; c < this.columns; c += 4) {
+                    text.push(new DrawableText("" + Math.floor(999 * Math.random()), r, c, 
+                        getRGB(Math.floor(250 * Math.random()), Math.floor(250 * Math.random()), Math.floor(250 * Math.random())), null));
+                }
+            }
+            this.window.webContents.send("update", {
+                subscription: "random",
+                text: text,
+                lines: this.lines,
+                columns: this.columns            
+            });
+        }
+
+        setTimeout(() => { this.doUpdate(); }, 500);
     }
 }
 
@@ -93,6 +104,8 @@ class View {
         this.windows = [];
         this.nextWindowId = 11;
 
+        this.createWindow();
+        this.createWindow();
         this.createWindow();
         this.createWindow();
     }
@@ -134,6 +147,7 @@ class Main {
 
     registerCallbacks() {
         ipcMain.on("resize", (event, info) => {
+            console.log(info);
             this.view.getWindow(info.id).onResize(info.lines, info.columns);
         });
 

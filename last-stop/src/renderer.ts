@@ -3,24 +3,28 @@
 
 import './index.css';
 import { ipcRenderer, ipcMain } from 'electron';
-import { Color, DrawableText } from "./shared";
+import { getRGB, DrawableText } from "./shared";
 
 class Application {
     id: number;
     canvas: HTMLCanvasElement;
+    backBuffer: HTMLCanvasElement | null;
     subscription: string;
 
     fontFace: string;
     fontSize: number;
+    lineSpacing: number;
     lineCount: number;
     columnCount: number;    
     charWidth: number;
     charHeight: number;
+    margin: number;
     text: Array<DrawableText>;
     isLoaded: boolean;
     
     constructor() {
         this.canvas = null;
+        this.backBuffer = null;
         this.id = -1;
         this.subscription = "";
         this.fontFace = "Consolas";
@@ -28,7 +32,9 @@ class Application {
         this.lineCount = 0;
         this.columnCount = 0;
         this.charWidth = 0;
-        this.charHeight = 22;
+        this.charHeight = 0;
+        this.lineSpacing = 1.3;
+        this.margin = 20;
         this.isLoaded = false;
         
         this.registerPreloadHandlers();
@@ -84,19 +90,52 @@ class Application {
         this.text = text;
         this.subscription = subscription;
 
-        // TODO
+        document.getElementById("subscription").innerText = this.subscription;
+        this.render();
     }
     
-    onResize() {
-        this.canvas.width = this.canvas.offsetWidth;
-        this.canvas.height = this.canvas.offsetHeight;
+    getGraphics(isFront: boolean) {
+        let graphics = (isFront ? this.canvas : this.backBuffer).getContext("2d");
+        graphics.font = (this.fontSize * window.devicePixelRatio) + "px " + this.fontFace;
+        return graphics;
+    }
 
-        let graphics = this.canvas.getContext("2d");
-        graphics.font = this.fontSize + "px " + this.fontFace;
+    render() {
+        const back = this.getGraphics(true);
+
+        back.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (const text of this.text) {
+            const x = this.charWidth * text.column + this.margin;
+            const y = this.charHeight * (1 + text.row) + this.margin;
+
+            if (text.background !== null) {
+                // TODO: draw rectongle
+            }
+
+            back.fillStyle = text.foreground;
+            back.fillText(text.text, x, y);
+        }
+
+        //const front = this.getGraphics(true);
+        //front.drawImage(this.backBuffer, 0, 0);
+    }
+
+    onResize() {
+        this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
+        this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
+
+        const graphics = this.getGraphics(true);
         
         this.charWidth = graphics.measureText("w").width;
-        this.lineCount = Math.floor(this.canvas.height / this.charHeight);
-        this.columnCount = Math.floor(this.canvas.width / this.charWidth);
+        this.charHeight = this.lineSpacing * this.fontSize * window.devicePixelRatio;
+        this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.charHeight);
+        this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth);
+
+        if (this.backBuffer === null) {
+            this.backBuffer = document.createElement('canvas');
+            this.backBuffer.width = this.canvas.width;
+            this.backBuffer.height = this.canvas.height;
+        }
 
         this.sendResizeMessage();
     }

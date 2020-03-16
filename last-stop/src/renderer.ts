@@ -1,6 +1,10 @@
+// renderer.ts
+//   Main client-side entry point.
 
 import './index.css';
 import { ipcRenderer, ipcMain } from 'electron';
+import { Color, DrawableText } from "./shared";
+
 
 class Application {
     id: number;
@@ -13,6 +17,7 @@ class Application {
     columnCount: number;    
     charWidth: number;
     charHeight: number;
+    text: Array<DrawableText>;
     
     constructor() {
         this.canvas = document.getElementById("content") as HTMLCanvasElement;
@@ -39,11 +44,32 @@ class Application {
             this.onResize();
         });
 
+        ipcRenderer.on("update", (event, data) => {
+            const subscription = data.subscription;
+            const text = data.text as Array<DrawableText>;
+            const expectedLines = data.lines;
+            const expectedColumns = data.columns;
+            
+            if (expectedLines !== this.lineCount || expectedColumns !== this.columnCount) {
+                this.sendResizeMessage();
+            }
+            else {
+                this.onUpdate(subscription, text);
+            }
+        });
     }
 
+    onUpdate(subscription: string, text: Array<DrawableText>) {
+        console.log("update: " + subscription + ", " + text.length + " DrawableText objects");
+        this.text = text;
+        this.subscription = subscription;
+
+        // TODO
+    }
+    
     onResize() {
         if (this.id === -1) return;
-        
+
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
 
@@ -54,6 +80,10 @@ class Application {
         this.lineCount = Math.floor(this.canvas.height / this.charHeight);
         this.columnCount = Math.floor(this.canvas.width / this.charWidth);
 
+        this.sendResizeMessage();
+    }
+
+    sendResizeMessage() {
         ipcRenderer.send("resize", {
             id: this.id,
             lines: this.lineCount,

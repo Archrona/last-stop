@@ -1,4 +1,9 @@
+// index.ts
+//   Main server-side entry point.
+
 import { app, BrowserWindow, ipcMain, WebContents } from 'electron';
+import { Color, DrawableText } from "./shared";
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -20,12 +25,14 @@ class Window {
     window: BrowserWindow;
     lines: number;
     columns: number;
+    subscription: string;
 
     constructor(view: View, id: number) {
         this.view = view;
         this.id = id;
         this.lines = 0;
         this.columns = 0;
+        this.subscription = "none";
 
         this.window = new BrowserWindow({
             height: 1200,
@@ -49,10 +56,16 @@ class Window {
     }
 
     onResize(lines: number, columns: number) {
+        console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
+
         this.lines = lines;
         this.columns = columns;
 
-        console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
+        this.doUpdate();
+    }
+
+    doUpdate() {
+        // TODO
     }
 }
 

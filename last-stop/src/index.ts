@@ -1,7 +1,7 @@
 // index.ts
 //   Main server-side entry point.
 
-import { app, BrowserWindow, ipcMain, WebContents } from 'electron';
+import { app, BrowserWindow, ipcMain, WebContents, ipcRenderer } from 'electron';
 import { Color, DrawableText } from "./shared";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
@@ -26,6 +26,7 @@ class Window {
     lines: number;
     columns: number;
     subscription: string;
+    isReady: boolean;
 
     constructor(view: View, id: number) {
         this.view = view;
@@ -33,10 +34,11 @@ class Window {
         this.lines = 0;
         this.columns = 0;
         this.subscription = "none";
+        this.isReady = false;
 
         this.window = new BrowserWindow({
-            height: 1200,
-            width: 900,
+            height: 900,
+            width: 600,
             webPreferences: {
                 nodeIntegration: true
             }
@@ -64,8 +66,20 @@ class Window {
         this.doUpdate();
     }
 
+    onReady() {
+        console.log("Window id " + this.id + " is ready UwU OwO >w<");
+        this.isReady = true;
+
+        this.doUpdate();
+    }
+
     doUpdate() {
-        // TODO
+        this.window.webContents.send("update", {
+            subscription: "random",
+            text: [], 
+            lines: this.lines,
+            columns: this.columns            
+        });
     }
 }
 
@@ -79,6 +93,7 @@ class View {
         this.windows = [];
         this.nextWindowId = 11;
 
+        this.createWindow();
         this.createWindow();
     }
 
@@ -121,6 +136,10 @@ class Main {
         ipcMain.on("resize", (event, info) => {
             this.view.getWindow(info.id).onResize(info.lines, info.columns);
         });
+
+        ipcMain.on("ready", (event, info) => {
+            this.view.getWindow(info.id).onReady();
+        })
     }
 }
 

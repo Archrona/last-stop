@@ -5,7 +5,6 @@ import './index.css';
 import { ipcRenderer, ipcMain } from 'electron';
 import { Color, DrawableText } from "./shared";
 
-
 class Application {
     id: number;
     canvas: HTMLCanvasElement;
@@ -18,9 +17,10 @@ class Application {
     charWidth: number;
     charHeight: number;
     text: Array<DrawableText>;
+    isLoaded: boolean;
     
     constructor() {
-        this.canvas = document.getElementById("content") as HTMLCanvasElement;
+        this.canvas = null;
         this.id = -1;
         this.subscription = "";
         this.fontFace = "Consolas";
@@ -29,18 +29,38 @@ class Application {
         this.columnCount = 0;
         this.charWidth = 0;
         this.charHeight = 22;
+        this.isLoaded = false;
         
-        this.registerEventHandlers();
+        this.registerPreloadHandlers();
     }
     
-    registerEventHandlers() {
-        window.addEventListener("resize", (event) => {
-            this.onResize();
+    registerPreloadHandlers() {
+        window.addEventListener("load", (event) => {
+            this.canvas = document.getElementById("content") as HTMLCanvasElement;
+            this.isLoaded = true;
+
+            this.onMaybeLoaded();
         });
         
         ipcRenderer.on("setId", (event, id) => {
             this.id = id;
             document.getElementById("id").innerText = "#" + this.id;
+
+            this.onMaybeLoaded();
+        });
+    }
+
+    onMaybeLoaded() {
+        if (this.isLoaded && this.id !== -1) {
+            this.registerPostloadHandlers();
+
+            this.onResize();
+            ipcRenderer.send("ready", {id: this.id});
+        }
+    }
+
+    registerPostloadHandlers() {
+        window.addEventListener("resize", (event) => {
             this.onResize();
         });
 
@@ -68,8 +88,6 @@ class Application {
     }
     
     onResize() {
-        if (this.id === -1) return;
-
         this.canvas.width = this.canvas.offsetWidth;
         this.canvas.height = this.canvas.offsetHeight;
 
@@ -84,15 +102,16 @@ class Application {
     }
 
     sendResizeMessage() {
+        if (this.id === -1) return;
+
         ipcRenderer.send("resize", {
             id: this.id,
             lines: this.lineCount,
             columns: this.columnCount
         });
     }
-}
+} 
 
-window.addEventListener("load", () => {
-    const app = new Application();
-});
+let app;
 
+app = new Application();

@@ -173,36 +173,43 @@ console.log(languages.tokenize("print(\"this is 3.4\\t\\n\");", ["basic"], new P
 
 
 let store = new Store();
-console.log(store.set([], ["a", "b", "c"]));
+
+store.set([], Store.normalize(languages.contexts));
+store.set(['basic', 'blah'], Store.normalize(new Date()));
+store.set(['basic', 'foo'], Store.normalize((x: number) => x + 2));
 console.log(store.get([]));
 
-console.log(store.insertList([], 0, [14, 17]));
-console.log(store.get([]));
 
-console.log(store.removeList([], 4, 1));
-console.log(store.get([]));
+// console.log(store.set([], ["a", "b", "c"]));
+// console.log(store.get([]));
+
+// console.log(store.insertList([], 0, [14, 17]));
+// console.log(store.get([]));
+
+// console.log(store.removeList([], 4, 1));
+// console.log(store.get([]));
  
-store.checkpoint();
+// store.checkpoint();
 
-console.log(store.set([1], new Map([["b", 1], ["d", 3], ["a", 7]])));
-console.log(store.get([]));
+// console.log(store.set([1], new Map([["b", 1], ["d", 3], ["a", 7]])));
+// console.log(store.get([]));
 
-console.log(store.changeKey([1], "b", "d"));
-console.log(store.get([]));
+// console.log(store.changeKey([1], "b", "d"));
+// console.log(store.get([]));
 
-console.log(store.clear([1, "b"]));
-console.log(store.get([]));
+// console.log(store.clear([1, "b"]));
+// console.log(store.get([]));
 
-console.log(store.clear([1, "d"]));
-console.log(store.get([]));
+// console.log(store.clear([1, "d"]));
+// console.log(store.get([]));
 
-console.log(store.changeKey([1], "a", "f"));
-console.log(store.get([]));
+// console.log(store.changeKey([1], "a", "f"));
+// console.log(store.get([]));
 
-console.log(store.undoUntilIndex(0));
-console.log(store.get([]));
+// console.log(store.undoUntilIndex(0));
+// console.log(store.get([]));
 
-console.log(store.redoAll());
-console.log(store.get([]));
+// console.log(store.redoAll());
+// console.log(store.get([]));
 
  

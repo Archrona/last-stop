@@ -35,7 +35,7 @@ enum DataTypes {
     Map
 }
 
-function getType(data: StoreData) {
+export function getType(data: StoreData) {
     if (typeof data === "number") {
         return DataTypes.Number;
     } else if (typeof data === "string") {
@@ -47,7 +47,7 @@ function getType(data: StoreData) {
     } else if (Array.isArray(data)) {
         return DataTypes.Array;
     } else if (Object.getPrototypeOf(data) === Map.prototype) {
-        return DataTypes.Map;   
+        return DataTypes.Map;
     } else {
         throw "unknown data type in store!";
     }
@@ -305,7 +305,7 @@ enum DeltaPairType {
     ChangeKey
 }
 
-export class DeltaPair {
+class DeltaPair {
     constructor(public type: DeltaPairType, public forward: Delta, public backward: Delta) {
 
     }
@@ -479,4 +479,35 @@ export class Store {
             return new StoreResult(false, this.undoStack.length);
         }
     }  
+
+    static normalize(data: any, throwOnInvalid: boolean = false): StoreData {
+        const typeString = typeof data;
+        if (typeString === "undefined" || typeString === null) {
+            return null;
+        }
+        else if (typeString === "boolean" || typeString === "number" || typeString === "string") {
+            return data;
+        }
+        else if (Array.isArray(data)) {
+            return (data as Array<any>).map((x) => Store.normalize(x, throwOnInvalid));
+        }
+        else if (Object.getPrototypeOf(data) === Map.prototype) {
+            const result = new Map<string, StoreData>();
+            let iterator = (data as Map<any, any>).entries();
+            for (const item of iterator) {
+                result.set(item[0].toString(), Store.normalize(item[1], throwOnInvalid));
+            }
+            return result;
+        }
+        else if (Object.getPrototypeOf(data) === Object.prototype) {
+            const result = new Map<string, StoreData>();
+            for (const key in (data as Object)) {
+                result.set(key, Store.normalize(data[key], throwOnInvalid));
+            }
+            return result;
+        }
+        else {
+            return data.toString();
+        }        
+    } 
 }

@@ -18,6 +18,7 @@ class Application {
     columnCount: number;    
     charWidth: number;
     charHeight: number;
+    lineHeight: number;
     margin: number;
     text: Array<DrawableText>;
     isLoaded: boolean;
@@ -33,7 +34,8 @@ class Application {
         this.columnCount = 0;
         this.charWidth = 0;
         this.charHeight = 0;
-        this.lineSpacing = 1.3;
+        this.lineHeight = 0;
+        this.lineSpacing = 1.25;
         this.margin = 20;
         this.isLoaded = false;
         
@@ -106,10 +108,12 @@ class Application {
         back.clearRect(0, 0, this.canvas.width, this.canvas.height);
         for (const text of this.text) {
             const x = this.charWidth * text.column + this.margin;
-            const y = this.charHeight * (1 + text.row) + this.margin;
+            const y = this.lineHeight * text.row + this.charHeight + this.margin;
 
             if (text.background !== null) {
-                // TODO: draw rectongle
+                const bky = this.lineHeight * text.row + this.margin;
+                back.fillStyle = text.background;
+                back.fillRect(x, bky, this.charWidth * text.text.length, this.lineHeight);
             }
 
             back.fillStyle = text.foreground;
@@ -127,8 +131,10 @@ class Application {
         const graphics = this.getGraphics(true);
         
         this.charWidth = graphics.measureText("w").width;
-        this.charHeight = this.lineSpacing * this.fontSize * window.devicePixelRatio;
-        this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.charHeight);
+        this.charHeight = this.fontSize * window.devicePixelRatio;
+        this.lineHeight = this.charHeight * this.lineSpacing;
+
+        this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.lineHeight);
         this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth);
 
         if (this.backBuffer === null) {

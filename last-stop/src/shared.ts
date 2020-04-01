@@ -5,6 +5,25 @@ export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";
 }
 
+export function splitIntoLines(str: string) {
+    const re = /\r\n|\n|\r/;
+    return str.split(re);
+}
+
+export class Position {
+    row: number;
+    column: number;
+
+    constructor(row: number, column: number) {
+        this.row = row;
+        this.column = column;
+    }
+
+    clone() {
+        return new Position(this.row, this.column);
+    }
+}
+
 export class DrawableText {
     text: string;
     row: number;

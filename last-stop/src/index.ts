@@ -2,15 +2,18 @@
 //   Main server-side entry point.
 
 import { app, BrowserWindow, ipcMain, WebContents, ipcRenderer } from 'electron';
-import { getRGB, DrawableText } from "./shared";
+import { getRGB, DrawableText, Position } from "./shared";
+import { Languages } from "./language";
+import { StoreData, Store } from "./store";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+
 
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
     app.quit();
 }
 
-
+ 
 class Model {
     app: Main;
     
@@ -79,7 +82,8 @@ class Window {
             for (let r = 0; r < this.lines; r++) {
                 for (let c = 0; c < this.columns; c += 4) {
                     text.push(new DrawableText("" + Math.floor(999 * Math.random()), r, c, 
-                        getRGB(Math.floor(250 * Math.random()), Math.floor(250 * Math.random()), Math.floor(250 * Math.random())), null));
+                        getRGB(Math.floor(250 * Math.random()), Math.floor(250 * Math.random()), Math.floor(250 * Math.random())), 
+                        (Math.random() < 0.1 ? getRGB(20, 70, 130) : null)));
                 }
             }
             this.window.webContents.send("update", {
@@ -89,8 +93,6 @@ class Window {
                 columns: this.columns            
             });
         }
-
-        setTimeout(() => { this.doUpdate(); }, 500);
     }
 }
 
@@ -104,9 +106,6 @@ class View {
         this.windows = [];
         this.nextWindowId = 11;
 
-        this.createWindow();
-        this.createWindow();
-        this.createWindow();
         this.createWindow();
     }
 
@@ -165,3 +164,45 @@ app.on('ready', () => {
 app.on('window-all-closed', () => {
     app.quit();
 });
+
+
+
+let languages = new Languages();
+console.log(languages.tokenize("print(\"this is 3.4\\t\\n\");", ["basic"], new Position(2, 20), false));
+
+
+
+let store = new Store();
+console.log(store.set([], ["a", "b", "c"]));
+console.log(store.get([]));
+
+console.log(store.insertList([], 0, [14, 17]));
+console.log(store.get([]));
+
+console.log(store.removeList([], 4, 1));
+console.log(store.get([]));
+ 
+store.checkpoint();
+
+console.log(store.set([1], new Map([["b", 1], ["d", 3], ["a", 7]])));
+console.log(store.get([]));
+
+console.log(store.changeKey([1], "b", "d"));
+console.log(store.get([]));
+
+console.log(store.clear([1, "b"]));
+console.log(store.get([]));
+
+console.log(store.clear([1, "d"]));
+console.log(store.get([]));
+
+console.log(store.changeKey([1], "a", "f"));
+console.log(store.get([]));
+
+console.log(store.undoUntilIndex(0));
+console.log(store.get([]));
+
+console.log(store.redoAll());
+console.log(store.get([]));
+
+ 

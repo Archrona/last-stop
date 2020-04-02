@@ -54,6 +54,14 @@ export class Window {
         this.doUpdate();
     }
 
+    onMouseDown(row: number, column: number, button: number) {
+        console.log("down " + row + ", " + column + " (" + button + ")");
+    }  
+
+    onMouseUp(row: number, column: number, button: number) {
+        console.log("  up " + row + ", " + column + " (" + button + ")");
+    }
+
     onReady() {
         console.log("Window id " + this.id + " is ready UwU OwO >w<");
         this.isReady = true;
@@ -64,6 +72,7 @@ export class Window {
     doUpdate() {
         if (this.isReady) {
             let text = [];
+            
             for (let r = 0; r < this.lines; r++) {
                 for (let c = 0; c < this.columns; c += 4) {
                     text.push(new DrawableText("" + Math.floor(999 * Math.random()), r, c, 
@@ -71,6 +80,7 @@ export class Window {
                         (Math.random() < 0.1 ? getRGB(20, 70, 130) : null)));
                 }
             }
+
             this.window.webContents.send("update", {
                 subscription: "random",
                 text: text,

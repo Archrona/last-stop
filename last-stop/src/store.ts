@@ -406,8 +406,7 @@ export class Store {
         }
     }
 
-    set(path: StorePath, value: StoreData): StoreResult {
-        value = clone(value);
+    private setNoClone(path: StorePath, value: StoreData): StoreResult {
         const setResult = this.backing.set(path, value);
         if (setResult.success) {
             this.redoStack = [];
@@ -424,6 +423,16 @@ export class Store {
             return new StoreResult(false, this.undoStack.length);
         }
     }
+
+    set(path: StorePath, value: StoreData): StoreResult {
+        value = clone(value);
+        return this.setNoClone(path, value);
+    }
+
+    setNormalized(path: StorePath, value: any): StoreResult {
+        const normalized = Store.normalize(value);
+        return this.setNoClone(path, normalized);
+    }  
 
     insertList(path: StorePath, index: number, values: Array<StoreData>): StoreResult {
         const clonedValues = values.map((x) => clone(x));
@@ -481,17 +490,20 @@ export class Store {
     }  
 
     static normalize(data: any, throwOnInvalid: boolean = false): StoreData {
-        const typeString = typeof data;
-        if (typeString === "undefined" || typeString === null) {
+        if (data === undefined || data === null) {
             return null;
         }
-        else if (typeString === "boolean" || typeString === "number" || typeString === "string") {
+
+        const typeString = typeof data;
+        if (typeString === "boolean" || typeString === "number" || typeString === "string") {
             return data;
         }
-        else if (Array.isArray(data)) {
+        
+        if (Array.isArray(data)) {
             return (data as Array<any>).map((x) => Store.normalize(x, throwOnInvalid));
         }
-        else if (Object.getPrototypeOf(data) === Map.prototype) {
+        
+        if (Object.getPrototypeOf(data) === Map.prototype) {
             const result = new Map<string, StoreData>();
             let iterator = (data as Map<any, any>).entries();
             for (const item of iterator) {
@@ -499,15 +511,15 @@ export class Store {
             }
             return result;
         }
-        else if (Object.getPrototypeOf(data) === Object.prototype) {
+        
+        if (Object.getPrototypeOf(data) === Object.prototype) {
             const result = new Map<string, StoreData>();
             for (const key in (data as Object)) {
                 result.set(key, Store.normalize(data[key], throwOnInvalid));
             }
             return result;
         }
-        else {
-            return data.toString();
-        }        
+        
+        return data.toString();
     } 
 }

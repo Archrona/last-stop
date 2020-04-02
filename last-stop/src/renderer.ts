@@ -8,7 +8,6 @@ import { getRGB, DrawableText } from "./shared";
 class Application {
     id: number;
     canvas: HTMLCanvasElement;
-    backBuffer: HTMLCanvasElement | null;
     subscription: string;
 
     fontFace: string;
@@ -25,7 +24,6 @@ class Application {
     
     constructor() {
         this.canvas = null;
-        this.backBuffer = null;
         this.id = -1;
         this.subscription = "";
         this.fontFace = "Consolas";
@@ -45,8 +43,8 @@ class Application {
     registerPreloadHandlers() {
         window.addEventListener("load", (event) => {
             this.canvas = document.getElementById("content") as HTMLCanvasElement;
-            this.isLoaded = true;
 
+            this.isLoaded = true;
             this.onMaybeLoaded();
         });
         
@@ -67,10 +65,42 @@ class Application {
         }
     }
 
+    
+
     registerPostloadHandlers() {
         window.addEventListener("resize", (event) => {
             this.onResize();
         });
+
+
+        this.canvas.addEventListener("mousedown", (event) => {
+            this.onMouseEvent("down", event.offsetX, event.offsetY, event.button);
+            event.preventDefault();
+        });
+        
+        this.canvas.addEventListener("mouseup", (event) => {
+            this.onMouseEvent("up", event.offsetX, event.offsetY, event.button);
+            event.preventDefault();
+        });
+        
+        this.canvas.addEventListener("keydown", (event) => {
+            console.log("keydown");
+            console.log(event);
+            event.preventDefault();
+        });
+        
+        this.canvas.addEventListener("keyup", (event) => {
+            console.log("keyup");
+            console.log(event);
+            event.preventDefault();
+        });
+        
+        this.canvas.addEventListener("keypress", (event) => {
+            console.log("keypress");
+            console.log(event);
+            event.preventDefault();
+        });
+         
 
         ipcRenderer.on("update", (event, data) => {
             const subscription = data.subscription;
@@ -95,53 +125,56 @@ class Application {
         document.getElementById("subscription").innerText = this.subscription;
         this.render();
     }
+
+    onMouseEvent(type: string, domX: number, domY: number, button: number) {
+        const pixelX = domX * window.devicePixelRatio;
+        const pixelY = domY * window.devicePixelRatio;
+        
+        const row = Math.floor((pixelY - this.margin) / this.lineHeight);
+        const column = Math.floor((pixelX - this.margin) / this.charWidth);
+        
+        this.sendMouseMessage(type, button, row, column);
+    }  
     
-    getGraphics(isFront: boolean) {
-        let graphics = (isFront ? this.canvas : this.backBuffer).getContext("2d");
+    getGraphics() {
+        let graphics = this.canvas.getContext("2d");
         graphics.font = (this.fontSize * window.devicePixelRatio) + "px " + this.fontFace;
         return graphics;
     }
 
     render() {
-        const back = this.getGraphics(true);
+        const context = this.getGraphics();
 
-        back.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        context.textBaseline = "top";
+        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        
         for (const text of this.text) {
             const x = this.charWidth * text.column + this.margin;
-            const y = this.lineHeight * text.row + this.charHeight + this.margin;
+            const y = this.lineHeight * text.row + this.margin;
 
             if (text.background !== null) {
                 const bky = this.lineHeight * text.row + this.margin;
-                back.fillStyle = text.background;
-                back.fillRect(x, bky, this.charWidth * text.text.length, this.lineHeight);
+                context.fillStyle = text.background;
+                context.fillRect(x, bky, this.charWidth * text.text.length, this.lineHeight);
             }
 
-            back.fillStyle = text.foreground;
-            back.fillText(text.text, x, y);
+            context.fillStyle = text.foreground;
+            context.fillText(text.text, x, y);
         }
-
-        //const front = this.getGraphics(true);
-        //front.drawImage(this.backBuffer, 0, 0);
     }
 
     onResize() {
         this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
         this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
-
-        const graphics = this.getGraphics(true);
+        
+        const graphics = this.getGraphics();
         
         this.charWidth = graphics.measureText("w").width;
         this.charHeight = this.fontSize * window.devicePixelRatio;
         this.lineHeight = this.charHeight * this.lineSpacing;
 
         this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.lineHeight);
-        this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth);
-
-        if (this.backBuffer === null) {
-            this.backBuffer = document.createElement('canvas');
-            this.backBuffer.width = this.canvas.width;
-            this.backBuffer.height = this.canvas.height;
-        }
+        this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth) - 1;
 
         this.sendResizeMessage();
     }
@@ -155,8 +188,20 @@ class Application {
             columns: this.columnCount
         });
     }
+
+    sendMouseMessage(type: string, button: number, row: number, column: number) {
+        if (this.id === - 1) {
+            return;
+        }
+        
+        ipcRenderer.send("mouse", {
+            id: this.id,
+            type: type,
+            button: button,
+            row: row,
+            column: column
+        });
+    }  
 } 
 
-let app;
-
-app = new Application();
+window["app"] = new Application();

@@ -35,7 +35,6 @@ export class Main {
         });
 
         ipcMain.on("mouse", (event, info) => {
-            console.log(info);
             const window = this.view.getWindow(info.id);
             if (window !== null) {
                 if (info.type === "down") {
@@ -45,7 +44,19 @@ export class Main {
                     window.onMouseUp(info.row, info.column, info.button);
                 }
             }
-        });        
+        });
+
+        ipcMain.on("key", (event, info) => {
+            const window = this.view.getWindow(info.id);
+            if (window !== null) {
+                if (info.type === "down") {
+                    window.onKeyDown(info.key, info.modifiers);
+                }
+                else if (info.type === "up") {
+                    window.onKeyUp(info.key, info.modifiers);
+                }
+            }
+        });
 
         ipcMain.on("ready", (event, info) => {
             const window = this.view.getWindow(info.id);

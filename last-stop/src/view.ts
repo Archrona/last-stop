@@ -62,6 +62,14 @@ export class Window {
         console.log("  up " + row + ", " + column + " (" + button + ")");
     }
 
+    onKeyDown(key: string, modifiers: Array<string>) {
+        console.log("down " + key + " " + modifiers);
+    }
+    
+    onKeyUp(key: string, modifiers: Array<string>) {
+        console.log("  up " + key + " " + modifiers);
+    }
+
     onReady() {
         console.log("Window id " + this.id + " is ready UwU OwO >w<");
         this.isReady = true;
@@ -72,7 +80,7 @@ export class Window {
     doUpdate() {
         if (this.isReady) {
             let text = [];
-            
+
             for (let r = 0; r < this.lines; r++) {
                 for (let c = 0; c < this.columns; c += 4) {
                     text.push(new DrawableText("" + Math.floor(999 * Math.random()), r, c, 

@@ -83,24 +83,15 @@ class Application {
             event.preventDefault();
         });
         
-        this.canvas.addEventListener("keydown", (event) => {
-            console.log("keydown");
-            console.log(event);
+        window.addEventListener("keydown", (event) => {
+            this.onKeyboardEvent("down", event.key, event.shiftKey, event.ctrlKey, event.altKey, event.metaKey);
             event.preventDefault();
         });
         
-        this.canvas.addEventListener("keyup", (event) => {
-            console.log("keyup");
-            console.log(event);
+        window.addEventListener("keyup", (event) => {
+            this.onKeyboardEvent("up", event.key, event.shiftKey, event.ctrlKey, event.altKey, event.metaKey);
             event.preventDefault();
         });
-        
-        this.canvas.addEventListener("keypress", (event) => {
-            console.log("keypress");
-            console.log(event);
-            event.preventDefault();
-        });
-         
 
         ipcRenderer.on("update", (event, data) => {
             const subscription = data.subscription;
@@ -134,6 +125,24 @@ class Application {
         const column = Math.floor((pixelX - this.margin) / this.charWidth);
         
         this.sendMouseMessage(type, button, row, column);
+    }  
+
+    onKeyboardEvent(type: string, key: string, shift: boolean, control: boolean, alt: boolean, meta: boolean) {
+        let modifiers = [];
+        if (shift) {
+            modifiers.push("shift");
+        }
+        if (control) {
+            modifiers.push("control");
+        }
+        if (alt) {
+            modifiers.push("alt");
+        }
+        if (meta) {
+            modifiers.push("meta");
+        }
+        
+        this.sendKeyboardMessage(type, key, modifiers);
     }  
     
     getGraphics() {
@@ -201,7 +210,20 @@ class Application {
             row: row,
             column: column
         });
-    }  
+    }
+    
+    sendKeyboardMessage(type: string, key: string, modifiers: Array<string>) {
+        if (this.id === - 1) {
+            return;
+        }
+        
+        ipcRenderer.send("key", {
+            id: this.id,
+            type: type,
+            key: key,
+            modifiers: modifiers
+        });
+    }
 } 
 
 window["app"] = new Application();

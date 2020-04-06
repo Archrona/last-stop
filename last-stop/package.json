@@ -83,6 +83,8 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0"
+    "@types/express": "^4.17.4",
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.17.1"
   }
 }

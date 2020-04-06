@@ -5,7 +5,7 @@ import { Main } from "./main";
 import { Store } from "./store";
 
 const STORE_INITIAL_STATE = {
-    buffers: {
+    documents: {
         "scratchpad": {
             name: "scratchpad",
             modified: null,
@@ -26,27 +26,33 @@ const STORE_INITIAL_STATE = {
             ],
             anchors: [
                 {
-                    type: "cursor",
+                    type: "cursor_0",
                     row: 0,
                     column: 0
-                }
+                },
+                {
+                    type: "mark_0",
+                    row: 0,
+                    column: 0
+                },
+                {
+                    type: "view_0",
+                    row: 0,
+                    column: 0
+                },
             ],
             filename: null,
             baseContext: "basic"
         }  
     },
-    windows: {
-        "11": {
-            subscription: "buffer/scratchpad",
-            showLine: 0,
-            showColumn: 0
-        }
+    subscriptions: {
+        "11": "doc:scratchpad:0"
     },
     view: {
         activeWindow: "11"
     },
     project: {
-        basePath: null
+        basePath: "c:\\last-stop\\"
     }
 };
 

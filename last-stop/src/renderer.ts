@@ -2,8 +2,8 @@
 //   Main client-side entry point.
 
 import './index.css';
-import { ipcRenderer, ipcMain } from 'electron';
-import { getRGB, DrawableText } from "./shared";
+import { ipcRenderer } from 'electron';
+import { DrawableText } from "./shared";
 
 class Application {
     id: number;
@@ -213,7 +213,7 @@ class Application {
     }
     
     sendKeyboardMessage(type: string, key: string, modifiers: Array<string>) {
-        if (this.id === - 1) {
+        if (this.id === -1) {
             return;
         }
         

@@ -15,6 +15,7 @@ export class Window {
     columns: number;
     subscription: string;
     isReady: boolean;
+    topRowNumber: number;
 
     constructor(view: View, id: number) {
         this.view = view;
@@ -23,10 +24,11 @@ export class Window {
         this.columns = 0;
         this.subscription = "none";
         this.isReady = false;
-
+        this.topRowNumber = 0;
+ 
         this.window = new BrowserWindow({
-            height: 900,
-            width: 600,
+            height: 1000,
+            width: 700,
             webPreferences: {
                 nodeIntegration: true
             }
@@ -48,7 +50,8 @@ export class Window {
     onResize(lines: number, columns: number) {
         this.lines = lines;
         this.columns = columns;
-
+        this.view.recomputeTopRowNumbers();
+ 
         console.log("Window id " + this.id + " resized to [" + this.lines + ", " + this.columns + "]");
 
         this.doUpdate();
@@ -63,6 +66,10 @@ export class Window {
     }
 
     onKeyDown(key: string, modifiers: Array<string>) {
+        if (this.view.app.handleGlobalHotkeys(this.id, key, modifiers)) {
+            return;
+        }
+         
         console.log("down " + key + " " + modifiers);
     }
     
@@ -76,6 +83,11 @@ export class Window {
 
         this.doUpdate();
     }
+
+    needsUpdate() {
+        // TODO: don't immediately update, queue it
+        this.doUpdate();
+    }  
 
     doUpdate() {
         if (this.isReady) {
@@ -133,4 +145,28 @@ export class View {
         }
         return null;
     }
+
+    maximumWindowId() {
+        let highest = 0;
+        for (const window of this.windows) {
+            highest = Math.max(highest, window.id);
+        }
+        return highest;
+    }
+
+    recomputeTopRowNumbers() {
+        this.windows.sort((first, second) => first.topRowNumber - second.topRowNumber);
+
+        const max = this.maximumWindowId();
+        let firstAvailableLine = Math.max(Math.floor(max / 10) * 10 + 10, 30);
+        for (const window of this.windows) {
+            if (window.topRowNumber < firstAvailableLine || window.topRowNumber >= firstAvailableLine + 50) {
+                window.topRowNumber = firstAvailableLine;
+                window.needsUpdate();
+            }
+
+            firstAvailableLine = Math.floor(window.topRowNumber / 10) * 10 + 20;
+        }
+
+    } 
 }

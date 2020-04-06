@@ -58,3 +58,6 @@ $RECYCLE.BIN/
 
 node_modules/
 .webpack/
+
+SpeechConsole.exe*
+SpeechConsole.pdb

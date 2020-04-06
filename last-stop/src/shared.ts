@@ -10,6 +10,18 @@ export function splitIntoLines(str: string) {
     return str.split(re);
 }
 
+export function listsContainSameElements(x: Array<any>, y: Array<any>) {
+    if (x.length !== y.length) {
+        return false;
+    }
+    for (const item of x) {
+        if (!y.includes(item)) {
+            return false;
+        }
+    }
+    return true;
+}
+ 
 export class Position {
     row: number;
     column: number;

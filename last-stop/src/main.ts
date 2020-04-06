@@ -5,15 +5,21 @@ import { View } from "./view";
 import { Model } from "./model";
 import { Languages } from "./language";
 import { ipcMain } from 'electron';
+import { listsContainSameElements } from "./shared";
+import { ConsoleServer } from "./console_server";
+ 
 
 export class Main {
     languages: Languages;
     view: View;
     model: Model;
+    consoleServer: ConsoleServer;
+    mode: string; // "speech" or "raw"
 
     constructor() {
         this.registerCallbacks();
 
+        this.mode = "raw";
         this.languages = new Languages();
         // console.log(languages.tokenize("print(\"this is 3.4\\t\\n\");", ["basic"], new Position(2, 20), false));
 
@@ -24,6 +30,7 @@ export class Main {
 
         this.model = new Model(this);
         this.view = new View(this);
+        this.consoleServer = new ConsoleServer(this);
     }
 
     registerCallbacks() {
@@ -64,5 +71,14 @@ export class Main {
                 window.onReady();
             }
         })
+    }
+
+    handleGlobalHotkeys(windowId: number, key: string, modifiers: Array<string>) {
+        if (key === "w" && listsContainSameElements(modifiers, ["control"])) {
+            this.view.createWindow();
+            return true;
+        }
+        
+        return false;
     }
 }

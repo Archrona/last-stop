@@ -26,7 +26,7 @@ function clone(data: StoreData): StoreData {
     }
 }
 
-enum DataTypes {
+export enum DataTypes {
     Number,
     String, 
     Boolean,

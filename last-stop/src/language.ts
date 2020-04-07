@@ -13,7 +13,8 @@ interface TokenContext {
 interface ContextChange {
     token: string,
     action: string,
-    target: string | undefined
+    target: string | undefined,
+    style: string,
 }
 
 interface LanguageContext {
@@ -64,7 +65,7 @@ export class Languages {
         let pos = initialPosition.clone();
         let i = 0;
 
-        let tokens = [];
+        let tokens: Array<Token> = [];
 
         while (i < text.length) {
             const context = (contextStack.length > 0 ?
@@ -72,40 +73,43 @@ export class Languages {
             const lang = this.contexts.get(context);
             const tokenTypes = lang.tokens;
             let found = false;
+            let foundText = "";
 
             for (const type of tokenTypes) {
                 type.re.lastIndex = i;
                 const matchResult = type.re.exec(text);
                 
                 if (matchResult !== null) {
-                    const text = matchResult[0];
+                    foundText = matchResult[0];
 
-                    if (includeWhite || type.type !== "white")
-                        tokens.push(new Token(text, pos.clone(), type.type, context));
+                    if (includeWhite || (type.type !== "white" && type.type !== "newline"))
+                        tokens.push(new Token(foundText, pos.clone(), type.type, context));
 
                     if (type.type === "newline") {
                         pos.row++;
                         pos.column = 0;
                     } else {
-                        pos.column += text.length;
+                        pos.column += foundText.length;
                     }
 
                     found = true;
-                    i += text.length;
+                    i += foundText.length;
                     break;
                 }
             }
 
             if (!found) {
                 tokens.push(new Token(text[i], pos, "unknown", context));
+                foundText = text[i];
                 i++;
                 pos.column++;
             }
 
-            const foundText = tokens[tokens.length - 1].text;
-
             for (const change of lang.contextChanges) {
                 if (change.token === foundText) {
+                    if (change.style !== undefined) {
+                        tokens[tokens.length - 1].type = change.style;
+                    }
                     if (change.action === "pop") {
                         contextStack.pop();
                     } else if (change.action === "push") {

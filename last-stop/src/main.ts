@@ -5,7 +5,7 @@ import { View } from "./view";
 import { Model } from "./model";
 import { Languages } from "./language";
 import { ipcMain } from 'electron';
-import { listsContainSameElements } from "./shared";
+import { listsContainSameElements, InputMode } from "./shared";
 import { ConsoleServer } from "./console_server";
  
 
@@ -14,20 +14,14 @@ export class Main {
     view: View;
     model: Model;
     consoleServer: ConsoleServer;
-    mode: string; // "speech" or "raw"
+    mode: InputMode;
 
     constructor() {
         this.registerCallbacks();
 
-        this.mode = "raw";
+        this.mode = InputMode.Speech;
         this.languages = new Languages();
-        // console.log(languages.tokenize("print(\"this is 3.4\\t\\n\");", ["basic"], new Position(2, 20), false));
-
-        // store.set([], Store.normalize(languages.contexts));
-        // store.set(['basic', 'blah'], Store.normalize(new Date()));
-        // store.set(['basic', 'foo'], Store.normalize((x: number) => x + 2));
-        // console.log(store.get([]));
-
+        
         this.model = new Model(this);
         this.view = new View(this);
         this.consoleServer = new ConsoleServer(this);

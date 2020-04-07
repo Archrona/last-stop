@@ -12,8 +12,20 @@
                 "pattern": "\\r|\\n|\\r\\n" 
             },
             {
+                "type": "accent_keyword",
+                "pattern": "export|import|if|for|while"
+            },
+            {
+                "type": "keyword",
+                "pattern": "class|this|constructor|let|const"
+            },
+            {
+                "type": "type_identifier",
+                "pattern": "[A-Z][a-zA-Z0-9_]*"
+            },            
+            {
                 "type": "identifier",
-                "pattern": "[a-zA-Z_][a-zA-Z0-9_]*" 
+                "pattern": "[a-z_][a-zA-Z0-9_]*" 
             },
             {
                 "type": "number",
@@ -32,7 +44,8 @@
             {
                 "token": "\"",
                 "action": "push",
-                "target": "double_quoted_string"
+                "target": "double_quoted_string",
+                "style": "string_delimiter"
             }
         ]
     },
@@ -49,22 +62,23 @@
                 "pattern": "\\r|\\n|\\r\\n" 
             },
             {
-                "type": "punctuation",
+                "type": "string_punctuation",
                 "pattern": "[!\"#$%&'*+,-./:;<=>?@\\^_`|~]"
             },
             {
-                "type": "escape",
+                "type": "string_escape",
                 "pattern": "\\\\."
             },
             {
-                "type": "text",
+                "type": "string_text",
                 "pattern": "[0-9A-Za-z]+" 
             }
         ],
         "contextChanges": [
             {
                 "token": "\"",
-                "action": "pop"
+                "action": "pop",
+                "style": "string_delimiter"
             }
         ]
     }

@@ -33,7 +33,7 @@ class Application {
         this.charWidth = 0;
         this.charHeight = 0;
         this.lineHeight = 0;
-        this.lineSpacing = 1.25;
+        this.lineSpacing = 1.32;
         this.margin = 20;
         this.isLoaded = false;
         
@@ -98,22 +98,24 @@ class Application {
             const text = data.text as Array<DrawableText>;
             const expectedLines = data.lines;
             const expectedColumns = data.columns;
-            
+            const accentColor = data.modeAccent as string;
+ 
             if (expectedLines !== this.lineCount || expectedColumns !== this.columnCount) {
                 this.sendResizeMessage();
             }
             else {
-                this.onUpdate(subscription, text);
+                this.onUpdate(subscription, text, accentColor);
             }
         });
     }
 
-    onUpdate(subscription: string, text: Array<DrawableText>) {
+    onUpdate(subscription: string, text: Array<DrawableText>, accentColor: string) {
         console.log("update: " + subscription + ", " + text.length + " DrawableText objects");
         this.text = text;
         this.subscription = subscription;
-
         document.getElementById("subscription").innerText = this.subscription;
+        document.getElementById("top").style.borderColor = accentColor;
+ 
         this.render();
     }
 
@@ -155,7 +157,8 @@ class Application {
         const context = this.getGraphics();
 
         context.textBaseline = "top";
-        context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        context.fillStyle = "rgb(20,20,20)";
+        context.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
         for (const text of this.text) {
             const x = this.charWidth * text.column + this.margin;
@@ -165,6 +168,19 @@ class Application {
                 const bky = this.lineHeight * text.row + this.margin;
                 context.fillStyle = text.background;
                 context.fillRect(x, bky, this.charWidth * text.text.length, this.lineHeight);
+            }
+
+            if (text.special !== "") {
+                const parts = text.special.split("@");
+                if (parts[0] === "token") {
+                    const count = parseInt(parts[1]);
+                    context.fillStyle = parts[2];
+                    for (let c = 0; c < count; c++) {
+                        context.beginPath();
+                        context.arc(x + 0.35 * this.charWidth + 9 * c, y + this.charHeight * 1.1, 3, 0, Math.PI * 2);
+                        context.fill();
+                    }
+                }
             }
 
             context.fillStyle = text.foreground;

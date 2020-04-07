@@ -2,13 +2,40 @@
 //   Windows and the overall View.
 
 import { BrowserWindow } from 'electron';
-import { getRGB, DrawableText } from "./shared";
+import { getRGB, DrawableText, InputMode } from "./shared";
 import { Main } from "./main";
+import { renderSubscription } from "./subscription";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
+const THEME = {
+    window_speech_mode_accent: getRGB(0, 191, 255),
+    window_direct_mode_accent: getRGB(255, 102, 153),
+    window_line_number: getRGB(120, 120, 120),
+    error: getRGB(255, 0, 0),
+
+    token_0: getRGB(128, 0, 0),
+    token_5: getRGB(0, 128, 0),
+
+    accent_keyword: getRGB(255, 150, 190),
+    keyword: getRGB(128, 128, 255),
+    type_identifier: getRGB(80, 220, 200),
+    identifier: getRGB(145, 210, 255),
+    number: getRGB(255, 150, 75),
+    punctuation: getRGB(255, 220, 210),
+    grouping: getRGB(240, 240, 240),
+    string_delimiter: getRGB(150, 220, 140),
+    string_punctuation: getRGB(150, 220, 140),
+    string_escape: getRGB(180, 180, 120),
+    string_text: getRGB(150, 220, 140),
+
+    general: getRGB(240, 240, 240),
+    background: getRGB(20, 20, 20),
+};
+
 export class Window {
     view: View;
+    app: Main;
     id: number;
     window: BrowserWindow;
     lines: number;
@@ -19,12 +46,13 @@ export class Window {
 
     constructor(view: View, id: number) {
         this.view = view;
+        this.app = view.app;
         this.id = id;
         this.lines = 0;
         this.columns = 0;
         this.subscription = "none";
         this.isReady = false;
-        this.topRowNumber = 0;
+        this.topRowNumber = 999;
  
         this.window = new BrowserWindow({
             height: 1000,
@@ -91,21 +119,19 @@ export class Window {
 
     doUpdate() {
         if (this.isReady) {
-            let text = [];
-
-            for (let r = 0; r < this.lines; r++) {
-                for (let c = 0; c < this.columns; c += 4) {
-                    text.push(new DrawableText("" + Math.floor(999 * Math.random()), r, c, 
-                        getRGB(Math.floor(250 * Math.random()), Math.floor(250 * Math.random()), Math.floor(250 * Math.random())), 
-                        (Math.random() < 0.1 ? getRGB(20, 70, 130) : null)));
-                }
+            let sub = this.app.model.getSubscription(this.id);
+            if (sub === undefined) {
+                sub = "unknown_window";
             }
+            
+            let text = renderSubscription(sub, this.topRowNumber, this.lines, this.columns, this.view.app);
 
             this.window.webContents.send("update", {
-                subscription: "random",
+                subscription: sub,
                 text: text,
                 lines: this.lines,
-                columns: this.columns            
+                columns: this.columns,
+                modeAccent: this.view.getModeAccent()  
             });
         }
     }
@@ -124,6 +150,27 @@ export class View {
         this.createWindow();
     }
 
+    getModeAccent() {
+        const mode = this.app.mode;
+        if (mode === InputMode.Direct) {
+            return this.getColor("window_direct_mode_accent");
+        }
+        else if (mode === InputMode.Speech) {
+            return this.getColor("window_speech_mode_accent");
+        }
+        else {
+            return this.getColor("error");
+        }
+    } 
+
+    getColor(name: string) {
+        let color = THEME[name];
+        if (color === undefined) {
+            return THEME["general"];
+        }
+        return color;
+    }
+
     createWindow() {
         const id = this.nextWindowId;
         this.nextWindowId++;
@@ -135,6 +182,8 @@ export class View {
     windowClosed(id: number) {
         this.windows = this.windows.filter(w => w.id !== id);
         console.log("Remaining window IDs: " + this.windows.map(x => x.id));
+
+        this.recomputeTopRowNumbers();
     }
 
     getWindow(id: number) {
@@ -155,17 +204,19 @@ export class View {
     }
 
     recomputeTopRowNumbers() {
-        this.windows.sort((first, second) => first.topRowNumber - second.topRowNumber);
+        const windows = this.windows.slice();
+        windows.sort((first, second) => first.topRowNumber - second.topRowNumber);
 
         const max = this.maximumWindowId();
         let firstAvailableLine = Math.max(Math.floor(max / 10) * 10 + 10, 30);
-        for (const window of this.windows) {
+
+        for (const window of windows) {
             if (window.topRowNumber < firstAvailableLine || window.topRowNumber >= firstAvailableLine + 50) {
                 window.topRowNumber = firstAvailableLine;
                 window.needsUpdate();
             }
 
-            firstAvailableLine = Math.floor(window.topRowNumber / 10) * 10 + 20;
+            firstAvailableLine = Math.floor((window.topRowNumber + window.lines) / 10) * 10 + 20;
         }
 
     } 

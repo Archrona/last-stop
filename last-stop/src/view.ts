@@ -17,6 +17,10 @@ const THEME = {
     token_0: getRGB(128, 0, 0),
     token_5: getRGB(0, 128, 0),
 
+    anchor_cursor: getRGB(255, 60, 255),
+    anchor_mark: getRGB(255, 60, 150),
+    selection: getRGB(20, 40, 80),
+ 
     accent_keyword: getRGB(255, 150, 190),
     keyword: getRGB(128, 128, 255),
     type_identifier: getRGB(80, 220, 200),

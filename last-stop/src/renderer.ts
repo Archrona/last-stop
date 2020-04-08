@@ -180,7 +180,26 @@ class Application {
                         context.arc(x + 0.35 * this.charWidth + 9 * c, y + this.charHeight * 1.1, 3, 0, Math.PI * 2);
                         context.fill();
                     }
+                } else if (parts[0] === "anchor") {
+                    context.lineWidth = 3;
+                    context.strokeStyle = text.foreground;
+                    context.beginPath();
+                    context.moveTo(x, y - (this.lineHeight - this.charHeight) * 0.5);
+                    context.lineTo(x, y + this.lineHeight - (this.lineHeight - this.charHeight) * 0.5);
+                    context.stroke();
+                } else if (parts[0] === "selection") {
+                    const leftColumn = parseInt(parts[1]);
+                    const rightColumn = parseInt(parts[2]);
+
+                    const left = this.charWidth * leftColumn + this.margin;
+                    const right = this.charWidth * rightColumn + this.margin;
+                    const top = y - (this.lineHeight - this.charHeight) * 0.5;
+                    const bottom = top + this.lineHeight + 1;
+ 
+                    context.fillStyle = text.foreground;
+                    context.fillRect(left, top, right - left, bottom - top);
                 }
+                 
             }
 
             context.fillStyle = text.foreground;

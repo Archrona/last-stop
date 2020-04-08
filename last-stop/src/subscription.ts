@@ -130,10 +130,47 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
     let content = [];
     let position = new Position(view.row, 0);
  
+    let selectionLeft = anchors.get("cursor");
+    let selectionRight = anchors.get("mark");
+    if (selectionLeft.compareTo(selectionRight) > 0) {
+        let temporary = selectionLeft;
+        selectionLeft = selectionRight;
+        selectionRight = temporary;
+    }
+ 
     for (let i = 0; i < rows; i++) {
         const lineIndex = view.row + i;
         
         if (lineIndex >= 0 && lineIndex < text.length) {
+
+            if (selectionLeft.row <= lineIndex && selectionRight.row >= lineIndex) {
+                let left = (selectionLeft.row === lineIndex ? selectionLeft.column : 0);
+                let right = (selectionRight.row === lineIndex ? selectionRight.column : 1000000);
+                left = Math.max(left, view.column) + LEFT_MARGIN_COLUMNS - view.column;
+                right = Math.min(right, view.column + columns - LEFT_MARGIN_COLUMNS)
+                    + LEFT_MARGIN_COLUMNS - view.column;
+                
+                if (right > 0 && left < columns && left < right) {
+                    let selectionColor = app.view.getColor("selection");
+    
+                    content.push(new DrawableText(
+                        "", "selection@" + left + "@" + right, i, 0, selectionColor, null
+                    ));
+                }
+            }
+
+            for (const name of ["mark", "cursor"]) {
+                const anchor = anchors.get(name);
+                if (anchor.row === lineIndex && anchor.column >= view.column) {
+                    const anchorColumn = anchor.column - view.column + LEFT_MARGIN_COLUMNS;
+                    const anchorColor = app.view.getColor("anchor_" + name);
+ 
+                    content.push(new DrawableText(
+                        "", "anchor@" + name, i, anchorColumn, anchorColor, null
+                    ));
+                }
+            }
+ 
             const lineText = text[lineIndex];
             position.row = lineIndex;
 

@@ -39,6 +39,16 @@ export class Position {
     clone() {
         return new Position(this.row, this.column);
     }
+
+    compareTo(other: Position) {
+        if (this.row < other.row || (this.row === other.row && this.column < other.column)) {
+            return -1;
+        }
+        if (this.row === other.row && this.column === other.column) {
+            return 0;
+        }
+        return 1;
+    }
 }
 
 export class DrawableText {

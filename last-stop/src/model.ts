@@ -40,18 +40,18 @@ const STORE_INITIAL_STATE = {
             anchors: [
                 {
                     type: "cursor_0",
-                    row: 0,
+                    row: 4,
                     column: 0
                 },
                 {
                     type: "mark_0",
-                    row: 0,
-                    column: 0
+                    row: 5,
+                    column: 15
                 },
                 {
                     type: "view_0",
                     row: 0,
-                    column: 0
+                    column: 12       
                 },
             ],
             filename: null,

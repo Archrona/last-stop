@@ -406,7 +406,7 @@ export class Store {
         }
     }
 
-    private setNoClone(path: StorePath, value: StoreData): StoreResult {
+    setNoClone(path: StorePath, value: StoreData): StoreResult {
         const setResult = this.backing.set(path, value);
         if (setResult.success) {
             this.redoStack = [];

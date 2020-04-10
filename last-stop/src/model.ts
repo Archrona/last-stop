@@ -4,52 +4,31 @@
 import { Main } from "./main";
 import { Store, getType, DataTypes, StoreData } from "./store";
 import { Position, splitIntoLines } from "./shared";
-import { contentTracing } from "electron";
- 
+
+type Context = [number, Array<string>];
+
 const STORE_INITIAL_STATE = {
     documents: {
         "scratchpad": {
             name: "scratchpad",
             modified: null,
             lines: [
-                "aaaaa", "bbbbb", "ccccc", "ddddd"
-                // "export class View {",
-                // "    app: Main;",
-                // "    windows: Array<Window>;",
-                // "    nextWindowId: number;",
-                // "",
-                // "    constructor(app: Main) {",
-                // "        this.app = app;",
-                // "        this.windows = [];",
-                // "        this.nextWindowId = 11;",
-                // "",
-                // "        this.createWindow();",
-                // "    }",
-                // "",
-                // "    test() {",
-                // "        let str = \"asd \\\"haha\\\" 3+4-5\";",
-                // "        let multiLine = \"this is a test",
-                // "            of the emergency broadcasting",
-                // "            system!\";",
-                // "    }",
-                // "",
-                // "    checkpoint(): number {",
-                // "        this.undoStack.push(new DeltaPair(DeltaPairType.Checkpoint, (store) => true, (store) => true));",
-                // "        return this.undoStack.length;",
-                // "    }",
-                // "}",
+                "This is a test of the emergency broadcast system. Long lines are my favorite."
+            ],
+            contextChanges: [
+
             ],
             anchors: [
                 {
                     type: "cursor_0",
-                    row: 1,
-                    column: 1,
+                    row: 0,
+                    column: 0,
                     fixed: false
                 },
                 {
                     type: "mark_0",
-                    row: 2,
-                    column: 4,
+                    row: 0,
+                    column: 0,
                     fixed: false
                 },
                 {
@@ -87,15 +66,10 @@ export class Model {
         this.store.setNormalized([], STORE_INITIAL_STATE);
         this.store.checkpoint();
 
-        this.insert("scratchpad", "hello\nthere!!!", new Position(2, 1));
-        console.log(this.getStandardAnchors("scratchpad", 0));
-        console.log(this.getDocumentText("scratchpad"));
-        
-        this.store.undoUntilCheckpoint();
-        console.log(this.getDocumentText("scratchpad"));
-        this.store.redoAll();
-        console.log(this.getDocumentText("scratchpad"));
-        
+        for (let i = 0; i <= 0; i++) {
+            console.log(this.getContext("scratchpad", i));
+        }
+         
     }
 
     getBaseContext(document: string): Array<string> | undefined {
@@ -211,6 +185,72 @@ export class Model {
         return result;
     }
 
+    getContexts(document: string) : Array<Context> {
+        const contexts = this.store.get(["documents", document, "contextChanges"]);
+        if (contexts === undefined) {
+            throw "document has no contexts (getContext: 3)";
+        }
+
+        return contexts as Array<Context>;
+    } 
+
+    getContextUnchecked(baseContext: Array<string>, contexts: Array<Context>, row: number) {
+        let lowest = 0;
+        let highest = contexts.length;
+
+        while (lowest <= highest) {
+            let middle = Math.floor((highest + lowest) / 2);
+            
+            let leftPredicate = (middle === 0 || contexts[middle - 1][0] <= row);
+            let rightPredicate = middle < contexts.length && contexts[middle][0] <= row;
+            
+            if (leftPredicate && !rightPredicate) {
+                if (middle === 0) {
+                    return {
+                        context: baseContext,
+                        index: null
+                    };
+                }
+                else {
+                    return {
+                        context: contexts[middle - 1][1],
+                        index: middle - 1
+                    };
+                }
+            }
+            else if (!leftPredicate) {
+                highest = middle - 1;
+            }
+            else {
+                lowest = middle + 1;
+            }
+        }
+
+        throw "binary search could not reveal context (getContextUnchecked: 2)";
+    }
+
+    getContext(document: string, row: number) {
+        const lines = this.getDocumentText(document);
+        const baseContext = this.getBaseContext(document);
+        
+        if (lines === undefined || baseContext === undefined) {
+            throw "cannot find document " + document + " (getContext: 2)";
+        }     
+        if (row < 0 || row >= lines.length) {
+            throw "cannot get context of nonexistent row " + row + " (getContext: 1)";
+        }
+        
+        return this.getContextUnchecked(baseContext, this.getContexts(document), row);         
+    } 
+
+    updateContexts(document: string, topRow: number, bottomRow: number) {
+        // BIG TODO
+        // recalculate contexts for lines [topRow, bottomRow) by tokenizing
+        // if bottomRow would be left in a context state inconsistent with what is already in
+        // the context list, keep tokenizing and updating down the file
+
+    } 
+
     insertUpdateAnchors(document: string, position: Position, lines: Array<string>) {
         const anchorsRaw = this.store.get(["documents", document, "anchors"]);
         if (anchorsRaw === undefined) {
@@ -305,8 +345,66 @@ export class Model {
         }
 
         this.insertUpdateAnchors(document, actualPosition, linesToInsert);
+        this.updateContexts(document, actualPosition.row, actualPosition.row + linesToInsert.length);
+ 
         return true;        
     }
+
+    removeUpdateAnchors(document: string, left: Position, right: Position) {
+        const anchorsRaw = this.store.get(["documents", document, "anchors"]);
+        if (anchorsRaw === undefined) {
+            throw "anchors should exist (removeUpdateAnchors: 1)";
+        }
+        
+        const anchors = anchorsRaw as unknown as Array<Map<string, StoreData>>;
+        
+        for (let i = 0; i < anchors.length; i++) {
+            const anchor = anchors[i];
+            const cursor = new Position(anchor.get("row") as number, anchor.get("column") as number);
+            
+            if (!anchor.get("fixed") as boolean && left.compareTo(cursor) < 0) {
+                let targetRow = left.row;
+                let targetColumn = left.column;
+                
+                if (right.compareTo(cursor) < 0) {
+                    targetRow = cursor.row - (right.row - left.row);
+                    
+                    if (right.row === cursor.row) {
+                        if (left.row === right.row) {
+                            targetColumn -= right.column - left.column;
+                        }
+                        else {
+                            targetColumn -= right.column;
+                        }
+                    } else {
+                        targetColumn = cursor.column;
+                    }
+                }
+                
+                if (targetRow !== cursor.row) {
+                    const modifyResult = this.store.setNoClone(
+                        ["documents", document, "anchors", i, "row"],
+                        targetRow
+                    );
+                    if (!modifyResult.success) {
+                        throw "anchor row set should have succeeded (removeUpdateAnchors: 2)";
+                    }
+                }
+
+                if (targetColumn !== cursor.column) {
+                    const modifyResult = this.store.setNoClone(
+                        ["documents", document, "anchors", i, "column"],
+                        targetColumn
+                    );
+                    if (!modifyResult.success) {
+                        throw "anchor column set should have succeeded (removeUpdateAnchors: 3)";
+                    }
+                }                
+            }
+        }
+
+        return true;
+    }  
 
     remove(document: string, left: Position, right: Position) {
         const lines = this.getDocumentText(document);
@@ -346,7 +444,11 @@ export class Model {
             throw "store set should have succeeded (remove: 2)";
         }
         
+        this.removeUpdateAnchors(document, left, right);
+        this.updateContexts(document, left.row, left.row + 1);
+ 
         return true;
-        
-    }  
+    }
+
+
 }

@@ -34,7 +34,6 @@ function parseSubscription(sub: string) {
         arguments: words.slice(1)
     };
 }
- 
 
 function renderError(text: string, app: Main) : Array<DrawableText> {
     const lines = splitIntoLines(text);
@@ -75,8 +74,7 @@ function renderUnknownWindow(terms: Array<string>, app: Main, rows: number, colu
 class RenderDocumentInfo {
     constructor(
         public text: Array<string>,
-        public anchors: Map<string, Position>,
-        public contextStack: Array<string>
+        public anchors: Map<string, Position>
     ) {
         
     }
@@ -105,17 +103,12 @@ function renderDocumentReadState(terms: Array<string>, app: Main) {
     if (!anchors.has("mark")) return fail("mark not found");
     if (!anchors.has("view")) return fail("view anchor not found");
     
-    const context = app.model.getBaseContext(name);
-    if (context === undefined) return fail("no base context for document");
- 
     return {
         success: true,
         display: null,
-        info: new RenderDocumentInfo(text, anchors, context)  
+        info: new RenderDocumentInfo(text, anchors)  
     };
 }
-
-// languages.tokenize("print(\"this is 3.4\\t\\n\");", ["basic"], new Position(2, 20), false)
 
 function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number)
     : Array<DrawableText>
@@ -125,7 +118,7 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
         return checkedTerms.display;
     }
 
-    let { text, anchors, contextStack } = checkedTerms.info as RenderDocumentInfo;
+    let { text, anchors } = checkedTerms.info as RenderDocumentInfo;
     let view = anchors.get("view");
     let content = [];
     let position = new Position(view.row, 0);
@@ -137,6 +130,8 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
         selectionLeft = selectionRight;
         selectionRight = temporary;
     }
+
+    let longLineIndicator = false;
  
     for (let i = 0; i < rows; i++) {
         const lineIndex = view.row + i;
@@ -172,16 +167,17 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
             }
  
             const lineText = text[lineIndex];
+            const context = app.model.getContext(terms[0], lineIndex);
+ 
             position.row = lineIndex;
 
             const result = app.languages.tokenize(
                 lineText + "\n",
-                contextStack,
+                context.context,
                 position,
                 false
             );
             
-            contextStack = result.finalContextStack;
             let tokens = result.tokens;
             
             for (let t = 0; t < tokens.length; t++) {
@@ -198,9 +194,30 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
                 }
 
                 if (displayColumn >= LEFT_MARGIN_COLUMNS) {
-                    content.push(new DrawableText(
-                        token.text, special, i, displayColumn, color, null
-                    ));
+                    let lli = false;
+
+                    if (displayColumn < columns - 1) {
+                        if (displayColumn + token.text.length <= columns - 1) {
+                            content.push(new DrawableText(
+                                token.text, special, i, displayColumn, color, null
+                            ));
+                        } else {
+                            content.push(new DrawableText(
+                                token.text.substring(0, columns - 1 - displayColumn),
+                                special, i, displayColumn, color, null
+                            ));
+                            lli = true;
+                        }
+                    } else {
+                        lli = true;
+                    }
+
+                    if (lli && !longLineIndicator) {
+                        content.push(new DrawableText(
+                            "»", "", i, columns - 1, app.view.getColor("overflow_indicator"), null
+                        ));
+                        longLineIndicator = true;
+                    }
                 }
                 else if (displayColumn + token.text.length > LEFT_MARGIN_COLUMNS) {
                     content.push(new DrawableText(

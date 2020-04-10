@@ -13,6 +13,7 @@ const THEME = {
     window_direct_mode_accent: getRGB(255, 102, 153),
     window_line_number: getRGB(120, 120, 120),
     error: getRGB(255, 0, 0),
+    overflow_indicator: getRGB(255, 255, 0),
 
     token_0: getRGB(128, 0, 0),
     token_5: getRGB(0, 128, 0),

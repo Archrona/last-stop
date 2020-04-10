@@ -1,5 +1,29 @@
 [
     {
+        "name": "spoken_text",
+        "extensions": [],
+        "tokens": [
+            {
+                "type": "white",
+                "pattern": "\\s+"
+            },
+            {
+                "type": "identifier",
+                "pattern": "[$a-zA-Z_']+" 
+            },
+            {
+                "type": "number",
+                "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+            },
+            {
+                "type": "punctuation",
+                "pattern": "[!\"#%&*+,-./:;<=>?@\\^_`|~(){}\\[\\]]"
+            }
+        ],
+        "commands": [],
+        "contextChanges": []
+    },
+    {
         "name": "basic",
         "extensions": [],
         "tokens": [
@@ -40,6 +64,10 @@
                 "pattern": "[(){}\\[\\]]"
             }
         ],
+        "commands": [
+            "universal", "standard_grouping", "identifiers", "numbers",
+            "standard_operators"
+        ],
         "contextChanges": [
             {
                 "token": "\"",
@@ -73,6 +101,9 @@
                 "type": "string_text",
                 "pattern": "[0-9A-Za-z]+" 
             }
+        ],
+        "commands": [
+            "universal"
         ],
         "contextChanges": [
             {

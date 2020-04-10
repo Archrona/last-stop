@@ -1,0 +1,84 @@
+{
+    "universal": [
+        {
+            "spoken": ["skip"],
+            "special": "SkipOnceCommand"
+        },
+        {
+            "spoken": ["jump"],
+            "special": "SkipTwiceCommand"
+        },
+        {
+            "spoken": ["hurdle", "leap"],
+            "special": "SkipThriceCommand"
+        },
+        {
+            "spoken": ["wrap up", "rap up"],
+            "special": "ClearInsertionPointsCommand"
+        },
+        {
+            "spoken": ["go $POSITION", "go to $POSITION"],
+            "special": "GoCommand"
+        }  
+    ],
+
+    "standard_grouping": [
+        {
+            "spoken": ["call"],
+            "insert": "$/() $_"
+        },
+        {
+            "spoken": ["of"],
+            "insert": "$/($_) $_"
+        },
+        {
+            "spoken": ["group"],
+            "insert": "($_) $_"
+        }
+    ],
+
+    "identifiers": [
+        {
+            "spoken": ["flat"],
+            "identifierCommand": "FlatCasing"
+        },
+        {
+            "spoken": ["snake"],
+            "identifierCommand": "SnakeCasing"
+        },
+        {
+            "spoken": ["camel"],
+            "identifierCommand": "CamelCasing"
+        },
+        {
+            "spoken": ["big", "huge"],
+            "identifierCommand": "TypeCasing"
+        }
+    ],
+
+    "numbers": [
+        {
+            "spoken": ["one", "won"],
+            "insert": "1"
+        },
+        {
+            "spoken": ["two", "too"],
+            "insert": "2"
+        }
+    ],
+
+    "standard_operators": [
+        {
+            "spoken": ["+", "plus", "added to"],
+            "insert": "+"
+        },
+        {
+            "spoken": ["-", "minas", "minus"],
+            "insert": "-"
+        },
+        {
+            "spoken": ["negate", "negative"],
+            "insert": "-$/"
+        }
+    ]
+} 

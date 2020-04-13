@@ -7,7 +7,8 @@ import { Languages } from "./language";
 import { ipcMain } from 'electron';
 import { listsContainSameElements, InputMode } from "./shared";
 import { ConsoleServer } from "./console_server";
- 
+import { Commands } from "./commands";
+
 
 export class Main {
     languages: Languages;
@@ -15,15 +16,19 @@ export class Main {
     model: Model;
     consoleServer: ConsoleServer;
     mode: InputMode;
-
+    commands: Commands;
+ 
     constructor() {
         this.registerCallbacks();
 
         this.mode = InputMode.Speech;
         this.languages = new Languages();
-        
+
+        this.commands = new Commands(this);
+
         this.model = new Model(this);
         this.view = new View(this);
+        
         this.consoleServer = new ConsoleServer(this);
     }
 

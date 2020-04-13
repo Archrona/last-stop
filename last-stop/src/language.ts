@@ -21,6 +21,7 @@ interface LanguageContext {
     name: string,
     extensions: Array<string>,
     tokens: Array<TokenContext>,
+    commands: Array<string>,
     contextChanges: Array<ContextChange>
 }
 

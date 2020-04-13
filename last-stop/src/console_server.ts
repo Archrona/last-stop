@@ -7,6 +7,7 @@ import express from 'express';
 import { Main } from './main';
 import { execFile, ChildProcess } from "child_process";
 import { createServer, Server } from 'http';
+import { TouchBarSlider } from 'electron';
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
@@ -27,7 +28,11 @@ export class ConsoleServer {
         this.expressServer.use(express.json());
 
         this.expressServer.post("/", (request, response) => {
-            console.log(request.body);
+            if (request.body.text !== undefined) {
+                const spokenText = request.body.text.toString();
+                app.commands.onSpokenText(spokenText);
+            }
+             
             response.send("ok");
         });
 

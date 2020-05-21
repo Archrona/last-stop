@@ -123,3 +123,102 @@ export class Languages {
         return new TokenizeResult(tokens, contextStack);
     }
 }
+
+export class TokenIterator {
+    tokens: Array<Token>;
+    index: number;
+    includeWhite: boolean;
+ 
+    constructor(tokens: Array<Token>, includeWhite: boolean) {       
+        this.tokens = tokens; 
+        this.reset(includeWhite);
+    }
+    
+    private offsetIncludingWhite(offset: number): number | null {
+        const result = this.index + offset;
+        
+        if (result < 0 || result >= this.tokens.length) {
+            return null;
+        }
+        else {
+            return result;
+        }
+    }
+
+    private absorbWhite(current: number, delta: number) {
+        while (current >= 0 && current < this.tokens.length && this.tokens[current].type === "white") {
+            current += delta;
+        }
+        return current;
+    }  
+    
+    private offsetExcludingWhite(offset: number): number | null {
+        let delta = (offset < 0 ? - 1 : 1);
+        let positiveOffset = (offset < 0 ? - offset : offset);
+        let current = this.index;
+        
+        current = this.absorbWhite(current, delta);
+        
+        while (positiveOffset > 0 && current >= 0 && current < this.tokens.length) {
+            if (this.tokens[current].type === "white") {
+                throw "algorithm broken (offsetExcludingWhite: 1)";
+            }
+            
+            current += delta;
+            current = this.absorbWhite(current, delta);
+            positiveOffset--;
+        }
+        
+        if (positiveOffset === 0 && current >= 0 && current < this.tokens.length) {
+            return current;
+        }
+        else {
+            return null;
+        }
+    }
+
+    private offset(offset: number) {
+        if (this.includeWhite) {
+            return this.offsetIncludingWhite(offset);
+        }
+        else {
+            return this.offsetExcludingWhite(offset);
+        }
+    }  
+
+    valid(): boolean {
+        return this.index >= 0 && this.index < this.tokens.length;
+    }
+
+    private checkValid() {
+        if (!this.valid()) {
+            throw "token iterator invalid (valid: 1)";
+        }      
+    }
+
+    get(offset: number = 0): Token | null {
+        this.checkValid();
+        const offsetIndex = this.offset(offset);
+        return (offsetIndex === null ? null : this.tokens[offsetIndex]);
+    }
+
+    shift(offset: number = 1) {
+        this.checkValid();
+        const index = this.offset(offset);
+ 
+        if (index === null) {
+            this.index = (offset < 0 ? -1 : this.tokens.length);
+        }
+        else {
+            this.index = index;
+        }
+    }
+
+    reset(includeWhite: boolean) {
+        this.index = 0;
+        this.includeWhite = includeWhite;
+        if (this.includeWhite === false) {
+            this.index = this.absorbWhite(0, 1);
+        }
+    }
+}

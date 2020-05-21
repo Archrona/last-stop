@@ -4,6 +4,7 @@
 import { Main } from "./main";
 import { getRGB, Position, DrawableText, splitIntoLines } from "./shared";
 import { View } from "./view";
+import { Anchor } from "./model";
 
 const LEFT_MARGIN_COLUMNS = 5;
 
@@ -74,7 +75,9 @@ function renderUnknownWindow(terms: Array<string>, app: Main, rows: number, colu
 class RenderDocumentInfo {
     constructor(
         public text: Array<string>,
-        public anchors: Map<string, Position>
+        public cursor: Anchor,
+        public mark: Anchor,
+        public view: Anchor
     ) {
         
     }
@@ -97,16 +100,23 @@ function renderDocumentReadState(terms: Array<string>, app: Main) {
 
     if (anchorIndex === NaN) return fail("doc requires integer for anchor index");
     
-    const anchors = app.model.getStandardAnchors(name, anchorIndex);
+    const anchors = app.model.getAnchors(name);
 
-    if (!anchors.has("cursor")) return fail("cursor not found");
-    if (!anchors.has("mark")) return fail("mark not found");
-    if (!anchors.has("view")) return fail("view anchor not found");
+    if (!anchors.has("cursor_" + anchorIndex)) return fail("cursor not found");
+    if (!anchors.has("mark_" + anchorIndex)) return fail("mark not found");
+    if (!anchors.has("view_" + anchorIndex)) return fail("view anchor not found");
     
+
+
     return {
         success: true,
         display: null,
-        info: new RenderDocumentInfo(text, anchors)  
+        info: new RenderDocumentInfo(
+            text, 
+            anchors.get("cursor_" + anchorIndex),
+            anchors.get("mark_" + anchorIndex),
+            anchors.get("view_" + anchorIndex)
+        )  
     };
 }
 
@@ -118,13 +128,15 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
         return checkedTerms.display;
     }
 
-    let { text, anchors } = checkedTerms.info as RenderDocumentInfo;
-    let view = anchors.get("view");
+    let info = checkedTerms.info as RenderDocumentInfo;
+    let text = info.text;
+    let view = info.view.position;
+
     let content = [];
     let position = new Position(view.row, 0);
  
-    let selectionLeft = anchors.get("cursor");
-    let selectionRight = anchors.get("mark");
+    let selectionLeft = info.cursor.position;
+    let selectionRight = info.mark.position;
     if (selectionLeft.compareTo(selectionRight) > 0) {
         let temporary = selectionLeft;
         selectionLeft = selectionRight;
@@ -155,9 +167,9 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
             }
 
             for (const name of ["mark", "cursor"]) {
-                const anchor = anchors.get(name);
-                if (anchor.row === lineIndex && anchor.column >= view.column) {
-                    const anchorColumn = anchor.column - view.column + LEFT_MARGIN_COLUMNS;
+                const anchor = info[name];
+                if (anchor.position.row === lineIndex && anchor.position.column >= view.column) {
+                    const anchorColumn = anchor.position.column - view.column + LEFT_MARGIN_COLUMNS;
                     const anchorColor = app.view.getColor("anchor_" + name);
  
                     content.push(new DrawableText(
@@ -167,7 +179,7 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
             }
  
             const lineText = text[lineIndex];
-            const context = app.model.getContext(terms[0], lineIndex);
+            const context = app.model.getLineContext(terms[0], lineIndex);
  
             position.row = lineIndex;
 

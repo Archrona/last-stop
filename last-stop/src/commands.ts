@@ -4,7 +4,7 @@
 import * as fs from "fs";
 import { Main } from "./main";
 import { Position } from "./shared";
-import { Token } from "./language";
+import { Token, TokenIterator } from "./language";
  
 const COMMANDS_FILENAME = "commands.json";
 
@@ -25,47 +25,7 @@ interface CommandGroupType {
 type CommandsFileType = Array<CommandGroupType>;
 
 
-class TokenIterator {
-    backing: Array<Token>;
-    index: number;
-    lowercase: boolean;
 
-    constructor(backing: Array<Token>, startingIndex: number, lowercase: boolean = false) {
-        this.backing = backing;
-        
-        this.index = startingIndex;
-        this.bump();
-
-        this.lowercase = lowercase;
-    }
-    
-    hasNext() {
-        return this.index < this.backing.length;
-    }
-    
-    getNext() {
-        if (this.index >= this.backing.length) {
-            throw "token iterator tried to step past end (getNext:1)";
-        }
-        
-        let item = this.backing[this.index].text;
-        const type = this.backing[this.index].type;
-        
-        this.index++;
-        this.bump();
-
-        if (this.lowercase) {
-            item = item.toLowerCase();
-        }
-
-        return [item, type];
-    }
-
-    bump() {
-        // no-op
-    }
-}
- 
  
 class TreeNode {
     commandReached: null | Terminal;
@@ -188,10 +148,21 @@ export class Commands {
     onSpokenText(input: string) {
         console.log("TEXT: \"" + input + "\"");
 
-        const tokenizeResult =  this.app.languages.tokenize(
+        let iterator = new TokenIterator(this.app.languages.tokenize(
             input, ["spoken_text"], new Position(0, 0), true
-        );
-
+        ).tokens, true);
+        
+        while (iterator.valid()) {
+            console.log(iterator.get());
+            iterator.shift();
+        }
+ 
+        iterator.reset(true);
+        while (iterator.valid()) {
+            console.log(iterator.get());
+            iterator.shift();
+        }
+ 
         
     } 
 }

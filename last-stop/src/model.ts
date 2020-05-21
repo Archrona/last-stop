@@ -7,37 +7,41 @@ import { Position, splitIntoLines } from "./shared";
 
 type Context = [number, Array<string>];
 
+export class Anchor {
+    constructor(public position: Position, public fixed: boolean) {
+    
+    }
+}
+ 
 const STORE_INITIAL_STATE = {
     documents: {
         "scratchpad": {
             name: "scratchpad",
             modified: null,
             lines: [
-                "This is a test of the emergency broadcast system. Long lines are my favorite."
+                'Boo "asd\\n" a "asd',
+                'asd", "fefe\\nfe" a'
             ],
             contextChanges: [
-
+                [1, ["basic", "double_quoted_string"]]
             ],
-            anchors: [
-                {
-                    type: "cursor_0",
+            anchors: {
+                "cursor_0": {
                     row: 0,
                     column: 0,
                     fixed: false
                 },
-                {
-                    type: "mark_0",
+                "mark_0": {
                     row: 0,
                     column: 0,
                     fixed: false
                 },
-                {
-                    type: "view_0",
+                "view_0": {
                     row: 0,
                     column: 0,
                     fixed: true   
                 },
-            ],
+            },
             filename: null,
             baseContext: ["basic"]
         }  
@@ -67,9 +71,21 @@ export class Model {
         this.store.checkpoint();
 
         for (let i = 0; i <= 0; i++) {
-            console.log(this.getContext("scratchpad", i));
+            console.log(this.getLineContext("scratchpad", i));
         }
-         
+        
+        let position = new Position(0, 0);
+        let text = this.getDocumentText("scratchpad");
+        while (position.row < text.length) {
+            let context = this.getPositionContext("scratchpad", position);
+            console.log(position.row + " " + position.column + ": " + context);
+            position.column++;
+            if (position.column > text[position.row].length) {
+                position.row++;
+                position.column = 0;
+            }
+        }
+ 
     }
 
     getBaseContext(document: string): Array<string> | undefined {
@@ -152,34 +168,49 @@ export class Model {
         return result;
     }  
 
-    getStandardAnchors(document: string, anchorIndex: number) {
+    getAnchor(document: string, name: string): Anchor | undefined {
+        const anchor = this.store.get(["documents", document, "anchors", name]);
+        if (anchor === undefined) {
+            return undefined;
+        }
+        
+        return new Anchor(
+            new Position(
+                (anchor as Map<string, StoreData>).get("row") as number,
+                (anchor as Map<string, StoreData>).get("column") as number
+            ),
+            (anchor as Map<string, StoreData>).get("fixed") as boolean
+        );
+    }  
+
+    getAnchors(document: string) {
         const anchors = this.store.get(["documents", document, "anchors"]);
         if (anchors === undefined) {
             return undefined;
         }
         
-        const result: Map<string, Position> = new Map();
+        const result: Map<string, Anchor> = new Map();
 
-        for (const anchor of anchors) {
+        for (const [name, anchor] of (anchors as Map<string, StoreData>).entries()) {
             if (getType(anchor) !== DataTypes.Map) {
                 continue;
             }
              
             const map = anchor as Map<string, StoreData>;
-            const name = map.get("type").toString();
+            
+            const row = map.get("row");
+            if (getType(row) !== DataTypes.Number) throw "anchor in store has non-numeric row";
 
-            if (name.endsWith("_" + anchorIndex)) {
-                const row = map.get("row");
-                if (getType(row) !== DataTypes.Number) throw "anchor in store has non-numeric row";
-
-                const column = map.get("column");
-                if (getType(column) !== DataTypes.Number) throw "anchor in store has non-numeric column";
-                
-                result.set(
-                    name.substring(0, name.length - 2),
-                    new Position(row as number, column as number)
-                );
-            }
+            const column = map.get("column");
+            if (getType(column) !== DataTypes.Number) throw "anchor in store has non-numeric column";
+            
+            const fixed = map.get("fixed");
+            if (getType(fixed) !== DataTypes.Boolean) throw "anchor in store has non-boolean fixed";
+            
+            result.set(
+                name,
+                new Anchor(new Position(row as number, column as number), fixed as boolean)
+            );
         }
         
         return result;
@@ -194,7 +225,7 @@ export class Model {
         return contexts as Array<Context>;
     } 
 
-    getContextUnchecked(baseContext: Array<string>, contexts: Array<Context>, row: number) {
+    getLineContextUnchecked(baseContext: Array<string>, contexts: Array<Context>, row: number) {
         let lowest = 0;
         let highest = contexts.length;
 
@@ -226,22 +257,62 @@ export class Model {
             }
         }
 
-        throw "binary search could not reveal context (getContextUnchecked: 2)";
+        throw "binary search could not reveal context (getLineContextUnchecked: 2)";
     }
 
-    getContext(document: string, row: number) {
+    getLineContext(document: string, row: number) {
         const lines = this.getDocumentText(document);
         const baseContext = this.getBaseContext(document);
         
         if (lines === undefined || baseContext === undefined) {
-            throw "cannot find document " + document + " (getContext: 2)";
+            throw "cannot find document " + document + " (getLineContext: 2)";
         }     
         if (row < 0 || row >= lines.length) {
-            throw "cannot get context of nonexistent row " + row + " (getContext: 1)";
+            throw "cannot get context of nonexistent row " + row + " (getLineContext: 1)";
         }
         
-        return this.getContextUnchecked(baseContext, this.getContexts(document), row);         
+        return this.getLineContextUnchecked(baseContext, this.getContexts(document), row);         
     } 
+
+    getPositionContext(document: string, position: Position) {
+        const lineContext = this.getLineContext(document, position.row);
+        const lines = this.getDocumentText(document);
+
+        let result = this.app.languages.tokenize(
+            lines[position.row], lineContext.context, new Position(position.row, 0), true
+        );
+
+        //console.log(result.tokens);
+
+        let left = 0;
+        let right = result.tokens.length;
+
+        while (left <= right) {
+            let middle = Math.floor((left + right) / 2);
+            
+            let leftPredicate = (middle === 0 || result.tokens[middle - 1].position.column <= position.column);
+            let rightPredicate = middle < result.tokens.length && result.tokens[middle].position.column <= position.column;
+            
+            if (leftPredicate && !rightPredicate) {
+                if (middle === 0) {
+                    //console.log("middle: 0");
+                    return lineContext.context[lineContext.context.length - 1];
+                }
+                else {
+                    //console.log("middle: " + middle);
+                    return result.tokens[middle - 1].context;
+                }
+            }
+            else if (!leftPredicate) {
+                right = middle - 1;
+            }
+            else {
+                left = middle + 1;
+            }
+        }
+
+        throw "binary search could not reveal context (getPositionContext: 1)";
+    }  
 
     updateContexts(document: string, topRow: number, bottomRow: number) {
         // BIG TODO
@@ -450,5 +521,19 @@ export class Model {
         return true;
     }
 
+    getCursorContext(document: string, viewIndex: number): string {
+        const cursor = this.getAnchor(document, "cursor_" + viewIndex);
+        const mark = this.getAnchor(document, "mark_" + viewIndex);
 
+        if (cursor === undefined || mark === undefined) {
+            throw "could not find cursor or mark for context (getCursorContext: 1)";
+        }       
+        
+        let left = (cursor.position.compareTo(mark.position) < 0 ? cursor : mark).position;
+        const context = this.getPositionContext(document, left);
+        
+        return context;
+    }
+
+    
 }

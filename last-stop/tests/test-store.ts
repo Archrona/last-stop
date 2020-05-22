@@ -4,7 +4,6 @@ import test from "ava";
 
 test("literal number", t => {
     const node = StoreNode.fromJson(15);
-    t.is(node.age, 0);
     t.is(node.parent, null);
     t.true(node instanceof Store.NumberNode);
     t.is((node as Store.NumberNode).value, 15);
@@ -56,7 +55,7 @@ test("list of literals", t => {
     t.is(node.index(4), undefined);
     for (let i = 0; i < 4; i++) {
         t.is(node.index(i).parent, node);
-    }    
+    }
 });
 
 test("map of literals", t => {
@@ -78,32 +77,14 @@ test("map of literals", t => {
     }
 });
  
-test("modified & parenting", t => {
+test("parenting & nesting", t => {
     const node = StoreNode.fromJson([
         35,
         { issue: 2, names: ["Fred", "Alice"] },
         [2, 7, 16]
     ]);
-    t.is(node.index(1).key("names").index(0).getString(), "Fred");
-
-    node.index(0).modified();
-    node.index(1).modified();
-    node.index(1).key("issue").modified();
-    node.index(1).key("names").modified();
-    node.index(1).key("names").index(1).modified();
-    node.index(2).index(2).modified();
-
-    t.is(node.age, 6);
-    t.is(node.index(0).age, 1);
-    t.is(node.index(1).age, 4);
-    t.is(node.index(1).key("issue").age, 1);
-    t.is(node.index(1).key("names").age, 2);
-    t.is(node.index(1).key("names").index(0).age, 0);
-    t.is(node.index(1).key("names").index(1).age, 1);
-    t.is(node.index(2).age, 1);
-    t.is(node.index(2).index(0).age, 0);
-    t.is(node.index(2).index(1).age, 0);
-    t.is(node.index(2).index(2).age, 1);
+    
+    t.is(node.index(1).key("names").index(0).getString(), "Fred")
 
     t.is(node.parent, null);
     t.is(node.index(0).parent, node);

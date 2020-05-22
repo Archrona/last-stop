@@ -1,23 +1,22 @@
 
+export enum DataType {
+    Number,
+    String, 
+    Boolean,
+    Null,
+    List,
+    Map
+}
 
 export abstract class StoreNode {
-    age: number;
     parent: StoreNode;
     
     constructor(parent: StoreNode) {
-        this.age = 0;
         this.parent = parent;
     }
     
-    modified(): void {
-        this.age += 1;
-
-        if (this.parent !== null) {
-            this.parent.modified();
-        }        
-    }
-
     abstract getJson(): any;
+    abstract getType(): DataType;
 
     getNumber(): number {
         throw new TypeError("node is not of type number");
@@ -59,6 +58,7 @@ export abstract class StoreNode {
         throw new TypeError("node is not of type map");
     }
 
+    
     private static fromJsonHelper(data: any, parent: StoreNode): StoreNode {      
         if (data === null || data === undefined) {
             return new NullNode(parent, null);
@@ -124,7 +124,11 @@ export class NumberNode extends ValueNode<number> {
 
     getNumber(): number {
         return this.value;
-    }  
+    }
+
+    getType(): DataType {
+        return DataType.Number;
+    }
 }
 
 export class StringNode extends ValueNode<string> {
@@ -134,6 +138,10 @@ export class StringNode extends ValueNode<string> {
 
     getString(): string {
         return this.value;
+    }
+
+    getType(): DataType {
+        return DataType.String;
     }
 }
 
@@ -145,6 +153,10 @@ export class BooleanNode extends ValueNode<boolean> {
     getBoolean(): boolean {
         return this.value;
     }
+
+    getType(): DataType {
+        return DataType.Boolean;
+    }
 }
 
 export class NullNode extends ValueNode<null> {
@@ -154,6 +166,10 @@ export class NullNode extends ValueNode<null> {
 
     getNull(): null {
         return this.value;
+    }
+
+    getType(): DataType {
+        return DataType.Null;
     }
 }
 
@@ -179,6 +195,10 @@ export class ListNode extends StoreNode {
 
     length(): number {
         return this.list.length;
+    }
+
+    getType(): DataType {
+        return DataType.List;
     }
 }
 
@@ -209,13 +229,60 @@ export class MapNode extends StoreNode {
     keys(): Array<string> {
         return Array.from(this.map.keys());
     }
+
+    getType(): DataType {
+        return DataType.Map;
+    }
 }
 
 export class Store {
     root: StoreNode;
+    currentNavigatorId: number;
 
     constructor() {
         this.root = new NullNode(null, null);
+        this.currentNavigatorId = 0;
     }
+
+    getNavigator(): Navigator {
+        this.currentNavigatorId++;
+        let result = new Navigator(this, this.currentNavigatorId);
+        return result;
+    }  
 }
 
+
+type PathComponent = string | number;
+
+export class Navigator {
+    private store: Store;
+    private id: number;
+    private node: StoreNode;
+    private path: Array<PathComponent>;
+
+    constructor(store: Store, id: number) {
+        this.store = store;
+        this.id = id;
+        this.node = store.root;
+        this.path = [];
+    }
+
+    obsolete() {
+        return this.id < this.store.currentNavigatorId;
+    }
+
+    getJson(): any { return this.node.getJson(); }
+    getType(): DataType { return this.node.getType(); }
+    getNumber(): number { return this.node.getNumber(); }
+    getString(): string { return this.node.getString(); }
+    getBoolean(): boolean { return this.node.getBoolean(); }
+    getNull(): null { return this.node.getNull(); }
+    getLength(): number { return this.node.length(); }
+    getKeys(): Array<string> { return this.node.keys(); }
+    getPath(): Array<PathComponent> { return this.path.slice(0); }
+    getId(): number { return this.id; }
+    getStore(): Store { return this.store; }
+    
+    
+ 
+}

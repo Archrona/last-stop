@@ -2,7 +2,7 @@
 //   Overall data model for the app.
 
 import { Main } from "./main";
-import { Store, getType, DataTypes, StoreData } from "./store";
+import { Store, Navigator, DataType } from "./store";
 import { Position, splitIntoLines } from "./shared";
 
 type Context = [number, Array<string>];
@@ -65,10 +65,7 @@ export class Model {
 
     constructor(app: Main) {
         this.app = app;
-        this.store = new Store();
-
-        this.store.setNormalized([], STORE_INITIAL_STATE);
-        this.store.checkpoint();
+        this.store = new Store(STORE_INITIAL_STATE);
 
         for (let i = 0; i <= 0; i++) {
             console.log(this.getLineContext("scratchpad", i));

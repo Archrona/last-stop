@@ -84,6 +84,7 @@ test("parenting & nesting", t => {
         [2, 7, 16]
     ]);
 
+    t.notThrows(() => node.verifyNodeLinkage());
     t.is(node.index(1).key("names").index(0).getString(), "Fred")
 
     t.is(node.parent, null);
@@ -128,6 +129,7 @@ test("serialization & aliasing", t => {
 
 test("store & followPath", t => {
     const store = new Store.Store([12, [3, 2], { a: 1, b: [7, 5] }]);
+    t.notThrows(() => store.verifyNodeLinkage());
 
     t.is(store.age, 0);
     
@@ -199,6 +201,8 @@ test("basic age/obsolete", t => {
 
 test("navigator lists", t => {
     const store = new Store.Store([[1, 2], 3, 5, [7, 8]]);
+    t.notThrows(() => store.verifyNodeLinkage());
+
     const navigator = store.getNavigator();
     t.deepEqual(navigator.getJson(), [[1, 2], 3, 5, [7, 8]]);
     t.deepEqual(navigator.getType(), Store.DataType.List);
@@ -213,18 +217,18 @@ test("navigator lists", t => {
     t.deepEqual(navigator.getJson(), [1, 2]);
     navigator.goIndex(0);
     t.is(navigator.getNumber(), 1);
-    t.is(navigator.goSibling(1), true);
+    t.is(navigator.goSibling(1), navigator);
     t.is(navigator.getNumber(), 2);
-    t.is(navigator.goPreviousSibling(), true);
+    t.is(navigator.goPreviousSibling(), navigator);
     t.is(navigator.getNumber(), 1);
-    t.is(navigator.goPreviousSibling(), false);
+    t.is(navigator.goPreviousSibling(), null);
     t.is(navigator.getNumber(), 1);
     navigator.goParent();
     navigator.goParent();
     navigator.goIndex(2);
     t.is(navigator.getNumber(), 5);
     t.deepEqual(navigator.getJson(), 5);
-    t.is(navigator.goNextSibling(), true);
+    t.is(navigator.goNextSibling(), navigator);
     t.deepEqual(navigator.getJson(), [7, 8]);
     navigator.goIndex(1);
     t.is(navigator.getNumber(), 8);
@@ -240,6 +244,8 @@ test("navigator maps", t => {
         names: { first: "John", last: "Smith" }
     };
     const store = new Store.Store(json);
+    t.notThrows(() => store.verifyNodeLinkage());
+
     const navigator = store.getNavigator();
 
     t.deepEqual(navigator.getJson(), json);
@@ -262,7 +268,7 @@ test("navigator maps", t => {
     navigator.goIndex(1);
     t.is(navigator.getNumber(), 6);
     t.deepEqual(navigator.getPath(), ["friends", 1]);
-    t.is(navigator.goSibling(- 1), true);
+    t.is(navigator.goSibling(-1), navigator);
     t.is(navigator.getNumber(), 2);
     t.deepEqual(navigator.getPath(), ["friends", 0]);
     t.throws(() => {
@@ -285,3 +291,186 @@ test("navigator maps", t => {
     t.deepEqual(navigator.getPath(), ["names", "last"]);    
 });
 
+test("value set, undo, clone", t => {
+    const json = {
+        cheese: "cheddar",
+        friends: [2, 6],
+        happy: false
+    };
+    const store = new Store.Store(json);
+    t.notThrows(() => store.verifyNodeLinkage());
+
+    const navigator = store.getNavigator();
+
+    navigator.goKey("friends").goIndex(0).setNumber(100);
+    navigator.goNextSibling().setNumber(200);
+    const n2 = navigator.clone();
+    navigator.goParent();
+    t.deepEqual(navigator.getJson(), [100, 200]);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.is(navigator.getUndoCount(), 2);
+    t.is(store.getUndoCount(), 2);
+    t.is(n2.getNumber(), 200);
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), [100, 6]);
+    t.is(navigator.getUndoCount(), 1);
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), [2, 6]);
+    t.is(store.age, 0);
+    t.is(navigator.obsolete(), false);
+    t.is(navigator.getUndoCount(), 0);
+    t.is(store.getUndoCount(), 0);
+    t.is(n2.getNumber(), 6);
+
+    navigator.goRoot().goKey("cheese").setString("monterey");
+    navigator.goRoot().goKey("happy").setBoolean(true);
+    navigator.goRoot();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), {
+        cheese: "monterey",
+        friends: [2, 6],
+        happy: true
+    });
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), {
+        cheese: "monterey",
+        friends: [2, 6],
+        happy: false
+    });
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), json);
+    t.is(navigator.getUndoCount(), 0);
+    t.is(navigator.obsolete(), false);
+    t.is(n2.obsolete(), false);
+});
+
+test("setIndex", t => {
+    const json = {
+        cheese: "cheddar",
+        friends: [2, {a: 1, b: 2}],
+        happy: false
+    };
+    const store = new Store.Store(json);
+    t.notThrows(() => store.verifyNodeLinkage());
+    const n1 = store.getNavigator(["friends"]).setIndex(0, "bob").setIndex(1, [4, 7]);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.is(n1.clone().goIndex(0).hasParent(), true);
+    t.is(n1.obsolete(), true);
+    t.notThrows(() => n1.checkValid());
+    t.is(n1.obsolete(), false);
+    t.deepEqual(n1.goRoot().getJson(), {
+        cheese: "cheddar",
+        friends: ["bob", [4, 7]],
+        happy: false
+    })
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(n1.getJson(), {
+        cheese: "cheddar",
+        friends: ["bob", {a: 1, b: 2}],
+        happy: false
+    })
+    n1.goKey("friends").setIndex(0, "46346");
+    store.undo(100);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(n1.goRoot().getJson(), json);
+    t.is(n1.obsolete(), false);
+});
+
+test("setKey, clearKey", t => {
+    const store = new Store.Store({});
+    const n = store.getNavigator();
+
+    n.setKey("a", 1);
+    n.setKey("b", {});
+    n.setKey("c", [1, 2, 3]);
+    n.setKey("a", 100);
+    t.deepEqual(n.getJson(), {a: 100, b: {}, c: [1, 2, 3]});
+    t.notThrows(() => store.verifyNodeLinkage());
+    store.undo();
+    let n2 = n.clone().goKey("c").goIndex(0);
+    t.is(n2.getNumber(), 1);
+    t.is(n.obsolete(), true);
+    t.deepEqual(n.getJson(), {a: 1, b: {}, c: [1, 2, 3]});
+    store.undo();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(n.getJson(), {a: 1, b: {}});
+    t.throws(() => n2.checkValid());
+    n.goKey("b");
+    n.setKey("first", "John");
+    n.setKey("last", "Smith");
+    n.setKey("married", true);
+    n.setKey("spouse", "Jane Doe");
+    t.deepEqual(n.getJson(), { first: "John", last: "Smith", married: true, spouse: "Jane Doe" });
+    t.notThrows(() => store.verifyNodeLinkage());
+    n.setKey("married", false);
+    let n3 = n.clone().goKey("spouse");
+    n.clearKey("spouse");
+    t.throws(() => n3.checkValid());
+    t.deepEqual(n.getJson(), { first: "John", last: "Smith", married: false });
+    t.notThrows(() => store.verifyNodeLinkage());
+    store.undo(2);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(n.getJson(), { first: "John", last: "Smith", married: true, spouse: "Jane Doe" });
+    t.throws(() => n3.checkValid());
+    store.undo(100);
+    t.deepEqual(store.getNavigator().getJson(), {});
+    t.throws(() => n.checkValid());
+});
+
+test("push, pop", t => {
+    const store = new Store.Store([]);
+    const navigator = store.getNavigator();
+    navigator.push(50).push("splendid").push([]);
+    navigator.goIndex(2).push(true).push(false);
+    navigator.goRoot();
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), [50, "splendid", [true, false]]);
+    const navigator2 = navigator.clone().goIndex(2);
+    navigator.pop();
+    t.deepEqual(navigator.getJson(), [50, "splendid"]);
+    navigator.push(100);
+    t.notThrows(() => store.verifyNodeLinkage());
+    store.undo(2);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.throws(() => {
+        navigator2.checkValid();
+    }, {instanceOf: Error});
+    t.deepEqual(navigator.getJson(), [50, "splendid", [true, false]]);
+    store.undo(100);
+    t.notThrows(() => store.verifyNodeLinkage());
+    t.deepEqual(navigator.getJson(), []);
+});
+
+test("insert, remove", t => {
+    const store = new Store.Store([]);
+    const navigator = store.getNavigator();
+    const list = [1, 2, 3, 4];
+    navigator.insert(0, list);
+    navigator.insert(1, list);
+    navigator.insert(8, list);
+    t.throws(() => navigator.insert(-1, list));
+    t.throws(() => navigator.insert(13, list));
+    store.setCheckpoint();
+    t.deepEqual(navigator.getJson(), [1, 1, 2, 3, 4, 2, 3, 4, 1, 2, 3, 4]);
+    t.notThrows(() => store.verifyNodeLinkage());
+
+    navigator.remove(0, 1);
+    t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 2, 3, 4, 1, 2, 3, 4]);
+    navigator.remove(10, 11);
+    t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 2, 3, 4, 1, 2, 3]);
+    navigator.remove(2, 5);
+    t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 1, 2, 3]);
+    navigator.remove(0, navigator.getLength());
+    t.deepEqual(navigator.getJson(), []);
+    t.notThrows(() => store.verifyNodeLinkage());
+    store.undoUntilCheckpoint();
+    t.deepEqual(navigator.getJson(), [1, 1, 2, 3, 4, 2, 3, 4, 1, 2, 3, 4]);
+    store.undo(3);
+    t.deepEqual(navigator.getJson(), []);
+    t.notThrows(() => store.verifyNodeLinkage());
+});

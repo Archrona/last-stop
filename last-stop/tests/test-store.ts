@@ -1,5 +1,5 @@
 import * as Store from "../src/store";
-import { StoreNode } from "../src/store";
+import { Navigator, StoreNode } from "../src/store";
 import test from "ava";
 
 test("literal number", t => {
@@ -83,7 +83,7 @@ test("parenting & nesting", t => {
         { issue: 2, names: ["Fred", "Alice"] },
         [2, 7, 16]
     ]);
-    
+
     t.is(node.index(1).key("names").index(0).getString(), "Fred")
 
     t.is(node.parent, null);
@@ -124,5 +124,164 @@ test("serialization & aliasing", t => {
     node.getListReference().push(new Store.NumberNode(node, 333333));
     
     t.deepEqual(original_copy, serialized);
+});
+
+test("store & followPath", t => {
+    const store = new Store.Store([12, [3, 2], { a: 1, b: [7, 5] }]);
+
+    t.is(store.age, 0);
+    
+    t.is(store.followPath([]), store.root);
+    t.is(store.followPath([0]), store.root.index(0));
+    t.is(store.followPath([1]), store.root.index(1));
+    t.is(store.followPath([2]), store.root.index(2));
+    t.is(store.followPath([1, 0]), store.root.index(1).index(0));
+    t.is(store.followPath([1, 1]), store.root.index(1).index(1));
+    t.is(store.followPath([2, "a"]), store.root.index(2).key("a"));
+    t.is(store.followPath([2, "b", 0]), store.root.index(2).key("b").index(0));
+
+    t.is(store.followPath([- 1]), null);
+    t.is(store.followPath([3]), null);
+    t.is(store.followPath(["fail"]), null);
+    t.is(store.followPath([1, 2]), null);
+    t.is(store.followPath([2, "fail"]), null);
+    t.is(store.followPath([2, 0]), null);
+});
+
+test("basic navigator", t => {
+    const store = new Store.Store(34);
+    const navigator = store.getNavigator();
+    t.is(navigator.obsolete(), false);
+    t.deepEqual(navigator.getJson(), 34);
+    t.deepEqual(navigator.getType(), Store.DataType.Number);
+    t.is(navigator.getNumber(), 34);
+    t.throws(() => {
+        navigator.getString();
+    }, {instanceOf: TypeError});
+    t.deepEqual(navigator.getPath(), []);
+    t.is(navigator.getAge(), 0);
+    t.is(navigator.getStore(), store);
+    t.is(navigator.hasParent(), false);
+    t.is(navigator.hasIndex(0), false);
+    t.is(navigator.hasKey("fail"), false);
+    t.throws(() => {
+        navigator.goParent();
+    }, {instanceOf: Error});
+    t.throws(() => {
+        navigator.goIndex(0);
+    }, {instanceOf: Error});
+    t.throws(() => {
+        navigator.goKey("fail");
+    }, {instanceOf: Error});
+    t.throws(() => {
+        navigator.goSibling(1);
+    }, {instanceOf: Error});
+});
+
+test("basic age/obsolete", t => {
+    const store = new Store.Store(null);
+    const navigator = store.getNavigator();
+
+    t.is(store.age, 0);
+    t.is(navigator.getAge(), 0);
+    
+    store.wasModified();
+    t.is(store.age, 1);
+    t.is(navigator.getAge(), 0);
+
+    t.is(navigator.obsolete(), true);
+    t.notThrows(() => {
+        navigator.checkValid();
+    });
+    t.is(store.age, 1);
+    t.is(navigator.getAge(), 1);
+});
+
+test("navigator lists", t => {
+    const store = new Store.Store([[1, 2], 3, 5, [7, 8]]);
+    const navigator = store.getNavigator();
+    t.deepEqual(navigator.getJson(), [[1, 2], 3, 5, [7, 8]]);
+    t.deepEqual(navigator.getType(), Store.DataType.List);
+    t.is(navigator.getLength(), 4);
+    t.is(navigator.hasIndex(0), true);
+    t.is(navigator.hasIndex(3), true);
+    t.is(navigator.hasIndex(- 1), false);
+    t.is(navigator.hasIndex(4), false);
+    navigator.goIndex(0);
+    t.is(navigator.hasParent(), true);
+    t.is(navigator.getLength(), 2);
+    t.deepEqual(navigator.getJson(), [1, 2]);
+    navigator.goIndex(0);
+    t.is(navigator.getNumber(), 1);
+    t.is(navigator.goSibling(1), true);
+    t.is(navigator.getNumber(), 2);
+    t.is(navigator.goPreviousSibling(), true);
+    t.is(navigator.getNumber(), 1);
+    t.is(navigator.goPreviousSibling(), false);
+    t.is(navigator.getNumber(), 1);
+    navigator.goParent();
+    navigator.goParent();
+    navigator.goIndex(2);
+    t.is(navigator.getNumber(), 5);
+    t.deepEqual(navigator.getJson(), 5);
+    t.is(navigator.goNextSibling(), true);
+    t.deepEqual(navigator.getJson(), [7, 8]);
+    navigator.goIndex(1);
+    t.is(navigator.getNumber(), 8);
+    t.deepEqual(navigator.getPath(), [3, 1]);
+    navigator.goRoot();
+    t.deepEqual(navigator.getJson(), [[1, 2], 3, 5, [7, 8]]);
+});
+
+test("navigator maps", t => {
+    const json = {
+        cheese: "cheddar",
+        friends: [2, 6],
+        names: { first: "John", last: "Smith" }
+    };
+    const store = new Store.Store(json);
+    const navigator = store.getNavigator();
+
+    t.deepEqual(navigator.getJson(), json);
+    t.deepEqual(navigator.getType(), Store.DataType.Map);
+    t.deepEqual(navigator.getKeys(), ["cheese", "friends", "names"]);
+    t.is(navigator.hasKey("friends"), true);
+    t.is(navigator.hasKey("sauce"), false);
+    t.throws(() => {
+        navigator.getLength();
+    }, {instanceOf: TypeError});
+    t.is(navigator.hasIndex(0), false);
+    
+    t.throws(() => {
+        navigator.goKey("sauce");
+    }, {instanceOf: Error});
+    navigator.goKey("cheese");
+    t.is(navigator.getString(), "cheddar");
+    navigator.goSiblingKey("friends");
+    t.deepEqual(navigator.getJson(), [2, 6]);
+    navigator.goIndex(1);
+    t.is(navigator.getNumber(), 6);
+    t.deepEqual(navigator.getPath(), ["friends", 1]);
+    t.is(navigator.goSibling(- 1), true);
+    t.is(navigator.getNumber(), 2);
+    t.deepEqual(navigator.getPath(), ["friends", 0]);
+    t.throws(() => {
+        navigator.goSiblingKey("fail");
+    }, {instanceOf: Error});
+    t.deepEqual(navigator.getPath(), ["friends", 0]);
+    t.is(navigator.getNumber(), 2);
+    navigator.goParent();
+    navigator.goSiblingKey("names");
+    t.deepEqual(navigator.getJson(), { first: "John", last: "Smith" });
+    t.deepEqual(navigator.getPath(), ["names"]);
+    navigator.goKey("first");
+    t.is(navigator.getString(), "John");
+    navigator.goSiblingKey("last");
+    t.is(navigator.getString(), "Smith");
+    t.throws(() => {
+        navigator.goSiblingKey("middle");
+    }, {instanceOf: Error});
+    t.is(navigator.getString(), "Smith");
+    t.deepEqual(navigator.getPath(), ["names", "last"]);    
 });
 

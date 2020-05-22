@@ -235,41 +235,85 @@ export class MapNode extends StoreNode {
     }
 }
 
+type PathComponent = string | number;
+type Path = Array<PathComponent>;
+
 export class Store {
     root: StoreNode;
-    currentNavigatorId: number;
+    age: number;
 
-    constructor() {
-        this.root = new NullNode(null, null);
-        this.currentNavigatorId = 0;
+    constructor(jsonContent: any = null) {
+        this.root = StoreNode.fromJson(jsonContent);
+        this.age = 0;
+    }
+
+    wasModified(): void {
+        this.age++;
     }
 
     getNavigator(): Navigator {
-        this.currentNavigatorId++;
-        let result = new Navigator(this, this.currentNavigatorId);
+        let result = new Navigator(this, this.age);
         return result;
+    }
+
+    followPath(p: Path): StoreNode | null {
+        let node = this.root;
+
+        for (const component of p) {
+            if (typeof component === "string" && node.getType() === DataType.Map) {
+                node = node.key(component as string);
+                if (node === undefined) {
+                    return null;
+                }
+            }
+            else if (typeof component === "number" && node.getType() === DataType.List) {
+                const index = component as number;
+                if (index < 0 || index >= node.length()) {
+                    return null;
+                }
+                node = node.index(index);
+            }
+            else {
+                return null;
+            }
+        }
+        
+        return node;
     }  
 }
 
 
-type PathComponent = string | number;
 
 export class Navigator {
     private store: Store;
-    private id: number;
+    private age: number;
     private node: StoreNode;
     private path: Array<PathComponent>;
 
-    constructor(store: Store, id: number) {
+    constructor(store: Store, age: number) {
         this.store = store;
-        this.id = id;
+        this.age = age;
         this.node = store.root;
         this.path = [];
     }
 
     obsolete() {
-        return this.id < this.store.currentNavigatorId;
+        return this.age < this.store.age;
     }
+
+    checkValid(): void {
+        if (!this.obsolete()) {
+            return;
+        }
+        
+        let pathTarget = this.store.followPath(this.path);
+        if (pathTarget === this.node) {
+            this.age = this.store.age;
+        }
+        else {
+            throw new Error("Navigator invalid after external modification");
+        }
+    }  
 
     getJson(): any { return this.node.getJson(); }
     getType(): DataType { return this.node.getType(); }
@@ -280,9 +324,95 @@ export class Navigator {
     getLength(): number { return this.node.length(); }
     getKeys(): Array<string> { return this.node.keys(); }
     getPath(): Array<PathComponent> { return this.path.slice(0); }
-    getId(): number { return this.id; }
+    getAge(): number { return this.age; }
     getStore(): Store { return this.store; }
     
-    
+    hasParent(): boolean {
+        return this.node.parent !== null;
+    }
  
+    hasIndex(i: number): boolean {
+        return this.node.getType() === DataType.List && i >= 0 && i < this.node.length();
+    }  
+
+    hasKey(k: string): boolean {
+        return this.node.getType() === DataType.Map && this.node.key(k) !== undefined;
+    }
+
+    goRoot(): void {
+        this.checkValid();
+        this.node = this.store.root;
+        this.path = [];
+    }
+    
+    goParent(): void {
+        this.checkValid();
+        if (!this.hasParent()) {
+            throw new Error("cannot navigate to parent; node has no parent");
+        }
+        
+        this.path.pop();
+        this.node = this.node.parent;
+    }
+
+    goIndex(i: number): void {
+        this.checkValid();
+        if (!this.hasIndex(i)) {
+            throw new Error("cannot navigate to index " + i + "; does not exist");
+        }
+        
+        this.path.push(i);
+        this.node = this.node.index(i);
+    }
+
+    goKey(k: string): void {
+        this.checkValid();
+        if (!this.hasKey(k)) {
+            throw new Error("cannot navigate to key " + k + "; does not exist");
+        }
+        
+        this.path.push(k);
+        this.node = this.node.key(k);
+    }
+
+    goSiblingKey(k: string): void {
+        this.checkValid();
+        if (this.node.parent === null 
+            || this.node.parent.getType() !== DataType.Map
+            || this.node.parent.key(k) === undefined)
+        {
+            throw new Error("cannot navigate to sibling key " + k + "; does not exist");
+        }
+        
+        this.path[this.path.length - 1] = k;
+        this.node = this.node.parent.key(k);
+    }
+
+    // Throws if parent is not a list
+    // Doesn't throw if the index is invalid; just returns false
+    goSibling(offset: number): boolean {
+        this.checkValid();
+        if (!this.hasParent() || this.node.parent.getType() !== DataType.List) {
+            throw new Error("cannot navigate to sibling; parent is not list");
+        }
+        
+        let selfIndex = this.path[this.path.length - 1] as number;
+        selfIndex += offset;
+
+        if (selfIndex < 0 || selfIndex >= this.node.parent.length()) {
+            return false;
+        }
+        
+        this.node = this.node.parent.index(selfIndex);
+        this.path[this.path.length - 1] = selfIndex;
+        return true;
+    }
+
+    goNextSibling(): boolean {
+        return this.goSibling(1);
+    }
+    
+    goPreviousSibling(): boolean {
+        return this.goSibling(-1);
+    }
 }

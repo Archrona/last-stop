@@ -8,10 +8,10 @@ export enum DataType {
     Map
 }
 
-type PathComponent = string | number;
-type Path = Array<PathComponent>;
+export type PathComponent = string | number;
+export type Path = Array<PathComponent>;
 
-type Transform = (store: Store) => any;
+export type Transform = (store: Store) => any;
 
 export abstract class StoreNode {
     parent: StoreNode;
@@ -274,6 +274,10 @@ export class MapNode extends StoreNode {
     }
 }
 
+export interface NavigatorConstructor<T> {
+    new (store: Store, age: number, path: Array<PathComponent>): T;
+}
+
 export class Store {
     root: StoreNode;
     age: number;
@@ -300,6 +304,11 @@ export class Store {
 
     getNavigator(path: Array<PathComponent> = []): Navigator {
         let result = new Navigator(this, this.age, path);
+        return result;
+    }
+
+    getSpecialNavigator<T>(klass: NavigatorConstructor<T>, path: Array<PathComponent> = []): T {
+        let result = new klass(this, this.age, path);
         return result;
     }
 
@@ -354,10 +363,10 @@ export class Store {
 
 
 export class Navigator {
-    private store: Store;
-    private age: number;
-    private node: StoreNode;
-    private path: Array<PathComponent>;
+    store: Store;
+    age: number;
+    node: StoreNode;
+    path: Array<PathComponent>;
 
     constructor(store: Store, age: number, path: Array<PathComponent> = []) {
         this.store = store;
@@ -414,6 +423,35 @@ export class Navigator {
 
     hasKey(k: string): boolean {
         return this.node.getType() === DataType.Map && this.node.key(k) !== undefined;
+    }
+
+    mapList(fun: (nav: Navigator) => void): Navigator {
+        if (!(this.node instanceof ListNode)) {
+            throw new Error("mapList expects list node");
+        }
+
+        let nav = this.clone().goIndex(0);
+        while (nav !== null) {
+            fun(nav);
+            nav = nav.goNextSibling();
+        }
+
+        return this;
+    }
+
+    mapKeys(fun: (nav: Navigator) => void): Navigator {
+        if (!(this.node instanceof MapNode)) {
+            throw new Error("mapKeys expects map node");
+        }
+
+        let nav = this.clone();
+        for (const k of this.getKeys()) {
+            nav.goKey(k);
+            fun(nav);
+            nav.goParent();
+        }
+
+        return this;
     }
 
     goRoot(): Navigator {
@@ -496,6 +534,10 @@ export class Navigator {
     
     goPreviousSibling(): Navigator {
         return this.goSibling(-1);
+    }
+
+    setCheckpoint(): void {
+        this.store.setCheckpoint();
     }
 
     private _setNumberUntracked(n: number): void {

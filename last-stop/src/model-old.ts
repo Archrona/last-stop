@@ -12,7 +12,7 @@ export class Anchor {
     
     }
 }
- 
+
 const STORE_INITIAL_STATE = {
     documents: {
         "scratchpad": {

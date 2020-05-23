@@ -474,3 +474,6 @@ test("insert, remove", t => {
     t.deepEqual(navigator.getJson(), []);
     t.notThrows(() => store.verifyNodeLinkage());
 });
+
+// mapkeys
+// maplist

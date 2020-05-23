@@ -124,9 +124,10 @@ export class Window {
 
     doUpdate() {
         if (this.isReady) {
-            let sub = this.app.model.getSubscription(this.id);
-            if (sub === undefined) {
-                sub = "unknown_window";
+            let sub = "unknown_window";
+
+            if (this.app.model.subscriptions.has(this.id)) {
+                sub = this.app.model.subscriptions.get(this.id);
             }
             
             let text = renderSubscription(sub, this.topRowNumber, this.lines, this.columns, this.view.app);

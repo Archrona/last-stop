@@ -5,7 +5,7 @@ import { View } from "./view";
 import { Model } from "./model";
 import { Languages } from "./language";
 import { ipcMain } from 'electron';
-import { listsContainSameElements, InputMode } from "./shared";
+import { listsContainSameElements, InputMode, Position } from "./shared";
 import { ConsoleServer } from "./console_server";
 import { Commands } from "./commands";
 
@@ -26,8 +26,15 @@ export class Main {
 
         this.commands = new Commands(this);
 
-        this.model = new Model(this);
+        this.model = new Model();
         this.view = new View(this);
+
+        let doc = this.model.documents.add("scratchpad", "basic");
+        doc.insert(0, "Hello world!\n\nThis is a test\nOf the emergency broadcasting system :D");
+        doc.setCursor(0, new Position(0, 2));
+        doc.setMark(0, new Position(2, 5));
+
+        this.model.subscriptions.set(11, "doc@scratchpad@0");
         
         this.consoleServer = new ConsoleServer(this);
     }

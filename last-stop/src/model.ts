@@ -7,6 +7,31 @@ export class Anchor {
     }
 }
 
+export class SubscriptionsNavigator extends Navigator {
+    constructor(base: Navigator) {
+        super(base.store, base.age, base.path.concat("subscriptions"));
+    }
+    
+    set(windowId: number, subscription: string): SubscriptionsNavigator {
+        this.setKey(windowId.toString(), subscription);
+        return this;
+    }
+    
+    get(windowId: number): string {
+        return this.clone().goKey(windowId.toString()).getString();
+    }
+    
+    remove(windowId: number): SubscriptionsNavigator {
+        this.clearKey(windowId.toString());
+        return this;
+    }
+
+    has(windowId: number): boolean {
+        return this.hasKey(windowId.toString());
+    }
+}
+ 
+
 export class DocumentsNavigator extends Navigator {
     constructor(store: Store, age: number, path: Array<PathComponent> = []) {
         super(store, age, path);
@@ -89,6 +114,10 @@ export class DocumentNavigator extends Navigator {
         return this.clone().goKey("lines").getJson() as Array<string>;
     }
 
+    getLineCount(): number {
+        return this.clone().goKey("lines").getLength();
+    }
+
     getBaseContext(): Array<string> {
         return this.clone().goKey("baseContext").getJson() as Array<string>;
     }
@@ -105,6 +134,22 @@ export class DocumentNavigator extends Navigator {
         return this.clone().goKey("anchors").getKeys();
     }
 
+    getCursor(anchorIndex: number): Position {
+        return this.getAnchor("cursor_" + anchorIndex).position;
+    }  
+
+    getMark(anchorIndex: number): Position {
+        return this.getAnchor("mark_" + anchorIndex).position;
+    }
+
+    getView(anchorIndex: number): Position {
+        return this.getAnchor("view_" + anchorIndex).position;
+    }  
+
+    getLineContext(index: number): Array<string> {
+        return this.getBaseContext();   // TODO ACTUALLY DO IT
+    }
+
     setLine(index: number, text: string): void {
         this.clone().goKey("lines").goIndex(index).setString(text);
     }
@@ -114,13 +159,35 @@ export class DocumentNavigator extends Navigator {
         this.setKey("lines", splitIntoLines(text));
     }
 
-    setAnchor(name: string, anchor: Anchor): void {
+    setAnchor(name: string, anchor: Anchor): DocumentNavigator {
         let nav = this.clone().goKey("anchors").goKey(name);
         nav.goKey("row").setNumber(anchor.position.row);
-        nav.goParent().goKey("column").setNumber(anchor.position.column);
-        nav.goParent().goKey("fixed").setBoolean(anchor.fixed);
-        return;
+        nav.goSiblingKey("column").setNumber(anchor.position.column);
+        nav.goSiblingKey("fixed").setBoolean(anchor.fixed);
+        return this;
     }
+
+    setAnchorPosition(name: string, position: Position): DocumentNavigator {
+        let nav = this.clone().goKey("anchors").goKey(name);
+        nav.goKey("row").setNumber(position.row);
+        nav.goSiblingKey("column").setNumber(position.column);
+        return this;
+    }
+
+    setCursor(anchorIndex: number, position: Position): DocumentNavigator {
+        this.setAnchorPosition("cursor_" + anchorIndex, position);
+        return this;
+    }
+    
+    setMark(anchorIndex: number, position: Position): DocumentNavigator {
+        this.setAnchorPosition("mark_" + anchorIndex, position);
+        return this;
+    }
+    
+    setView(anchorIndex: number, position: Position): DocumentNavigator {
+        this.setAnchorPosition("view_" + anchorIndex, position);
+        return this;
+    }  
 
     newAnchor(name: string, anchor: Anchor): void {
         let nav = this.clone().goKey("anchors");
@@ -157,7 +224,7 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
-    insertTextAt(text: string, position: Position) {
+    insertAt(text: string, position: Position): DocumentNavigator {
         const linesToInsert = splitIntoLines(text);
         const pos = position.normalize(this);
 
@@ -171,23 +238,68 @@ export class DocumentNavigator extends Navigator {
             const toInsert = linesToInsert.slice(1);
             toInsert[toInsert.length - 1] += after;
             this.setLine(pos.row, before + linesToInsert[0]);
-            this.clone().goKey("lines").insert(pos.row + 1, toInsert);
+            this.clone().goKey("lines").insertItems(pos.row + 1, toInsert);
         }
 
         this._insertUpdateAnchors(pos, linesToInsert);
+        return this;
     }
 
-    insertText(text: string, anchorIndex: number) {
-        // TODO: deal with remove if cursor !== mark
+    insert(anchorIndex: number, text: string): DocumentNavigator {
+        let cursor = this.getAnchor("cursor_" + anchorIndex);
+        let mark = this.getAnchor("mark_" + anchorIndex);
 
-        this.insertTextAt(text, this.getAnchor("cursor_" + anchorIndex).position);
+        if (cursor.position.compareTo(mark.position) !== 0) {
+            this.removeAt(cursor.position, mark.position);
+        }
+ 
+        return this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position);
+    }
+
+
+    protected _removeUpdateAnchors(left: Position, right: Position): void {
+        let names = this.getAnchorNames();
+
+        for (const name of names) {
+            let anchor = this.getAnchor(name);
+            
+            if (anchor.fixed || anchor.position.compareTo(left) <= 0) {
+                continue;
+            }
+            else if (anchor.position.compareTo(right) <= 0) {
+                anchor.position = left;
+            }
+            else {
+                if (anchor.position.row === right.row) {
+                    anchor.position.column = left.column + (anchor.position.column - right.column);
+                }
+                anchor.position.row -= right.row - left.row;
+            }
+
+            this.setAnchorPosition(name, anchor.position);
+        }
+    }
+
+    removeAt(p1: Position, p2: Position): DocumentNavigator {
+        let [left, right] = Position.orderNormalize(p1, p2, this);
+        
+        let before = this.getLine(left.row).substring(0, left.column);
+        let after = this.getLine(right.row).substring(right.column);
+        
+        if (right.row > left.row) {
+            this.clone().goKey("lines").removeItems(left.row + 1, right.row + 1);
+        }
+        
+        this.clone().goKey("lines").goIndex(left.row).setString(before + after);
+        this._removeUpdateAnchors(left, right);
+        return this;
     }
 }
 
 export class Model {
     store: Store;
     documents: DocumentsNavigator;
-    subscriptions: Navigator;
+    subscriptions: SubscriptionsNavigator;
     views: Navigator;
     project: Navigator;
     
@@ -202,11 +314,9 @@ export class Model {
         });
         
         this.documents = this.store.getSpecialNavigator(DocumentsNavigator, ["documents"]);
-        this.subscriptions = this.store.getNavigator().goKey("subscriptions");
+        this.subscriptions = new SubscriptionsNavigator(this.store.getNavigator());
         this.views = this.store.getNavigator().goKey("views");
         this.project = this.store.getNavigator().goKey("project");
-
-        
     }
 
 }

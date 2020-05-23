@@ -5,6 +5,7 @@ import { Main } from "./main";
 import { getRGB, Position, DrawableText, splitIntoLines } from "./shared";
 import { View } from "./view";
 import { Anchor } from "./model";
+import { text } from "express";
 
 const LEFT_MARGIN_COLUMNS = 5;
 
@@ -83,123 +84,86 @@ class RenderDocumentInfo {
     }
 }
 
-function renderDocumentReadState(terms: Array<string>, app: Main) { 
-    let fail = (message) => {
-        return { success: false, display: renderError(message, app), info: null };
-    };
+function renderDocumentSelection(
+    selectionLeft: Position, selectionRight: Position,
+    lineIndex: number, content: Array<DrawableText>,
+    view: Position, columns: number, app: Main, viewRow: number): void
+{
+    if (selectionLeft.row <= lineIndex && selectionRight.row >= lineIndex) {
+        let left = (selectionLeft.row === lineIndex ? selectionLeft.column : 0);
+        let right = (selectionRight.row === lineIndex ? selectionRight.column : 1000000);
+        left = Math.max(left, view.column) + LEFT_MARGIN_COLUMNS - view.column;
+        right = Math.min(right, view.column + columns - LEFT_MARGIN_COLUMNS)
+            + LEFT_MARGIN_COLUMNS - view.column;
+        
+        if (right > 0 && left < columns && left < right) {
+            let selectionColor = app.view.getColor("selection");
 
-    if (terms.length < 1) return fail("doc requires name");
-    
-    const name = terms[0];
-    const text = app.model.getDocumentText(name);
+            content.push(new DrawableText(
+                "", "selection@" + left + "@" + right, viewRow, 0, selectionColor, null
+            ));
+        }
+    }
+}
 
-    if (text === undefined) return fail("doc of that name not found");
-    if (terms.length < 2) return fail("doc requires anchor index");
-    
-    const anchorIndex = parseInt(terms[1]);
+function renderDocumentAnchor(
+    anchor: Position, name: String, content: Array<DrawableText>,
+    lineIndex: number, view: Position, app: Main, drawRow: number) : void
+{
+    if (anchor.row === lineIndex && anchor.column >= view.column) {
+        const anchorColumn = anchor.column - view.column + LEFT_MARGIN_COLUMNS;
+        const anchorColor = app.view.getColor("anchor_" + name);
 
-    if (anchorIndex === NaN) return fail("doc requires integer for anchor index");
-    
-    const anchors = app.model.getAnchors(name);
-
-    if (!anchors.has("cursor_" + anchorIndex)) return fail("cursor not found");
-    if (!anchors.has("mark_" + anchorIndex)) return fail("mark not found");
-    if (!anchors.has("view_" + anchorIndex)) return fail("view anchor not found");
-    
-
-
-    return {
-        success: true,
-        display: null,
-        info: new RenderDocumentInfo(
-            text, 
-            anchors.get("cursor_" + anchorIndex),
-            anchors.get("mark_" + anchorIndex),
-            anchors.get("view_" + anchorIndex)
-        )  
-    };
+        content.push(new DrawableText(
+            "", "anchor@" + name, drawRow, anchorColumn, anchorColor, null
+        ));
+    }
 }
 
 function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number)
     : Array<DrawableText>
 {
-    const checkedTerms = renderDocumentReadState(terms, app);
-    if (!checkedTerms.success) {
-        return checkedTerms.display;
-    }
+    try {
+        const name = terms[0];
+        const anchorIndex = parseInt(terms[1]);
+        if (name.length === 0 || typeof anchorIndex !== "number") {
+            throw new Error("invalid format of subscription string");
+        }
 
-    let info = checkedTerms.info as RenderDocumentInfo;
-    let text = info.text;
-    let view = info.view.position;
+        const doc = app.model.documents.get(name);
+        const cursor = doc.getCursor(anchorIndex);
+        const mark = doc.getMark(anchorIndex);
+        const view = doc.getView(anchorIndex);
 
-    let content = [];
-    let position = new Position(view.row, 0);
- 
-    let selectionLeft = info.cursor.position;
-    let selectionRight = info.mark.position;
-    if (selectionLeft.compareTo(selectionRight) > 0) {
-        let temporary = selectionLeft;
-        selectionLeft = selectionRight;
-        selectionRight = temporary;
-    }
+        let content = [];
+        let longLineIndicator = false;
+        let [selectionLeft, selectionRight] = Position.orderNormalize(cursor, mark, doc);
+        let lines = doc.getLineCount();
 
-    let longLineIndicator = false;
- 
-    for (let i = 0; i < rows; i++) {
-        const lineIndex = view.row + i;
-        
-        if (lineIndex >= 0 && lineIndex < text.length) {
+        for (let viewRow = 0; viewRow < rows; viewRow++) {
+            const lineIndex = view.row + viewRow;
+            if (lineIndex < 0 || lineIndex >= lines) continue;
 
-            if (selectionLeft.row <= lineIndex && selectionRight.row >= lineIndex) {
-                let left = (selectionLeft.row === lineIndex ? selectionLeft.column : 0);
-                let right = (selectionRight.row === lineIndex ? selectionRight.column : 1000000);
-                left = Math.max(left, view.column) + LEFT_MARGIN_COLUMNS - view.column;
-                right = Math.min(right, view.column + columns - LEFT_MARGIN_COLUMNS)
-                    + LEFT_MARGIN_COLUMNS - view.column;
-                
-                if (right > 0 && left < columns && left < right) {
-                    let selectionColor = app.view.getColor("selection");
+            renderDocumentSelection(
+                selectionLeft, selectionRight, lineIndex, content,
+                view, columns, app, viewRow);
+
+            renderDocumentAnchor(cursor, "cursor", content, lineIndex, view, app, viewRow);
+            renderDocumentAnchor(mark, "mark", content, lineIndex, view, app, viewRow);
     
-                    content.push(new DrawableText(
-                        "", "selection@" + left + "@" + right, i, 0, selectionColor, null
-                    ));
-                }
-            }
-
-            for (const name of ["mark", "cursor"]) {
-                const anchor = info[name];
-                if (anchor.position.row === lineIndex && anchor.position.column >= view.column) {
-                    const anchorColumn = anchor.position.column - view.column + LEFT_MARGIN_COLUMNS;
-                    const anchorColor = app.view.getColor("anchor_" + name);
- 
-                    content.push(new DrawableText(
-                        "", "anchor@" + name, i, anchorColumn, anchorColor, null
-                    ));
-                }
-            }
- 
-            const lineText = text[lineIndex];
-            const context = app.model.getLineContext(terms[0], lineIndex);
- 
-            position.row = lineIndex;
-
-            const result = app.languages.tokenize(
-                lineText + "\n",
-                context.context,
-                position,
-                false
-            );
-            
-            let tokens = result.tokens;
-            
-            for (let t = 0; t < tokens.length; t++) {
-                const token = tokens[t];
+            const lineText = doc.getLine(lineIndex);
+            const context = doc.getLineContext(lineIndex);
+            const tokenization = app.languages.tokenize(
+                lineText + "\n", context, new Position(lineIndex, 0), false);
+    
+            for (let tokenIndex = 0; tokenIndex < tokenization.tokens.length; tokenIndex++) {
+                const token = tokenization.tokens[tokenIndex];
                 const displayColumn = token.position.column - view.column + LEFT_MARGIN_COLUMNS;
                 const color = app.view.getColor(token.type);
                 
                 let special = "";
-                if (t > 0 && t % 5 === 0) {
-                    let mark = Math.floor(t / 5);
+                if (tokenIndex > 0 && tokenIndex % 5 === 0) {
+                    let mark = Math.floor(tokenIndex / 5);
                     let markColor = app.view.getColor(mark % 2 === 0 ? "token_0" : "token_5");
                     let count = Math.floor((mark - 1) / 2) % 3 + 1;
                     special = "token@" + count + "@" + markColor;
@@ -211,12 +175,12 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
                     if (displayColumn < columns - 1) {
                         if (displayColumn + token.text.length <= columns - 1) {
                             content.push(new DrawableText(
-                                token.text, special, i, displayColumn, color, null
+                                token.text, special, viewRow, displayColumn, color, null
                             ));
                         } else {
                             content.push(new DrawableText(
                                 token.text.substring(0, columns - 1 - displayColumn),
-                                special, i, displayColumn, color, null
+                                special, viewRow, displayColumn, color, null
                             ));
                             lli = true;
                         }
@@ -226,23 +190,25 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
 
                     if (lli && !longLineIndicator) {
                         content.push(new DrawableText(
-                            "»", "", i, columns - 1, app.view.getColor("overflow_indicator"), null
+                            "»", "", viewRow, columns - 1, app.view.getColor("overflow_indicator"), null
                         ));
                         longLineIndicator = true;
                     }
                 }
                 else if (displayColumn + token.text.length > LEFT_MARGIN_COLUMNS) {
                     content.push(new DrawableText(
-                        token.text.substring(LEFT_MARGIN_COLUMNS - displayColumn), special, i,
+                        token.text.substring(LEFT_MARGIN_COLUMNS - displayColumn), special, viewRow,
                         LEFT_MARGIN_COLUMNS, color, null
                     ));
                 }
             }
-
         }
-    }
+    
+        return content;
 
-    return content;
+    } catch (e) {
+        return renderError("error rendering document: " + e.message, app);
+    }
 }
 
 type Renderer = (terms: string[], app: Main, rows: number, columns: number) => DrawableText[];

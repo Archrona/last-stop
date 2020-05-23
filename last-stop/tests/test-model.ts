@@ -48,17 +48,46 @@ test("doc insert", t => {
     let model = new Model();
     let d = model.documents.add("scratchpad", "basic", null);
 
-    d.insertText("Hello!", 0);
+    d.insert(0, "Hello!");
     t.is(d.getText(), "Hello!");
     d.setAnchor("mark_0", new Anchor(new Position(0, 5), false));
     d.newAnchor("test", new Anchor(new Position(0, 1), false));
     t.deepEqual(d.getAnchor("cursor_0").position, new Position(0, 6));
 
     d.setAnchor("cursor_0", new Anchor(new Position(0, 3), false));
-    d.insertText("AAA\nBBB\nCCCCC", 0);
+    d.insertAt("AAA\nBBB\nCCCCC", new Position(0, 3));
     t.is(d.getText(), "HelAAA\nBBB\nCCCCClo!");
     t.deepEqual(d.getAnchor("cursor_0").position, new Position(2, 5));
     t.deepEqual(d.getAnchor("mark_0").position, new Position(2, 7));
     t.deepEqual(d.getAnchor("view_0").position, new Position(0, 0));
     t.deepEqual(d.getAnchor("test").position, new Position(0, 1));
 })
+
+test("document remove/cursor replace", t => {
+    let model = new Model();
+    let document = model.documents.add("scratchpad", "basic", null);
+    
+    document.insert(0, "Testing\n345\n\nFish");
+    document.newAnchor("test", new Anchor(new Position(3, 3), false));
+    document.newAnchor("test_2", new Anchor(new Position(1, 3), false));
+    document.removeAt(new Position(0, 2), new Position(1, 1));
+
+    t.is(document.getText(), "Te45\n\nFish");
+    t.deepEqual(document.getAnchor("cursor_0").position, new Position(2, 4));
+    t.deepEqual(document.getAnchor("test").position, new Position(2, 3));
+    t.log(document.getAnchor("test_2").position);
+    t.deepEqual(document.getAnchor("test_2").position, new Position(0, 4));
+    
+    document.setCursor(0, new Position(0, 2));
+    document.setMark(0, new Position(2, 0));
+    document.insert(0, "1\n2");
+
+    t.is(document.getText(), "Te1\n2Fish");
+    t.deepEqual(document.getCursor(0), new Position(1, 1));
+    t.deepEqual(document.getMark(0), new Position(1, 1));
+    t.deepEqual(document.getView(0), new Position(0, 0));
+    t.deepEqual(document.getAnchor("test").position, new Position(1, 4));
+    t.deepEqual(document.getAnchor("test_2").position, new Position(1, 1));
+     
+});
+

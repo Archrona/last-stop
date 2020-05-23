@@ -682,7 +682,7 @@ export class Navigator {
         this.store.wasModified();
     }
 
-    insert(index: number, json: Array<any>): Navigator {
+    insertItems(index: number, json: Array<any>): Navigator {
         this._insert(index, json);
 
         const undoPath = this.getPath();      
@@ -693,7 +693,7 @@ export class Navigator {
         return this;
     }
 
-    remove(from: number, upTo: number): Navigator {
+    removeItems(from: number, upTo: number): Navigator {
         if (!(this.node instanceof ListNode) || from < 0 || from >= upTo || upTo > this.node.length()) {
             throw new TypeError("_remove: invalid list node or indices");
         }

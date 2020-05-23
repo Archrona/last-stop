@@ -450,22 +450,22 @@ test("insert, remove", t => {
     const store = new Store.Store([]);
     const navigator = store.getNavigator();
     const list = [1, 2, 3, 4];
-    navigator.insert(0, list);
-    navigator.insert(1, list);
-    navigator.insert(8, list);
-    t.throws(() => navigator.insert(-1, list));
-    t.throws(() => navigator.insert(13, list));
+    navigator.insertItems(0, list);
+    navigator.insertItems(1, list);
+    navigator.insertItems(8, list);
+    t.throws(() => navigator.insertItems(-1, list));
+    t.throws(() => navigator.insertItems(13, list));
     store.setCheckpoint();
     t.deepEqual(navigator.getJson(), [1, 1, 2, 3, 4, 2, 3, 4, 1, 2, 3, 4]);
     t.notThrows(() => store.verifyNodeLinkage());
 
-    navigator.remove(0, 1);
+    navigator.removeItems(0, 1);
     t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 2, 3, 4, 1, 2, 3, 4]);
-    navigator.remove(10, 11);
+    navigator.removeItems(10, 11);
     t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 2, 3, 4, 1, 2, 3]);
-    navigator.remove(2, 5);
+    navigator.removeItems(2, 5);
     t.deepEqual(navigator.getJson(), [1, 2, 3, 4, 1, 2, 3]);
-    navigator.remove(0, navigator.getLength());
+    navigator.removeItems(0, navigator.getLength());
     t.deepEqual(navigator.getJson(), []);
     t.notThrows(() => store.verifyNodeLinkage());
     store.undoUntilCheckpoint();
@@ -477,3 +477,4 @@ test("insert, remove", t => {
 
 // mapkeys
 // maplist
+

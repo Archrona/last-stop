@@ -1,5 +1,6 @@
 import { Store, Navigator, DataType, PathComponent } from "./store";
-import { Position, splitIntoLines } from "./shared";
+import { Position, splitIntoLines, binarySearchSparse, arrayEquals } from "./shared";
+import { Languages } from "./language";
 
 export class Anchor {
     constructor(public position: Position, public fixed: boolean) {
@@ -49,7 +50,7 @@ export class DocumentsNavigator extends Navigator {
             name: name,
             modified: null,
             lines: [""],
-            contextChanges: [],
+            contexts: [],
             anchors: {
                 "cursor_0": { row: 0, column: 0, fixed: false },
                 "mark_0": { row: 0, column: 0, fixed: false },
@@ -147,7 +148,46 @@ export class DocumentNavigator extends Navigator {
     }  
 
     getLineContext(index: number): Array<string> {
-        return this.getBaseContext();   // TODO ACTUALLY DO IT
+        const contexts = this.clone().goKey("contexts");
+        const length = contexts.getLength();
+
+        if (index < 0 || index >= this.getLineCount()) {
+            throw new Error("getLineContext: invalid line index");
+        }       
+
+        let found = binarySearchSparse(0, length, index, 
+            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
+
+        if (found === -1) {
+            return this.getBaseContext();
+        }
+        else {
+            let result = contexts.clone().goIndex(found).goIndex(1).getJson();
+            if (Array.isArray(result) && result.length > 0) {
+                return result;
+            } else {
+                throw new Error("getLineContext: invalid context found in store");
+            }
+        }
+    }
+
+    getPositionContext(position: Position, languages: Languages): string {
+        const lineContext = this.getLineContext(position.row);
+        const lineText = this.getLine(position.row);
+        const tokenization = languages.tokenize(
+            lineText, lineContext, new Position(position.row, 0), true
+        );
+        
+        let found = binarySearchSparse(0, tokenization.tokens.length, position.column, (x) =>
+            tokenization.tokens[x].position.column
+        );
+
+        if (found === -1) {
+            return lineContext[lineContext.length - 1];
+        }
+        else {
+            return tokenization[found].context;
+        }
     }
 
     setLine(index: number, text: string): void {
@@ -187,7 +227,59 @@ export class DocumentNavigator extends Navigator {
     setView(anchorIndex: number, position: Position): DocumentNavigator {
         this.setAnchorPosition("view_" + anchorIndex, position);
         return this;
-    }  
+    }
+
+    _setLineContext(first: number, last: number, context: Array<string>): DocumentNavigator {
+        if (first < 0 || last < first || this.getLineCount() < last) {
+            throw new Error("_setLineContext: line indices invalid or out of range");
+        }
+        
+        const contexts = this.clone().goKey("contexts");
+        const length = contexts.getLength();
+        
+        let foundLeft = binarySearchSparse(0, length, first,
+            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
+
+        let foundRight = binarySearchSparse(0, length, first,
+            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
+
+        let matchLeft = foundLeft >= 0
+            && contexts.clone().goIndex(foundLeft).goIndex(0).getNumber() === first;
+
+        let matchRight = foundRight >= 0
+            && contexts.clone().goIndex(foundRight).goIndex(0).getNumber() === last;
+        
+        let stitchLeft = 
+
+        console.log(contexts.getJson());
+        console.log(foundLeft + " --- " + foundRight + "   (" + matchLeft + ", " + matchRight + ")");
+
+        let toInsert = [];
+
+        if ((foundLeft === -1 && !arrayEquals(this.getBaseContext(), context)
+            || (foundLeft >= 0 && !arrayEquals(contexts.clone().goIndex(foundLeft)
+                                    .goIndex(1).getJson() as Array<string>, context))))
+        {
+            toInsert.push([first, context]);
+        }
+
+        if (last < this.getLineCount() - 1 
+            && (foundRight >= length 
+                || contexts.clone().goIndex(foundRight).goIndex(0).getNumber() !== last))
+        {
+            toInsert.push([last + 1, this.getLineContext(last + 1)]);
+        }
+        
+        let removeLeft = matchLeft ? foundLeft : foundLeft + 1;
+        let removeRight = matchRight ? foundRight + 1 : foundRight;
+
+        if (removeLeft < removeRight) {
+            contexts.removeItems(removeLeft, removeRight);
+        }
+        contexts.insertItems(removeLeft, toInsert);
+        
+        return this;
+    } 
 
     newAnchor(name: string, anchor: Anchor): void {
         let nav = this.clone().goKey("anchors");

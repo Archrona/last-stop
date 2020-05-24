@@ -18,7 +18,8 @@ MODEL
 Anchor {.position.{x,y} .fixed}
 DocumentsNavigator { add(name,ctx,fn) get(name) }
 DocumentNavigator { get{Text|Range(p1,p2)|Line(i)|Lines|BaseContext|Anchor(nm)
-  |AnchorNames()|Cursor(ai)|Mark(ai)|View(ai)|LineCount()} 
+  |AnchorNames()|Cursor(ai)|Mark(ai)|View(ai)|LineCount()|LineContext(i)
+  |PositionContext(pos,languages)} 
   set{Line(i,t)|Text(t)|Anchor(n,a)|AnchorPosition(n,pos)}
   set{Cursor|Mark|View}(ai,pos)
   newAnchor(name,a) insertAt(t,pos) insert(ai,t) removeAt(p1,p2) remove(ai,t)

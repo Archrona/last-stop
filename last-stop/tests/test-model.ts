@@ -88,6 +88,72 @@ test("document remove/cursor replace", t => {
     t.deepEqual(document.getView(0), new Position(0, 0));
     t.deepEqual(document.getAnchor("test").position, new Position(1, 4));
     t.deepEqual(document.getAnchor("test_2").position, new Position(1, 1));
-     
 });
 
+test("can get line context", t => {
+    let model = new Model();
+    let document = model.documents.add("scratchpad", "basic", null);
+    
+    t.deepEqual(document.getLineContext(0), ["basic"]);
+    t.throws(() => document.getLineContext(-1), {instanceOf: Error});
+    t.throws(() => document.getLineContext(1), {instanceOf: Error});
+    
+    document.insert(0, "hello\nmy name is Greg\nI am an onion");
+    t.deepEqual(document.getLineContext(0), ["basic"]);
+    t.deepEqual(document.getLineContext(1), ["basic"]);
+    t.deepEqual(document.getLineContext(2), ["basic"]);
+    t.throws(() => document.getLineContext(-1), {instanceOf: Error});
+    t.throws(() => document.getLineContext(3), {instanceOf: Error});
+
+    document.setKey("contexts", [
+        [0, ["basic", "quoted_string"]],
+        [1, ["basic", "regular_expression"]]
+    ]);
+    t.deepEqual(document.getLineContext(0), ["basic", "quoted_string"]);
+    t.deepEqual(document.getLineContext(1), ["basic", "regular_expression"]);
+
+    document.insert(0, "\n\n\n\n\n\n\n\n\n");
+
+    document.setKey("contexts", [
+        [1, ["basic", "quoted_string"]],
+        [4, ["basic", "regular_expression"]],
+        [7, ["basic", "another"]]
+    ]);
+    t.deepEqual(document.getLineContext(0), ["basic"]);
+    t.deepEqual(document.getLineContext(1), ["basic", "quoted_string"]);
+    t.deepEqual(document.getLineContext(2), ["basic", "quoted_string"]);
+    t.deepEqual(document.getLineContext(3), ["basic", "quoted_string"]);
+    t.deepEqual(document.getLineContext(4), ["basic", "regular_expression"]);
+    t.deepEqual(document.getLineContext(5), ["basic", "regular_expression"]);
+    t.deepEqual(document.getLineContext(6), ["basic", "regular_expression"]);
+    t.deepEqual(document.getLineContext(7), ["basic", "another"]);
+    t.deepEqual(document.getLineContext(10), ["basic", "another"]);
+    t.deepEqual(document.getLineContext(11), ["basic", "another"]);
+});
+
+test("can set line context", t => {
+    let model = new Model();
+    let document = model.documents.add("scratchpad", "basic", null);
+    document.insert(0, "\n\n\n\n\n\n\n\n\n");
+
+    let contexts = document.clone().goKey("contexts");
+    t.deepEqual(contexts.getJson(), []);
+
+    document._setLineContext(0, 0, ["Alice"]);
+    t.deepEqual(contexts.getJson(), [
+        [0, ["Alice"]],
+        [1, ["basic"]]
+    ]);
+ 
+    document._setLineContext(1, 1, ["Alice"]);
+    t.deepEqual(contexts.getJson(), [
+        [0, ["Alice"]],
+        [2, ["basic"]]
+    ]);
+
+    document._setLineContext(0, 3, ["Bob"]);
+    t.deepEqual(contexts.getJson(), [
+        [0, ["Bob"]],
+        [4, ["basic"]]
+    ]);
+});

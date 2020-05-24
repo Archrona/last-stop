@@ -2,10 +2,9 @@
 //   Renders subscriptions from the store into DrawableText.
 
 import { Main } from "./main";
-import { getRGB, Position, DrawableText, splitIntoLines } from "./shared";
-import { View } from "./view";
+import { Position, DrawableText, splitIntoLines } from "./shared";
 import { Anchor } from "./model";
-import { text } from "express";
+import { TokenizeResult } from "./language";
 
 const LEFT_MARGIN_COLUMNS = 5;
 
@@ -73,16 +72,6 @@ function renderUnknownWindow(terms: Array<string>, app: Main, rows: number, colu
     return renderError("this window has no subscription", app);
 }
 
-class RenderDocumentInfo {
-    constructor(
-        public text: Array<string>,
-        public cursor: Anchor,
-        public mark: Anchor,
-        public view: Anchor
-    ) {
-        
-    }
-}
 
 function renderDocumentSelection(
     selectionLeft: Position, selectionRight: Position,
@@ -118,6 +107,59 @@ function renderDocumentAnchor(
             "", "anchor@" + name, drawRow, anchorColumn, anchorColor, null
         ));
     }
+}
+
+function renderDocumentToken(
+    tokenization: TokenizeResult, tokenIndex: number, view: Position, app: Main,
+    columns: number, viewRow: number, content: Array<DrawableText>,
+    longLineIndicator: boolean): boolean
+{
+    const token = tokenization.tokens[tokenIndex];
+    const displayColumn = token.position.column - view.column + LEFT_MARGIN_COLUMNS;
+    const color = app.view.getColor(token.type);
+    
+    let special = "";
+    if (tokenIndex > 0 && tokenIndex % 5 === 0) {
+        let mark = Math.floor(tokenIndex / 5);
+        let markColor = app.view.getColor(mark % 2 === 0 ? "token_0" : "token_5");
+        let count = Math.floor((mark - 1) / 2) % 3 + 1;
+        special = "token@" + count + "@" + markColor;
+    }
+
+    if (displayColumn >= LEFT_MARGIN_COLUMNS) {
+        let lli = false;
+
+        if (displayColumn < columns - 1) {
+            if (displayColumn + token.text.length <= columns - 1) {
+                content.push(new DrawableText(
+                    token.text, special, viewRow, displayColumn, color, null
+                ));
+            } else {
+                content.push(new DrawableText(
+                    token.text.substring(0, columns - 1 - displayColumn),
+                    special, viewRow, displayColumn, color, null
+                ));
+                lli = true;
+            }
+        } else {
+            lli = true;
+        }
+
+        if (lli && !longLineIndicator) {
+            content.push(new DrawableText(
+                "»", "", viewRow, columns - 1, app.view.getColor("overflow_indicator"), null
+            ));
+            longLineIndicator = true;
+        }
+    }
+    else if (displayColumn + token.text.length > LEFT_MARGIN_COLUMNS) {
+        content.push(new DrawableText(
+            token.text.substring(LEFT_MARGIN_COLUMNS - displayColumn), special, viewRow,
+            LEFT_MARGIN_COLUMNS, color, null
+        ));
+    }
+
+    return longLineIndicator;
 }
 
 function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number)
@@ -157,50 +199,8 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
                 lineText + "\n", context, new Position(lineIndex, 0), false);
     
             for (let tokenIndex = 0; tokenIndex < tokenization.tokens.length; tokenIndex++) {
-                const token = tokenization.tokens[tokenIndex];
-                const displayColumn = token.position.column - view.column + LEFT_MARGIN_COLUMNS;
-                const color = app.view.getColor(token.type);
-                
-                let special = "";
-                if (tokenIndex > 0 && tokenIndex % 5 === 0) {
-                    let mark = Math.floor(tokenIndex / 5);
-                    let markColor = app.view.getColor(mark % 2 === 0 ? "token_0" : "token_5");
-                    let count = Math.floor((mark - 1) / 2) % 3 + 1;
-                    special = "token@" + count + "@" + markColor;
-                }
-
-                if (displayColumn >= LEFT_MARGIN_COLUMNS) {
-                    let lli = false;
-
-                    if (displayColumn < columns - 1) {
-                        if (displayColumn + token.text.length <= columns - 1) {
-                            content.push(new DrawableText(
-                                token.text, special, viewRow, displayColumn, color, null
-                            ));
-                        } else {
-                            content.push(new DrawableText(
-                                token.text.substring(0, columns - 1 - displayColumn),
-                                special, viewRow, displayColumn, color, null
-                            ));
-                            lli = true;
-                        }
-                    } else {
-                        lli = true;
-                    }
-
-                    if (lli && !longLineIndicator) {
-                        content.push(new DrawableText(
-                            "»", "", viewRow, columns - 1, app.view.getColor("overflow_indicator"), null
-                        ));
-                        longLineIndicator = true;
-                    }
-                }
-                else if (displayColumn + token.text.length > LEFT_MARGIN_COLUMNS) {
-                    content.push(new DrawableText(
-                        token.text.substring(LEFT_MARGIN_COLUMNS - displayColumn), special, viewRow,
-                        LEFT_MARGIN_COLUMNS, color, null
-                    ));
-                }
+                longLineIndicator = renderDocumentToken(tokenization, tokenIndex, view,
+                    app, columns, viewRow, content, longLineIndicator);
             }
         }
     

@@ -17,6 +17,21 @@ export function splitIntoLines(str: string) {
     return str.split(re);
 }
 
+export function arrayEquals<T>(first: Array<T>, second: Array<T>): boolean {
+    if (first.length !== second.length) {
+        return false;
+    }
+    
+    for (let i = 0; i < first.length; i++) {
+        if (first[i] !== second[i]) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+ 
+
 export function listsContainSameElements(x: Array<any>, y: Array<any>) {
     if (x.length !== y.length) {
         return false;
@@ -28,7 +43,45 @@ export function listsContainSameElements(x: Array<any>, y: Array<any>) {
     }
     return true;
 }
- 
+
+// getIndex(n) = i and getIndex(n + 1) = k iff
+//    we should return n for i <= target < k   (if biasEqualAfter is true)
+//                        or i < target <= k   (if biasEqualAfter is false)
+export function binarySearchSparse(
+    left: number,
+    right: number,
+    target: number,
+    getIndex: (number) => number,
+    biasEqualAfter: boolean = true
+): number {
+    const length = right;
+
+    if (!biasEqualAfter) {
+        target -= 1;
+    }
+
+    while (left <= right) {
+        const middle = Math.floor((left + right) / 2);
+
+        // Is the insertion point at or right of middle?
+        const leftPredicate = (middle === 0 || getIndex(middle - 1) <= target);
+        const rightPredicate = (middle < length && getIndex(middle) <= target);
+
+        if (leftPredicate && !rightPredicate) {
+            return middle - 1;
+        }
+        else if (!leftPredicate) {
+            right = middle - 1;
+        }
+        else {
+            left = middle + 1;
+        }
+    }
+
+    throw new Error("getLineContext: binary search failed");
+}
+
+
 export class Position {
     row: number;
     column: number;

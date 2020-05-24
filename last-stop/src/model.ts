@@ -229,6 +229,15 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    private _getContextChange(contextIndex: number): number {
+        return this.clone().goKey("contexts").goIndex(contextIndex).goIndex(0).getNumber();
+    }
+
+    private _getContextContent(contextIndex: number): Array<string> {
+        return this.clone().goKey("contexts").goIndex(contextIndex)
+                .goIndex(1).getJson() as Array<string>;
+    }
+
     _setLineContext(first: number, last: number, context: Array<string>): DocumentNavigator {
         if (first < 0 || last < first || this.getLineCount() < last) {
             throw new Error("_setLineContext: line indices invalid or out of range");
@@ -237,20 +246,12 @@ export class DocumentNavigator extends Navigator {
         const contexts = this.clone().goKey("contexts");
         const length = contexts.getLength();
         
-        let foundLeft = binarySearchSparse(0, length, first,
-            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
+        let foundLeft = binarySearchSparse(0, length, first, (x) => this._getContextChange(x));
+        let foundRight = binarySearchSparse(0, length, last, (x) => this._getContextChange(x));
 
-        let foundRight = binarySearchSparse(0, length, first,
-            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
-
-        let matchLeft = foundLeft >= 0
-            && contexts.clone().goIndex(foundLeft).goIndex(0).getNumber() === first;
-
-        let matchRight = foundRight >= 0
-            && contexts.clone().goIndex(foundRight).goIndex(0).getNumber() === last;
+        let matchLeft = foundLeft >= 0 && this._getContextChange(foundLeft) === first;
+        let matchRight = foundRight >= 0 && this._getContextChange(foundRight) === last;
         
-        let stitchLeft = 
-
         console.log(contexts.getJson());
         console.log(foundLeft + " --- " + foundRight + "   (" + matchLeft + ", " + matchRight + ")");
 
@@ -258,7 +259,7 @@ export class DocumentNavigator extends Navigator {
 
         if ((foundLeft === -1 && !arrayEquals(this.getBaseContext(), context)
             || (foundLeft >= 0 && !arrayEquals(contexts.clone().goIndex(foundLeft)
-                                    .goIndex(1).getJson() as Array<string>, context))))
+                                    , context))))
         {
             toInsert.push([first, context]);
         }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>last-stop: User Guide</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Last Stop User Guide</h1>
+<p>Welcome to the user guide! This guide will show you the ropes - hopefully you won’t have to hang yourself with them.</p>
+<h2>Commands</h2>
+<p>Last Stop’s command language allows the user to control the editor through speech alone. Commands range in function, consisting of:</p>
+<ul>
+<li>simple substitutions (replacing <code>one</code> with <code>1</code>)</li>
+<li>complex substitutions (replacing <code>if</code> with a three-line structure containing blanks to fill in)</li>
+<li>subs with arguments (replacing <code>pick 13 hello</code> with <code>hl</code>)</li>
+<li>modifiers affecting identifiers (replacing <code>great original name</code> with <code>ORIGINAL_NAME</code>)</li>
+<li>navigation commands with arguments (saying <code>go 141.3</code> to move the cursor to the third token of the 141st line).</li>
+</ul>
+<h2>Contexts</h2>
+<p>The <strong>context</strong> at the cursor affects which commands apply and what they do.</p>
+<p>Context changes when you move your cursor to a new location. Comments, strings, regular expressions, embedded code, math – moving the cursor in or out of all of these regions can change the context.</p>
+<p>For example, languages containing a lambda operation will respond to <code>lambda</code>, each in a language-specific fashion. Others will treat <code>lambda</code> like a variable name or plain word.</p>
+<h2>Speech</h2>
+<p>The speech console will be your constant companion as you use Last Stop. By speaking, you can control almost everything: files, window contents, plaintext input, code input, the clipboard, and so on.</p>
+<p>In a text file, string, or other context where the capitalization and spacing of your speech should be preserved, the speech console will be in <strong>text mode</strong>. Commands will still be recognized in this mode, but non-command text will be emitted verbatim at the active cursor. For the most part, text mode should feel like you are speaking directly into the file with no assistance.</p>
+<p>In a source file or other context where Last Stop should automatically apply capitalization, spacing, and formatting, the speech console will be in <strong>source mode</strong>. In this mode, the full spectrum of commands is available. Words not recognized as commands will be joined together into identifiers (variable names) using spacing and capitalization rules. For instance,</p>
+<pre><code>camel object name call finish
+</code></pre>
+<p>Might become</p>
+<pre><code>objectName();
+</code></pre>
+<h3>Whitespace</h3>
+<p>Whitespace is processed as meaningful input only when it is:</p>
+<ul>
+<li><em>between</em> two text mode phrases.</li>
+</ul>
+<p>It is ignored when it is:</p>
+<ul>
+<li><em>between</em> a text mode phrase and the beginning or end of the speech input;</li>
+<li><em>between</em> two source mode phrases.</li>
+</ul>
+<p>For instance, in the below string, only the whitespace marked with <code>#</code> is processed:</p>
+<pre><code>&quot;  source text text text source source text  &quot;
+ ..      .    #    #    .      .      .    ..
+</code></pre>
+<p>The command <code>stop</code> acts in all contexts as a do-nothing placeholder. To explicitly insert whitespace into text mode, say <code>stop</code> between the whitespace and the adjacent text phrase. For instance:</p>
+<pre><code>&quot;  source stop  text text  stop  &quot;
+ ..      .    ##    #    ##    ..
+</code></pre>
+<h3>Mouse and Keyboard Events</h3>
+<p>For technical reasons, <em>all</em> inputs – including mouse and keyboard – are funneled through the speech console. Non-spoken commands are wrapped in the Unicode delimiters <code>«</code> and <code>»</code>. For instance,</p>
+<ul>
+<li>typing the word <code>hello</code>, then</li>
+<li>clicking the mouse button 0 in window 11 at row 3, column 14</li>
+</ul>
+<p>might be displayed as <code>«\κhello\μ11.3.14.0»</code>.</p>
+  
+        </div>
+    </body>
+</html>

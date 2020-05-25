@@ -8,8 +8,19 @@
         <div class="container">
             <h1>Last Stop User Guide</h1>
 <p>Welcome to the user guide! This guide will show you the ropes - hopefully you won’t have to hang yourself with them.</p>
-<h2>Commands</h2>
-<p>Last Stop’s command language allows the user to control the editor through speech alone. Commands range in function, consisting of:</p>
+<h2>Concepts</h2>
+<p>Before you read the rest of this documentation, you should learn the meanings of some common terms you will encounter.</p>
+<p><strong>Project</strong>: The directory on your computer’s filesystem containing the files you wish to edit. Commands dealing with files will automatically scope requests to this directory. At most one project is open at a time; when you first open the editor, no project will be open. You can still edit files, but you will not be able to save or load them from the filesystem.</p>
+<p><strong>Window</strong>: A single operating system window. Each window is numbered with an ID displayed in its upper-left corner. IDs are unique and start at <code>11</code>. In spoken commands, this ID can be used to refer to the window.</p>
+<p><strong>Speech Console</strong>: A small window where you can direct your dictation software to type. The speech console will be your constant companion as you use Last Stop. By spoken commands, you can control almost everything: files, window contents, plaintext input, code input, the clipboard, and so on.</p>
+<p><strong>Document</strong>: A named buffer of text which can be edited, displayed, and so forth. Documents can be linked to specific files on disk, but it is important to note that they are not the same as files. As you use the editor, the contents of a document will diverge from what is stored on disk. External editors and tools can also modify the on-disk file. It is best to think of a Document as a mutable snapshot of what existed in a file at a given moment in time. Saving or loading the Document brings the editor’s buffer and the filesystem into concordance.</p>
+<p>You can also edit a document that has no on-disk representation – it exists only in memory. You may find this useful if you decide to use the editor as a scratchpad for editing content you’d like to insert into a different application.</p>
+<p><strong>Anchor</strong>: A position in a Document. As you edit, Anchors may travel along with the text they are attached to.</p>
+<p><strong>Standard Anchors</strong>: Every document comes with three standard Anchors: the cursor, the mark, and the view. The cursor represents your current position in the file. The mark is usually the same as the cursor, but if you select a range of text, the mark will indicate the other end of the selection. The view points to the upper-left-hand corner of the region you would like to display.</p>
+<p><strong>Standard Anchor Indices</strong>: If multiple windows are displaying a single document, you may want them to have different cursor, mark, and view positions. (Or you may not!) For that reason, documents can have multiple sets of standard anchors. These are referred to by their <em>anchor index</em>. Indices begin at <code>0</code> and end at <code>3</code>, which means that a maximum of four unique cursor-mark-view anchor sets may exist in a single document.</p>
+<p><strong>Subscription</strong>: Each Window has a Subscription which describes what the Window should display. For example, the subscription <code>doc@name@0</code> displays the Document named <code>name</code> at standard anchor index <code>0</code>. The subscription <code>project@30</code> displays information about the active Project starting from line <code>30</code>.</p>
+<p><strong>Command</strong>: A word or phrase in your speech input which is recognized by the editor as having a special meaning. For instance, you might say <code>step</code> to move the cursor to the next insertion point, or <code>at least</code> to enter the operator <code>&gt;=</code> in a program.</p>
+<p>Commands range in function, consisting of:</p>
 <ul>
 <li>simple substitutions (replacing <code>one</code> with <code>1</code>)</li>
 <li>complex substitutions (replacing <code>if</code> with a three-line structure containing blanks to fill in)</li>
@@ -17,12 +28,13 @@
 <li>modifiers affecting identifiers (replacing <code>great original name</code> with <code>ORIGINAL_NAME</code>)</li>
 <li>navigation commands with arguments (saying <code>go 141.3</code> to move the cursor to the third token of the 141st line).</li>
 </ul>
-<h2>Contexts</h2>
-<p>The <strong>context</strong> at the cursor affects which commands apply and what they do.</p>
-<p>Context changes when you move your cursor to a new location. Comments, strings, regular expressions, embedded code, math – moving the cursor in or out of all of these regions can change the context.</p>
-<p>For example, languages containing a lambda operation will respond to <code>lambda</code>, each in a language-specific fashion. Others will treat <code>lambda</code> like a variable name or plain word.</p>
-<h2>Speech</h2>
-<p>The speech console will be your constant companion as you use Last Stop. By speaking, you can control almost everything: files, window contents, plaintext input, code input, the clipboard, and so on.</p>
+<p>Commands are stored in <code>commands.json</code> and can be modified while the program is running. Press <code>Ctrl-r</code> in any editor window to reload the command (and context) files and reprocess the speech console.</p>
+<p><strong>Context</strong>: The Context at the cursor affects which commands apply and what they do. Context changes when you move your cursor to a new location. Comments, strings, regular expressions, embedded code, math – moving the cursor in or out of all of these regions can change the context.</p>
+<p>For example, if you are editing a TypeScript file, the active context might be <code>typescript</code>. When you move the cursor into a comment beginning with <code>//</code>, the context will change to <code>line-comment</code>. In the <code>typescript</code> context, the word <code>if</code> indicates a complex substitution command, but the same word <code>if</code> in the <code>line-comment</code> context would simply type <code>&quot;if&quot;</code>.</p>
+<p>Contexts are stored in <code>contexts.json</code> and can be modified while the program is running. Press <code>Ctrl-r</code> in any editor window to reload the context file and reprocess the speech console.</p>
+<h2>Editing Documents</h2>
+<h3>Text vs. Source Mode</h3>
+<p>The speech console has two modes.</p>
 <p>In a text file, string, or other context where the capitalization and spacing of your speech should be preserved, the speech console will be in <strong>text mode</strong>. Commands will still be recognized in this mode, but non-command text will be emitted verbatim at the active cursor. For the most part, text mode should feel like you are speaking directly into the file with no assistance.</p>
 <p>In a source file or other context where Last Stop should automatically apply capitalization, spacing, and formatting, the speech console will be in <strong>source mode</strong>. In this mode, the full spectrum of commands is available. Words not recognized as commands will be joined together into identifiers (variable names) using spacing and capitalization rules. For instance,</p>
 <pre><code>camel object name call finish
@@ -48,6 +60,12 @@
 <pre><code>&quot;  source stop  text text  stop  &quot;
  ..      .    ##    #    ##    ..
 </code></pre>
+<p>To insert a space explicitly, use command <code>blank</code>, which acts in all contexts as a space bar.</p>
+<pre><code>quotes Hello there! blank step
+</code></pre>
+<p>will process into</p>
+<pre><code>&quot;Hello there! &quot;
+</code></pre>
 <h3>Mouse and Keyboard Events</h3>
 <p>For technical reasons, <em>all</em> inputs – including mouse and keyboard – are funneled through the speech console. Non-spoken commands are wrapped in the Unicode delimiters <code>«</code> and <code>»</code>. For instance,</p>
 <ul>
@@ -55,6 +73,794 @@
 <li>clicking the mouse button 0 in window 11 at row 3, column 14</li>
 </ul>
 <p>might be displayed as <code>«\κhello\μ11.3.14.0»</code>.</p>
+<h3>Locations</h3>
+<p>In speech, any positive number greater than or equal to <code>11</code> is potentially a location.</p>
+<p>Windows have unique IDs starting from <code>11</code>. When a window is closed, it relinquishes its ID and future windows can reuse it. When you want to switch from one window to another, navigate to its ID (<code>go to 11</code>). You can also use a window’s ID to set its subscription (<code>show 145 on 11</code> where <code>145</code> refers to a file, <code>show projects on 11</code>).</p>
+<p>Line numbers usually begin from <code>30</code> and are unique across <em>all</em> windows. Even if you are in window <code>11</code>, referring to a line number in window <code>13</code> is unambiguous. This can be used navigate quickly between windows or refer to items in distant windows. For instance, in the command <code>show 145 on 11</code>, <code>145</code> is a line number reference to a Project view – it refers to a named file on the file system. This saves you from having to speak complex filenames and their extensions.</p>
+<p>Floating-point numbers such as <code>76.1</code> refer to an index (<code>1</code>) within a line (<code>76</code>). The meaning varies from subscription to subscription. For documents, the decimal portion of a location refers to the token index. For example, in the line</p>
+<pre><code>76   if (x &lt; 3) {
+</code></pre>
+<p>the following tokens are addressable:</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Text</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>76.0</td>
+<td><code>if</code></td>
+</tr>
+<tr>
+<td>76.1</td>
+<td><code>(</code></td>
+</tr>
+<tr>
+<td>76.2</td>
+<td><code>x</code></td>
+</tr>
+<tr>
+<td>76.3</td>
+<td><code>&lt;</code></td>
+</tr>
+<tr>
+<td>76.4</td>
+<td><code>3</code></td>
+</tr>
+<tr>
+<td>76.5</td>
+<td><code>)</code></td>
+</tr>
+<tr>
+<td>76.6</td>
+<td><code>{</code></td>
+</tr>
+</tbody>
+</table>
+<p>To refer to a line or line-column position in a document (instead of a window), you must preface the location with the word <code>line</code>. After the <code>line</code> directive, <em>all</em> positive numbers are interpreted as positions, not just ones at or above <code>11</code>. For instance, <code>line 7</code> unambiguously refers to <code>line 7</code> of the active window.</p>
+<p>A number which is <em>only</em> a decimal (<code>.7</code>, <code>.14</code>) refers to tokens on the active line in the active window.</p>
+<h2>Managing Views and Projects</h2>
+<hr>
+<h1>Reference</h1>
+<h2>Subscriptions</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>doc@NAME@CURSOR</code></td>
+<td>Document <code>NAME</code> is displayed for editing at standard anchor index <code>CURSOR</code>. Values from <code>0</code> to <code>3</code> are accepted for <code>CURSOR</code>.</td>
+</tr>
+<tr>
+<td><code>project@LINE</code></td>
+<td>Information about the active project and some global status information. View starts at line index <code>LINE</code>.</td>
+</tr>
+<tr>
+<td><code>documents@LINE</code></td>
+<td>Information about open documents. View starts at line index <code>LINE</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2>Contexts</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>basic</code></td>
+<td>A generic programming-ish environment used for testing.</td>
+</tr>
+<tr>
+<td><code>double_quoted_string</code></td>
+<td>A string delimited by <code>&quot;...&quot;</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2>Commands</h2>
+<h3>Letters and Numbers</h3>
+<p>Last Stop supports three phonetic alphabets: one for forced lowercase, one for forced uppercase, and one which uses the active casing.</p>
+<table>
+<thead>
+<tr>
+<th>Character</th>
+<th>Active Casing</th>
+<th>Lowercase</th>
+<th>Uppercase</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td><code>alpha</code></td>
+<td><code>andrew</code></td>
+<td><code>atlanta</code></td>
+</tr>
+<tr>
+<td>b</td>
+<td><code>bravo</code></td>
+<td><code>bradley</code></td>
+<td><code>bangkok</code></td>
+</tr>
+<tr>
+<td>c</td>
+<td><code>charlie</code></td>
+<td><code>colby</code></td>
+<td><code>chicago</code></td>
+</tr>
+<tr>
+<td>d</td>
+<td><code>delta</code></td>
+<td><code>douglas</code></td>
+<td><code>dallas</code></td>
+</tr>
+<tr>
+<td>e</td>
+<td><code>echo</code></td>
+<td><code>edgar</code></td>
+<td><code>egypt</code></td>
+</tr>
+<tr>
+<td>f</td>
+<td><code>foxtrot</code></td>
+<td><code>felix</code></td>
+<td><code>france</code></td>
+</tr>
+<tr>
+<td>g</td>
+<td><code>golf</code></td>
+<td><code>gregory</code></td>
+<td><code>georgia</code></td>
+</tr>
+<tr>
+<td>h</td>
+<td><code>hotel</code></td>
+<td><code>harvey</code></td>
+<td><code>houston</code></td>
+</tr>
+<tr>
+<td>i</td>
+<td><code>india</code></td>
+<td><code>isaac</code></td>
+<td><code>iceland</code></td>
+</tr>
+<tr>
+<td>j</td>
+<td><code>juliet</code></td>
+<td><code>jackson</code></td>
+<td><code>jakarta</code></td>
+</tr>
+<tr>
+<td>k</td>
+<td><code>kilo</code></td>
+<td><code>kirby</code></td>
+<td><code>khartoum</code></td>
+</tr>
+<tr>
+<td>l</td>
+<td><code>lima</code></td>
+<td><code>lamarr</code></td>
+<td><code>london</code></td>
+</tr>
+<tr>
+<td>m</td>
+<td><code>mike</code></td>
+<td><code>mitchell</code></td>
+<td><code>madrid</code></td>
+</tr>
+<tr>
+<td>n</td>
+<td><code>november</code></td>
+<td><code>neville</code></td>
+<td><code>norway</code></td>
+</tr>
+<tr>
+<td>o</td>
+<td><code>oscar</code></td>
+<td><code>oliver</code></td>
+<td><code>orlando</code></td>
+</tr>
+<tr>
+<td>p</td>
+<td><code>papa</code></td>
+<td><code>preston</code></td>
+<td><code>poland</code></td>
+</tr>
+<tr>
+<td>q</td>
+<td><code>quebec</code></td>
+<td><code>quentin</code></td>
+<td><code>qatar</code></td>
+</tr>
+<tr>
+<td>r</td>
+<td><code>romeo</code></td>
+<td><code>richard</code></td>
+<td><code>russia</code></td>
+</tr>
+<tr>
+<td>s</td>
+<td><code>sierra</code></td>
+<td><code>stacy</code></td>
+<td><code>sydney</code></td>
+</tr>
+<tr>
+<td>t</td>
+<td><code>tango</code></td>
+<td><code>tommy</code></td>
+<td><code>tokyo</code></td>
+</tr>
+<tr>
+<td>u</td>
+<td><code>uniform</code></td>
+<td><code>ulysses</code></td>
+<td><code>ukraine</code></td>
+</tr>
+<tr>
+<td>v</td>
+<td><code>victor</code></td>
+<td><code>virgil</code></td>
+<td><code>vietnam</code></td>
+</tr>
+<tr>
+<td>w</td>
+<td><code>whiskey</code></td>
+<td><code>whitney</code></td>
+<td><code>washington</code></td>
+</tr>
+<tr>
+<td>x</td>
+<td><code>x-ray</code></td>
+<td><code>xavier</code></td>
+<td><code>xiamen</code></td>
+</tr>
+<tr>
+<td>y</td>
+<td><code>yankee</code></td>
+<td><code>young</code></td>
+<td><code>yemen</code></td>
+</tr>
+<tr>
+<td>z</td>
+<td><code>zulu</code></td>
+<td><code>zachary</code></td>
+<td><code>zambia</code></td>
+</tr>
+</tbody>
+</table>
+<p>Replacements for numbers 1 through 10 are also supported. However, because the numbers 2 and 4 are homonyms with function words <code>to</code> and <code>for</code>, only the exact spelling is converted into numeric form. Dragon supports the spoken syntax <code>numeral two</code> and <code>numeral four</code> to force these to numeric form.</p>
+<table>
+<thead>
+<tr>
+<th>Number</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><code>zero</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>one</code>, <code>won</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>two</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>three</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>four</code></td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>five</code></td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>six</code>, <code>sicks</code></td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>seven</code></td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>eight</code>, <code>ate</code></td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>nine</code>, <code>nein</code></td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>ten</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Operators and Structures</h3>
+<p>Not all of these are supported in every context, but when they <em>are</em> supported, the spoken forms are as below:</p>
+<h4>Access and Reference</h4>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>=</code></td>
+<td><code>is</code>, <code>are</code></td>
+</tr>
+<tr>
+<td><code>.</code></td>
+<td><code>dot</code></td>
+</tr>
+<tr>
+<td><code>-&gt;</code></td>
+<td><code>arrow</code>, <code>aero</code></td>
+</tr>
+<tr>
+<td><code>=&gt;</code></td>
+<td><code>maps to</code>, <code>becomes</code></td>
+</tr>
+<tr>
+<td><code>...</code></td>
+<td><code>spread</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Logical</h4>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>==</code></td>
+<td><code>equals</code>, <code>[is] equal [to]</code> (outside JS/TS), <code>loose equals</code></td>
+</tr>
+<tr>
+<td><code>===</code></td>
+<td><code>equals</code> (in JS/TS)</td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td><code>[is] below</code>, <code>[is] less than</code></td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td><code>[is] above</code>, <code>[is] greater than</code></td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td><code>[is] at most</code>, <code>[is] less than or equal to</code></td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td><code>[is] at least</code>, <code>[is] greater than or equal to</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Arithmetic</h4>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+[=]</code></td>
+<td><code>plus [equals]</code></td>
+</tr>
+<tr>
+<td><code>-[=]</code></td>
+<td><code>minus [equals]</code></td>
+</tr>
+<tr>
+<td><code>*[=]</code></td>
+<td><code>times [equals]</code></td>
+</tr>
+<tr>
+<td><code>/[=]</code></td>
+<td><code>divide [equals]</code>, <code>divided by [equals]</code></td>
+</tr>
+<tr>
+<td><code>%[=]</code></td>
+<td><code>modulo [equals]</code>, <code>remainder [equals]</code></td>
+</tr>
+<tr>
+<td><code>**[=]</code></td>
+<td><code>exponent [equals]</code></td>
+</tr>
+<tr>
+<td><code>&lt;&lt;[=]</code></td>
+<td><code>shift left [equals]</code></td>
+</tr>
+<tr>
+<td><code>&gt;&gt;[=]</code></td>
+<td><code>shift right [equals]</code></td>
+</tr>
+<tr>
+<td><code>++</code></td>
+<td><code>increment</code></td>
+</tr>
+<tr>
+<td><code>--</code></td>
+<td><code>decrement</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Logical and Bitwise</h4>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td><code>logical and</code>, <code>land</code></td>
+</tr>
+<tr>
+<td><code>||</code></td>
+<td><code>logical or</code>, <code>lore</code></td>
+</tr>
+<tr>
+<td><code>!</code></td>
+<td><code>logical not</code>, <code>not</code></td>
+</tr>
+<tr>
+<td><code>&amp;</code></td>
+<td><code>bitwise and</code>, <code>band</code></td>
+</tr>
+<tr>
+<td><code>|</code></td>
+<td><code>bitwise or</code>, <code>bore</code>, <code>boar</code></td>
+</tr>
+<tr>
+<td><code>~</code></td>
+<td><code>bitwise not</code></td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td><code>[bitwise] exclusive or</code>, <code>[bitwise] xor</code></td>
+</tr>
+<tr>
+<td><code>?:</code></td>
+<td><code>branch</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Grouping</h4>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>()</code></td>
+<td><code>group</code> (standalone), <code>of</code> (attached left), <code>call</code> (empty)</td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td><code>list</code> (standalone), <code>at</code> (attached left)</td>
+</tr>
+<tr>
+<td><code>{}</code></td>
+<td><code>record</code> (one line), <code>block</code> (multiline)</td>
+</tr>
+<tr>
+<td><code>&lt;&gt;</code></td>
+<td><code>of type</code></td>
+</tr>
+<tr>
+<td><code>&quot;&quot;</code></td>
+<td><code>quotes</code></td>
+</tr>
+<tr>
+<td><code>''</code></td>
+<td><code>drops</code></td>
+</tr>
+<tr>
+<td><code>``</code></td>
+<td><code>backs</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Escapes</h4>
+<p><code>\\n</code> | <code>settle</code> (in string context)
+<code>\\t</code> | <code>brindle</code> (in string context)
+<code>\\\\</code> | <code>dorsal</code> (in string context)</p>
+<h3>Complex Replacements</h3>
+<h3>Distant Navigation</h3>
+<p>The verb <code>go</code> is used for all navigation. Although <code>go</code> moves the cursor and mark, the view will also follow in such a way to keep as much relevant content centered on screen as possible.  It is often followed by another function word to indicate the kind of navigation, as below:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>go [to] W</code></td>
+<td>Activates window with ID <code>W</code>.</td>
+</tr>
+<tr>
+<td><code>go [to] W line L</code></td>
+<td>Shorthand for <code>go to W go to line L</code>.</td>
+</tr>
+<tr>
+<td><code>go [to] L</code></td>
+<td>Places the cursor at the end of <code>L</code>.</td>
+</tr>
+<tr>
+<td><code>go [to] L.T</code></td>
+<td>Selects all of <code>L.T</code>.</td>
+</tr>
+<tr>
+<td><code>go all [of] L</code></td>
+<td>Selects all of line <code>L</code> including the trailing newline.</td>
+</tr>
+<tr>
+<td><code>go all [of] L1 to L2</code></td>
+<td>Selects all of lines <code>L1</code> through <code>L2</code>, including the trailing newline.</td>
+</tr>
+<tr>
+<td><code>go before L.T</code></td>
+<td>Places the cursor immediately before <code>L.T</code>.</td>
+</tr>
+<tr>
+<td><code>go after L.T</code></td>
+<td>Places the cursor immediately after <code>L.T</code>.in</td>
+</tr>
+<tr>
+<td><code>go from L1[.T] to L2[.T]</code>                                                </td>
+<td>Selects from the beginning of <code>L1</code> or <code>L1.T</code> to the end of <code>L2</code> or <code>L2.T</code>. Does not include trailing newlines of <code>L2</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Documents maintain up to 99 <strong>spots</strong> each. A spot can be used as a location by prefacing its spot index with the word <code>spot</code>. The syntax <code>spot N</code> can be used anywhere <code>L</code> or <code>L.T</code> can be used.</p>
+<p>If a spot in a different window is needed, the floating-point number <code>W.N</code> refers to spot <code>N</code> of the document active in window <code>W</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>go spot N</code></td>
+<td>Navigate to spot <code>N</code>.</td>
+</tr>
+<tr>
+<td><code>go spot W.N</code></td>
+<td>Navigate to spot <code>N</code> of the document in window <code>W</code>.</td>
+</tr>
+<tr>
+<td><code>go ... spot ...</code></td>
+<td>All other go commands can be used with spots.</td>
+</tr>
+<tr>
+<td><code>mark spot N</code></td>
+<td>The active cursor is now spot N.</td>
+</tr>
+</tbody>
+</table>
+<h3>Local Navigation</h3>
+<p>There are also many <em>relative</em> navigation commands that use the context around the cursor to move or change the active selection. Some locations are defined contextually:</p>
+<table>
+<thead>
+<tr>
+<th>Location</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>left margin</code></td>
+<td>The leftmost character on the starting line of the selection.</td>
+</tr>
+<tr>
+<td><code>right margin</code></td>
+<td>The rightmost character on the starting line of the selection.</td>
+</tr>
+<tr>
+<td><code>lead</code></td>
+<td>The leftmost non-white character of the starting line of the selection.</td>
+</tr>
+<tr>
+<td><code>trail</code></td>
+<td>The rightmost non-white character of the ending line of the selection.</td>
+</tr>
+</tbody>
+</table>
+<p>Other navigation commands suited for code insertion include:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>step</code></td>
+<td>Move ahead 1 insertion point.</td>
+</tr>
+<tr>
+<td><code>jump</code></td>
+<td>Move ahead 2 insertion points.</td>
+</tr>
+<tr>
+<td><code>leap</code></td>
+<td>Move ahead 3 insertion points.</td>
+</tr>
+<tr>
+<td><code>ok</code></td>
+<td>Go to end of line, hit enter.</td>
+</tr>
+<tr>
+<td><code>finish</code></td>
+<td>Go to end of line, terminate the statement (<code>;</code> or the like), hit enter.</td>
+</tr>
+<tr>
+<td><code>and then</code></td>
+<td>Go to end of line, write a comma (<code>,</code>), hit enter.</td>
+</tr>
+</tbody>
+</table>
+<h3>Whitespace Control</h3>
+<p>Below, <code>[lr]</code> means either <code>left</code>, <code>right</code>, or nothing; <code>[ab]</code> means either <code>above</code>, <code>below</code>, or nothing.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>halo [lr]</code>                        </td>
+<td>Expand selection to include adjacent whitespace. Can cross lines.</td>
+</tr>
+<tr>
+<td><code>sponge [lr]</code></td>
+<td>Delete whitespace both within and adjacent to the selection. Can cross lines.</td>
+</tr>
+<tr>
+<td><code>stretch [lr]</code></td>
+<td>Ensure that there is at least one space between the selection and the adjacent tokens.</td>
+</tr>
+<tr>
+<td><code>dilate [ab]</code></td>
+<td>Ensure that there is at least one empty line between the selection and the adjacent lines.</td>
+</tr>
+<tr>
+<td><code>indent [T]</code></td>
+<td>Indent the lines containing the selection <code>T</code> times.</td>
+</tr>
+<tr>
+<td><code>unindent [T]</code></td>
+<td>Unindent the lines containing the selection <code>T</code> times.</td>
+</tr>
+<tr>
+<td><code>crack</code></td>
+<td>Hit enter, tab.</td>
+</tr>
+<tr>
+<td><code>expand</code></td>
+<td>Hit enter, tab, enter, backspace. Then put cursor in middle.</td>
+</tr>
+</tbody>
+</table>
+<h3>Clipboard</h3>
+<p>Last Stop does not just have a single clipboard - it maintains a clipboard <em>ring</em>. The ring has <code>8</code> slots numbered <code>0</code> through <code>7</code>, and loops around once it reaches the end. Because the words “cut”, “copy”, and “paste” often carry special meaning to dictation software, Last Stop uses alternatives:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>yank</code></td>
+<td>Like “cut”. Place the current selection into the next clipboard slot and delete the selection.</td>
+</tr>
+<tr>
+<td><code>grab</code></td>
+<td>Like “copy”. Place the current selection into the next clipboard slot.</td>
+</tr>
+<tr>
+<td><code>smear</code></td>
+<td>Like “paste”. Does not change the clipboard ring position.</td>
+</tr>
+<tr>
+<td><code>shed</code></td>
+<td>Like “paste”. Moves the clipboard ring position left one, to the previous item.</td>
+</tr>
+</tbody>
+</table>
+<p>Clipboard commands also work on <code>go</code>-locations. A line number reference will implicitly refer to the <em>entire</em> line, including the trailing newline.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>yank L</code></td>
+<td><code>yank</code> at location <code>L</code>; do not move the cursor.</td>
+</tr>
+<tr>
+<td><code>grab L</code></td>
+<td><code>grab</code> location <code>L</code>; do not move the cursor.</td>
+</tr>
+<tr>
+<td><code>smear L</code></td>
+<td><code>smear</code> at location <code>L</code>; do not move the cursor.</td>
+</tr>
+<tr>
+<td><code>shed L</code></td>
+<td><code>shed</code> at location <code>L</code>; do not move the cursor.</td>
+</tr>
+</tbody>
+</table>
+<h3>Subscriptions</h3>
+<p>The verb <code>show</code> is used to change subscriptions, typically in the form <code>show SUB on W</code>, where <code>SUB</code> is a phrase indicating a subscription and <code>W</code> is a window ID.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>show projects [on] W</code></td>
+<td>Project view.</td>
+</tr>
+<tr>
+<td><code>show documents [on] W</code></td>
+<td>Documents view.</td>
+</tr>
+<tr>
+<td><code>show L on W</code></td>
+<td>If <code>L</code> is a line reference to a document in the project view, show that document on window <code>W</code>. Open well though there a shit you</td>
+</tr>
+</tbody>
+</table>
+<h3>Project</h3>
   
         </div>
     </body>

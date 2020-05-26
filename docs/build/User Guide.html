@@ -145,6 +145,10 @@
 <td><code>documents@LINE</code></td>
 <td>Information about open documents. View starts at line index <code>LINE</code>.</td>
 </tr>
+<tr>
+<td><code>imagination@LINE</code></td>
+<td>Open-ended heuristic search across entire project, all known symbols.</td>
+</tr>
 </tbody>
 </table>
 <h2>Contexts</h2>
@@ -392,6 +396,76 @@
 </tr>
 </tbody>
 </table>
+<h3>Casing</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flat</code></td>
+<td><code>wordname</code></td>
+</tr>
+<tr>
+<td><code>snake</code></td>
+<td><code>word_name</code></td>
+</tr>
+<tr>
+<td><code>camel</code></td>
+<td><code>wordName</code></td>
+</tr>
+<tr>
+<td><code>big</code>, <code>great</code></td>
+<td><code>WordName</code></td>
+</tr>
+<tr>
+<td><code>tower</code></td>
+<td><code>WORD_NAME</code></td>
+</tr>
+<tr>
+<td><code>shout</code></td>
+<td><code>WORDNAME</code></td>
+</tr>
+<tr>
+<td><code>midline</code></td>
+<td><code>word-name</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Picking</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>lonely ABCDE</code></td>
+<td><code>A</code></td>
+</tr>
+<tr>
+<td><code>couple ABCDE</code></td>
+<td><code>AB</code></td>
+</tr>
+<tr>
+<td><code>triple ABCDE</code></td>
+<td><code>ABC</code></td>
+</tr>
+<tr>
+<td><code>quadruple ABCDE</code></td>
+<td><code>ABCD</code></td>
+</tr>
+<tr>
+<td><code>pick N ABCDE</code></td>
+<td>Use digits of <code>N</code> as indexes (starting at 1) of chars in <code>ABCDE</code> to pick.</td>
+</tr>
+</tbody>
+</table>
 <h3>Operators and Structures</h3>
 <p>Not all of these are supported in every context, but when they <em>are</em> supported, the spoken forms are as below:</p>
 <h4>Access and Reference</h4>
@@ -591,13 +665,139 @@
 <td><code>``</code></td>
 <td><code>backs</code></td>
 </tr>
+<tr>
+<td><code>//</code></td>
+<td><code>slashes</code></td>
+</tr>
 </tbody>
 </table>
 <h4>Escapes</h4>
-<p><code>\\n</code> | <code>settle</code> (in string context)
-<code>\\t</code> | <code>brindle</code> (in string context)
-<code>\\\\</code> | <code>dorsal</code> (in string context)</p>
-<h3>Complex Replacements</h3>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>\\n</code></td>
+<td><code>settle</code> (in string context)</td>
+</tr>
+<tr>
+<td><code>\\t</code></td>
+<td><code>brindle</code> (in string context)</td>
+</tr>
+<tr>
+<td><code>\\\\</code></td>
+<td><code>dorsal</code> (in string context)</td>
+</tr>
+</tbody>
+</table>
+<h4>Regular Expressions</h4>
+<p>The following are only used in the <code>regular_expression</code> context. The escapes from above are also incorporated here.</p>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Spoken Form</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>.</code></td>
+<td><code>any</code>, <code>anything</code></td>
+</tr>
+<tr>
+<td><code>*</code></td>
+<td><code>star</code>, <code>zero or more</code></td>
+</tr>
+<tr>
+<td><code>+</code></td>
+<td><code>plus</code>, <code>one or more</code></td>
+</tr>
+<tr>
+<td><code>?</code></td>
+<td><code>optional</code>, <code>maybe</code></td>
+</tr>
+<tr>
+<td><code>[]</code></td>
+<td><code>class</code>, <code>character class</code></td>
+</tr>
+<tr>
+<td><code>[^]</code></td>
+<td><code>not [character] class</code>,</td>
+</tr>
+<tr>
+<td><code>()</code></td>
+<td><code>group</code></td>
+</tr>
+<tr>
+<td><code>(?:)</code></td>
+<td><code>non-capturing group</code>,</td>
+</tr>
+<tr>
+<td><code>{}</code></td>
+<td><code>count</code></td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td><code>start [of line]</code></td>
+</tr>
+<tr>
+<td><code>$</code></td>
+<td><code>end [of line]</code></td>
+</tr>
+<tr>
+<td><code>\\d</code></td>
+<td><code>digit</code></td>
+</tr>
+<tr>
+<td><code>\\D</code></td>
+<td><code>not [a] digit</code></td>
+</tr>
+<tr>
+<td><code>\w</code></td>
+<td><code>alphanumeric</code></td>
+</tr>
+<tr>
+<td><code>\W</code></td>
+<td><code>not alphanumeric</code></td>
+</tr>
+<tr>
+<td><code>\s</code></td>
+<td><code>white space</code>, <code>whitespace</code></td>
+</tr>
+<tr>
+<td><code>\S</code></td>
+<td><code>not white space</code>, <code>not whitespace</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Programming Language Substitutions</h3>
+<p>These vary quite a bit from language to language! To give you a sense of what is possible, the following are a few TypeScript substitutions.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>if</code></td>
+<td><code>if (__) {\n\t_\n}</code></td>
+</tr>
+<tr>
+<td><code>iterate ID please</code></td>
+<td><code>for (let ID = 0; ID &lt; __; ID++) {\n\t_\n}</code></td>
+</tr>
+<tr>
+<td><code>try</code></td>
+<td><code>try {\n\t_\n} catch (_) {\n\t_\n}</code></td>
+</tr>
+</tbody>
+</table>
 <h3>Distant Navigation</h3>
 <p>The verb <code>go</code> is used for all navigation. Although <code>go</code> moves the cursor and mark, the view will also follow in such a way to keep as much relevant content centered on screen as possible.  It is often followed by another function word to indicate the kind of navigation, as below:</p>
 <table>
@@ -674,6 +874,23 @@
 </tr>
 </tbody>
 </table>
+<h3>Imagine</h3>
+<p>To search for a particular string or structure within a file or seek out complex identifiers by using simpler names, use <code>imagine ... please</code> syntax. Everything in the middle <code>...</code> is interpreted as a potential identifier name or location within a file. It’s heuristic. That means it’s not really done yet. But it is deterministic, which means that undos will work right.</p>
+<p>A window with the <code>imagination</code> subscription will show the results. You can <code>go L</code> within that file to get results or use short names to select the imagination index directly.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>imagine ... please</code></td>
+<td>Imagine <code>...</code>. The ellipsis must be no more than 8 tokens.</td>
+</tr>
+</tbody>
+</table>
 <h3>Local Navigation</h3>
 <p>There are also many <em>relative</em> navigation commands that use the context around the cursor to move or change the active selection. Some locations are defined contextually:</p>
 <table>
@@ -739,6 +956,7 @@
 </table>
 <h3>Whitespace Control</h3>
 <p>Below, <code>[lr]</code> means either <code>left</code>, <code>right</code>, or nothing; <code>[ab]</code> means either <code>above</code>, <code>below</code>, or nothing.</p>
+<p>To control whitespace within a single line, not counting the indent on the left:</p>
 <table>
 <thead>
 <tr>
@@ -749,20 +967,50 @@
 <tbody>
 <tr>
 <td><code>halo [lr]</code>                        </td>
-<td>Expand selection to include adjacent whitespace. Can cross lines.</td>
+<td>Expand selection to include adjacent whitespace. Does <em>not</em> include indent.</td>
 </tr>
 <tr>
 <td><code>sponge [lr]</code></td>
-<td>Delete whitespace both within and adjacent to the selection. Can cross lines.</td>
+<td>Delete whitespace both within and adjacent to the selection. Does <em>not</em> include indent.</td>
 </tr>
 <tr>
 <td><code>stretch [lr]</code></td>
 <td>Ensure that there is at least one space between the selection and the adjacent tokens.</td>
 </tr>
+</tbody>
+</table>
+<p>To control empty lines:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nimbus [ab]</code>                        </td>
+<td>Expand selection to include whitespace-only lines above and below, including trailing newlines.</td>
+</tr>
+<tr>
+<td><code>squelch [ab]</code></td>
+<td>Delete entirely empty lines above and below.</td>
+</tr>
 <tr>
 <td><code>dilate [ab]</code></td>
 <td>Ensure that there is at least one empty line between the selection and the adjacent lines.</td>
 </tr>
+</tbody>
+</table>
+<p>To deal with local indentation as you edit:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>indent [T]</code></td>
 <td>Indent the lines containing the selection <code>T</code> times.</td>
@@ -800,7 +1048,7 @@
 <td>Like “copy”. Place the current selection into the next clipboard slot.</td>
 </tr>
 <tr>
-<td><code>smear</code></td>
+<td><code>spit</code></td>
 <td>Like “paste”. Does not change the clipboard ring position.</td>
 </tr>
 <tr>
@@ -827,8 +1075,8 @@
 <td><code>grab</code> location <code>L</code>; do not move the cursor.</td>
 </tr>
 <tr>
-<td><code>smear L</code></td>
-<td><code>smear</code> at location <code>L</code>; do not move the cursor.</td>
+<td><code>spit L</code></td>
+<td><code>spit</code> at location <code>L</code>; do not move the cursor.</td>
 </tr>
 <tr>
 <td><code>shed L</code></td>
@@ -837,7 +1085,7 @@
 </tbody>
 </table>
 <h3>Subscriptions</h3>
-<p>The verb <code>show</code> is used to change subscriptions, typically in the form <code>show SUB on W</code>, where <code>SUB</code> is a phrase indicating a subscription and <code>W</code> is a window ID.</p>
+<p>The verb <code>show</code> is used to change subscriptions, typically in the form <code>show SUB on W</code>, where <code>SUB</code> is a phrase indicating a subscription and <code>W</code> is a window ID. If <code>W</code> is not provided, the command applies to the active window. Either way, <code>show</code> does not change the active window. To do so, use the verb <code>focus</code>, which can be substituted for <code>show</code> in any of the below commands.</p>
 <table>
 <thead>
 <tr>
@@ -847,20 +1095,54 @@
 </thead>
 <tbody>
 <tr>
-<td><code>show projects [on] W</code></td>
+<td><code>show projects [on W]</code>                                                 </td>
 <td>Project view.</td>
 </tr>
 <tr>
-<td><code>show documents [on] W</code></td>
+<td><code>show documents [on W]</code></td>
 <td>Documents view.</td>
 </tr>
 <tr>
-<td><code>show L on W</code></td>
-<td>If <code>L</code> is a line reference to a document in the project view, show that document on window <code>W</code>. Open well though there a shit you</td>
+<td><code>show document NAME [on W]</code></td>
+<td>Document view. <code>NAME</code> must be the name of a document that has already been loaded (not just on disk).</td>
+</tr>
+<tr>
+<td><code>show cursor N [on W]</code></td>
+<td>Sets cursor index 0~3 on window <code>W</code> or active.</td>
+</tr>
+<tr>
+<td><code>show imagination [on W]</code></td>
+<td>Imagination view.</td>
+</tr>
+<tr>
+<td><code>show L.T on W</code></td>
+<td><code>L</code> or <code>L.T</code> must be a reference to a selectable subscription in another view (e.g. the project view).</td>
+</tr>
+<tr>
+<td><code>focus ...</code></td>
+<td>Same as above, but also change to window <code>W</code>. <code>on</code> clause required.</td>
+</tr>
+<tr>
+<td><code>swap window[s] W1 and W2</code></td>
+<td>Swap the subscriptions of two windows.</td>
 </tr>
 </tbody>
 </table>
 <h3>Project</h3>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>open L.T [on W]</code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
   
         </div>
     </body>

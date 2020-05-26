@@ -170,7 +170,7 @@ Name | Description
 `doc@NAME@CURSOR` | Document `NAME` is displayed for editing at standard anchor index `CURSOR`. Values from `0` to `3` are accepted for `CURSOR`.
 `project@LINE` | Information about the active project and some global status information. View starts at line index `LINE`.
 `documents@LINE` | Information about open documents. View starts at line index `LINE`.
-
+`imagination@LINE` | Open-ended heuristic search across entire project, all known symbols.
 
 
 
@@ -236,6 +236,30 @@ Number | Command
 10 | `ten`
 
 
+### Casing
+
+Command | Meaning
+--- | ---
+`flat` | `wordname`
+`snake` | `word_name`
+`camel` | `wordName`
+`big`, `great` | `WordName`
+`tower` | `WORD_NAME`
+`shout` | `WORDNAME`
+`midline` | `word-name`
+
+
+### Picking
+
+Command | Meaning
+--- | ---
+`lonely ABCDE` | `A`
+`couple ABCDE` | `AB`
+`triple ABCDE` | `ABC`
+`quadruple ABCDE` | `ABCD`
+`pick N ABCDE` | Use digits of `N` as indexes (starting at 1) of chars in `ABCDE` to pick.
+
+
 
 ### Operators and Structures
 
@@ -251,6 +275,7 @@ Operator | Spoken Form
 `=>` | `maps to`, `becomes`
 `...` | `spread`
 
+
 #### Logical
 
 Operator | Spoken Form
@@ -261,6 +286,7 @@ Operator | Spoken Form
 `>` | `[is] above`, `[is] greater than`
 `<=` | `[is] at most`, `[is] less than or equal to`
 `>=` | `[is] at least`, `[is] greater than or equal to`
+
 
 #### Arithmetic
 
@@ -277,6 +303,7 @@ Operator | Spoken Form
 `++` | `increment`
 `--` | `decrement`
 
+
 #### Logical and Bitwise
 
 Operator | Spoken Form
@@ -290,6 +317,7 @@ Operator | Spoken Form
 `^` | `[bitwise] exclusive or`, `[bitwise] xor`
 `?:` | `branch`
 
+
 #### Grouping
 
 Operator | Spoken Form
@@ -301,16 +329,53 @@ Operator | Spoken Form
 `""` | `quotes`
 `''` | `drops`
 ``` `` ``` | `backs`
+`//` | `slashes`
+
 
 #### Escapes
 
+Operator | Spoken Form
+--- | ---
 `\\n` | `settle` (in string context)
 `\\t` | `brindle` (in string context)
 `\\\\` | `dorsal` (in string context)
 
 
+#### Regular Expressions
 
-### Complex Replacements
+The following are only used in the `regular_expression` context. The escapes from above are also incorporated here.
+
+Operator | Spoken Form
+--- | ---
+`.` | `any`, `anything`
+`*` | `star`, `zero or more`
+`+` | `plus`, `one or more`
+`?` | `optional`, `maybe`
+`[]` | `class`, `character class`
+`[^]` | `not [character] class`,
+`()` | `group`
+`(?:)` | `non-capturing group`, 
+`{}` | `count`
+`^` | `start [of line]`
+`$` | `end [of line]`
+`\\d` | `digit`
+`\\D` | `not [a] digit`
+`\w` | `alphanumeric`
+`\W` | `not alphanumeric`
+`\s` | `white space`, `whitespace`
+`\S` | `not white space`, `not whitespace`
+
+
+### Programming Language Substitutions
+
+These vary quite a bit from language to language! To give you a sense of what is possible, the following are a few TypeScript substitutions.
+
+Command | Meaning
+--- | ---
+`if` | `if (__) {\n\t_\n}`
+`iterate ID please` | `for (let ID = 0; ID < __; ID++) {\n\t_\n}`
+`try` | `try {\n\t_\n} catch (_) {\n\t_\n}`
+
 
 
 ### Distant Navigation
@@ -341,6 +406,17 @@ Command | Meaning
 `mark spot N` | The active cursor is now spot N.
 
 
+### Imagine
+
+To search for a particular string or structure within a file or seek out complex identifiers by using simpler names, use `imagine ... please` syntax. Everything in the middle `...` is interpreted as a potential identifier name or location within a file. It's heuristic. That means it's not really done yet. But it is deterministic, which means that undos will work right.
+
+A window with the `imagination` subscription will show the results. You can `go L` within that file to get results or use short names to select the imagination index directly.
+
+Command | Meaning
+--- | ---
+`imagine ... please` | Imagine `...`. The ellipsis must be no more than 8 tokens.
+
+
 ### Local Navigation
 
 There are also many *relative* navigation commands that use the context around the cursor to move or change the active selection. Some locations are defined contextually:
@@ -365,23 +441,34 @@ Command | Meaning
 `and then` | Go to end of line, write a comma (`,`), hit enter.
 
 
-
 ### Whitespace Control
 
 Below, `[lr]` means either `left`, `right`, or nothing; `[ab]` means either `above`, `below`, or nothing.
 
+To control whitespace within a single line, not counting the indent on the left:
+
 Command | Meaning
 --- | ---
-`halo [lr]` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Expand selection to include adjacent whitespace. Can cross lines.
-`sponge [lr]` | Delete whitespace both within and adjacent to the selection. Can cross lines.
+`halo [lr]` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Expand selection to include adjacent whitespace. Does *not* include indent.
+`sponge [lr]` | Delete whitespace both within and adjacent to the selection. Does *not* include indent.
 `stretch [lr]` | Ensure that there is at least one space between the selection and the adjacent tokens.
+
+To control empty lines:
+
+Command | Meaning
+--- | ---
+`nimbus [ab]` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Expand selection to include whitespace-only lines above and below, including trailing newlines.
+`squelch [ab]` | Delete entirely empty lines above and below.
 `dilate [ab]` | Ensure that there is at least one empty line between the selection and the adjacent lines.
+
+To deal with local indentation as you edit:
+
+Command | Meaning
+--- | ---
 `indent [T]` | Indent the lines containing the selection `T` times. 
 `unindent [T]` | Unindent the lines containing the selection `T` times.
 `crack` | Hit enter, tab.
 `expand` | Hit enter, tab, enter, backspace. Then put cursor in middle.
-
-
 
 
 ### Clipboard
@@ -392,7 +479,7 @@ Command | Meaning
 --- | ---
 `yank` | Like "cut". Place the current selection into the next clipboard slot and delete the selection.
 `grab` | Like "copy". Place the current selection into the next clipboard slot.
-`smear` | Like "paste". Does not change the clipboard ring position.
+`spit` | Like "paste". Does not change the clipboard ring position.
 `shed` | Like "paste". Moves the clipboard ring position left one, to the previous item.
 
 Clipboard commands also work on `go`-locations. A line number reference will implicitly refer to the *entire* line, including the trailing newline.
@@ -401,26 +488,31 @@ Command | Meaning
 --- | ---
 `yank L` | `yank` at location `L`; do not move the cursor.
 `grab L` | `grab` location `L`; do not move the cursor.
-`smear L` | `smear` at location `L`; do not move the cursor.
+`spit L` | `spit` at location `L`; do not move the cursor.
 `shed L` | `shed` at location `L`; do not move the cursor.
-
-
 
 
 ### Subscriptions
 
-The verb `show` is used to change subscriptions, typically in the form `show SUB on W`, where `SUB` is a phrase indicating a subscription and `W` is a window ID.
+The verb `show` is used to change subscriptions, typically in the form `show SUB on W`, where `SUB` is a phrase indicating a subscription and `W` is a window ID. If `W` is not provided, the command applies to the active window. Either way, `show` does not change the active window. To do so, use the verb `focus`, which can be substituted for `show` in any of the below commands.
 
 Command | Meaning
 --- | ---
-`show projects [on] W` | Project view.
-`show documents [on] W` | Documents view.
-`show L on W` | If `L` is a line reference to a document in the project view, show that document on window `W`. Open well though there a shit you
-
+`show projects [on W]`  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Project view.
+`show documents [on W]` | Documents view.
+`show document NAME [on W]` | Document view. `NAME` must be the name of a document that has already been loaded (not just on disk).
+`show cursor N [on W]` | Sets cursor index 0~3 on window `W` or active.
+`show imagination [on W]` | Imagination view.
+`show L.T on W` | `L` or `L.T` must be a reference to a selectable subscription in another view (e.g. the project view).
+`focus ...` | Same as above, but also change to window `W`. `on` clause required.
+`swap window[s] W1 and W2` | Swap the subscriptions of two windows. 
 
 
 ### Project
 
+Command | Meaning
+--- | ---
+`open L.T [on W]` | 
 
 
 

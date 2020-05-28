@@ -17,7 +17,18 @@ export class Main {
     consoleServer: ConsoleServer;
     commands: Commands;
  
+    static app: Main = null;
+
+    static getApp(): Main {
+        return Main.app;
+    }
+
     constructor(headless: boolean = false) {
+        if (!headless && Main.app !== null) {
+            throw new Error("Cannot create more than one non-headless Main - it's a singleton");
+        }
+        Main.app = this;
+
         this.headless = headless;
 
         if (!headless)
@@ -39,7 +50,7 @@ export class Main {
             this.model.subscriptions.set(11, "doc@scratchpad@0");
             this.model.setActiveWindow(11);
 
-            
+
         }
 
         if (!headless)

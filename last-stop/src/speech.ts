@@ -6,7 +6,6 @@ import { Position } from "./shared";
 import { Model, DocumentNavigator } from "./model";
 import { CommandList, Command } from "./commands";
 
-export const INSERTION_POINT = "▢";
 
 export type Executor = (model: Model, args: Array<any>) => void
 

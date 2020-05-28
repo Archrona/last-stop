@@ -88,8 +88,11 @@ export class SubscriptionsNavigator extends Navigator {
  
 
 export class DocumentsNavigator extends Navigator {
-    constructor(store: Store, age: number, path: Array<PathComponent> = []) {
-        super(store, age, path);
+    app: Main;
+
+    constructor(base: Navigator, app: Main) {
+        super(base.store, base.age, base.path.concat("documents"));
+        this.app = app;
     }
 
     add(name: string, baseContext: string, filename: string | null = null): DocumentNavigator {
@@ -104,27 +107,29 @@ export class DocumentsNavigator extends Navigator {
             name: name,
             modified: null,
             lines: [""],
-            contexts: [],
+            contexts: [[baseContext]],
             anchors: {
                 "cursor_0": { row: 0, column: 0, fixed: false },
                 "mark_0": { row: 0, column: 0, fixed: false },
                 "view_0": { row: 0, column: 0, fixed: true },
             },
-            filename: filename,
-            baseContext: [baseContext]
+            filename: filename
         });
 
         return this.get(name);
     }
 
     get(name: string): DocumentNavigator {
-        return new DocumentNavigator(this, name);
+        return new DocumentNavigator(this, name, this.app);
     }
 }
 
 export class DocumentNavigator extends Navigator {
-    constructor(base: DocumentsNavigator, name: string) {
+    app: Main;
+
+    constructor(base: DocumentsNavigator, name: string, app: Main) {
         super(base.store, base.age, base.path.concat(name));
+        this.app = app;
     }
 
     getText(): string {
@@ -174,7 +179,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     getBaseContext(): Array<string> {
-        return this.clone().goKey("baseContext").getJson() as Array<string>;
+        return this.clone().goKey("contexts").goIndex(0).getJson() as Array<string>;
     }
 
     getAnchor(name: string): Anchor {
@@ -209,25 +214,15 @@ export class DocumentNavigator extends Navigator {
             throw new Error("getLineContext: invalid line index");
         }       
 
-        let found = binarySearchSparse(0, length, index, 
-            (x) => contexts.clone().goIndex(x).goIndex(0).getNumber());
-
-        if (found === -1) {
-            return this.getBaseContext();
-        }
-        else {
-            let result = contexts.clone().goIndex(found).goIndex(1).getJson();
-            if (Array.isArray(result) && result.length > 0) {
-                return result;
-            } else {
-                throw new Error("getLineContext: invalid context found in store");
-            }
-        }
+        contexts.goIndex(index);
+        return contexts.getJson() as Array<string>;
     }
 
     getPositionContext(position: Position, languages: Languages): string {
+        position = position.normalize(this);
         const lineContext = this.getLineContext(position.row);
         const lineText = this.getLine(position.row);
+
         const tokenization = languages.tokenize(
             lineText, lineContext, new Position(position.row, 0), true
         );
@@ -240,7 +235,7 @@ export class DocumentNavigator extends Navigator {
             return lineContext[lineContext.length - 1];
         }
         else {
-            return tokenization[found].context;
+            return tokenization.tokens[found].context;
         }
     }
 
@@ -291,55 +286,6 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
-    private _getContextChange(contextIndex: number): number {
-        return this.clone().goKey("contexts").goIndex(contextIndex).goIndex(0).getNumber();
-    }
-
-    private _getContextContent(contextIndex: number): Array<string> {
-        return this.clone().goKey("contexts").goIndex(contextIndex)
-                .goIndex(1).getJson() as Array<string>;
-    }
-
-    _setLineContext(first: number, last: number, context: Array<string>): DocumentNavigator {
-        if (first < 0 || last < first || this.getLineCount() < last) {
-            throw new Error("_setLineContext: line indices invalid or out of range");
-        }
-        
-        const contexts = this.clone().goKey("contexts");
-        const length = contexts.getLength();
-        
-        let foundLeft = binarySearchSparse(0, length, first, (x) => this._getContextChange(x));
-        let foundRight = binarySearchSparse(0, length, last, (x) => this._getContextChange(x));
-
-        let matchLeft = foundLeft >= 0 && this._getContextChange(foundLeft) === first;
-        let matchRight = foundRight >= 0 && this._getContextChange(foundRight) === last;
-        
-        let toInsert = [];
-
-        if ((foundLeft === -1 && !arrayEquals(this.getBaseContext(), context)
-            || (foundLeft >= 0 && !arrayEquals(this._getContextContent(foundLeft), context))))
-        {
-            toInsert.push([first, context]);
-        }
-
-        if (last < this.getLineCount() - 1 
-            && (foundRight >= length 
-                || contexts.clone().goIndex(foundRight).goIndex(0).getNumber() !== last))
-        {
-            toInsert.push([last + 1, this.getLineContext(last + 1)]);
-        }
-        
-        let removeLeft = matchLeft ? foundLeft : foundLeft + 1;
-        let removeRight = matchRight ? foundRight + 1 : foundRight;
-
-        if (removeLeft < removeRight) {
-            contexts.removeItems(removeLeft, removeRight);
-        }
-        contexts.insertItems(removeLeft, toInsert);
-        
-        return this;
-    } 
-
     newAnchor(name: string, anchor: Anchor): void {
         let nav = this.clone().goKey("anchors");
         if (nav.hasKey(name)) {
@@ -351,6 +297,37 @@ export class DocumentNavigator extends Navigator {
             column: anchor.position.column,
             fixed: anchor.fixed
         });
+    }
+
+    // Lines [firstLine, lastLine) were modified.
+    // Assuming firstLine is still STARTING at the same context,
+    // update up to and including lastLine (if it exists)
+    // and keep going if necessary until all contexts are updated
+    protected _updateContexts(firstLine: number, lastLine: number) {
+        
+        let lineStartContext = this.app.languages.tokenize(
+            this.getLine(firstLine), this.getLineContext(firstLine),
+            new Position(firstLine, 0), false
+        ).finalContextStack;
+
+        let i = firstLine + 1;
+        let length = this.getLineCount();
+
+        while (i < length) {
+            if (i >= lastLine && arrayEquals(lineStartContext, this.getLineContext(i))) {
+                break;
+            }
+
+            this.clone().goKey("contexts").setIndex(i, lineStartContext);
+            lineStartContext = Main.getApp().languages.tokenize(
+                this.getLine(i), lineStartContext,
+                new Position(i, 0), false
+            ).finalContextStack;
+
+            i++;
+        }
+
+        //console.log("_updateContexts [" + firstLine + ", " + lastLine + ") updated to " + (i - 1));
     }
 
     protected _insertUpdateAnchors(pos: Position, lines: Array<string>) {
@@ -375,6 +352,21 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
+    protected _insertUpdateContexts(pos: Position, lines: Array<string>): void {
+        // Resize if appropriate
+        let contexts = this.clone().goKey("contexts");
+
+        if (lines.length > 1) {
+            let toInsert = [];
+            for (let i = 1; i < lines.length; i++) {
+                toInsert.push(null);
+            }
+            contexts.insertItems(pos.row + 1, toInsert);    
+        }
+
+        this._updateContexts(pos.row, pos.row + lines.length);
+    }
+
     insertAt(text: string, position: Position): DocumentNavigator {
         const linesToInsert = splitIntoLines(text);
         const pos = position.normalize(this);
@@ -393,6 +385,8 @@ export class DocumentNavigator extends Navigator {
         }
 
         this._insertUpdateAnchors(pos, linesToInsert);
+        this._insertUpdateContexts(pos, linesToInsert);
+
         return this;
     }
 
@@ -409,7 +403,7 @@ export class DocumentNavigator extends Navigator {
         if (lockMark) {
             this.setMark(anchorIndex, mark.position);
         }
-        
+
         return result;
     }
 
@@ -437,6 +431,17 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
+    protected _removeUpdateContexts(left: Position, right: Position): void {
+        // Resize if appropriate
+        let contexts = this.clone().goKey("contexts");
+
+        if (right.row > left.row) {
+            contexts.removeItems(left.row + 1, right.row + 1);    
+        }
+
+        this._updateContexts(left.row, left.row + 1);
+    }
+
     removeAt(p1: Position, p2: Position): DocumentNavigator {
         let [left, right] = Position.orderNormalize(p1, p2, this);
         
@@ -449,7 +454,16 @@ export class DocumentNavigator extends Navigator {
         
         this.clone().goKey("lines").goIndex(left.row).setString(before + after);
         this._removeUpdateAnchors(left, right);
+        this._removeUpdateContexts(left, right);
+
         return this;
+    }
+
+    remove(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getAnchor("cursor_" + anchorIndex);
+        let mark = this.getAnchor("mark_" + anchorIndex);
+            
+        return this.removeAt(cursor.position, mark.position);
     }
 }
 
@@ -472,7 +486,7 @@ export class Model {
             activeWindow: 0
         });
         
-        this.documents = this.store.getSpecialNavigator(DocumentsNavigator, ["documents"]);
+        this.documents = new DocumentsNavigator(this.store.getNavigator(), this.app);
         this.subscriptions = new SubscriptionsNavigator(this.store.getNavigator());
         this.project = this.store.getNavigator().goKey("project");
     }

@@ -3,6 +3,7 @@
 
 import { DocumentNavigator } from "./model";
 
+export const INSERTION_POINT = "▢";
 
 export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";

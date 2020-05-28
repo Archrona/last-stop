@@ -1,6 +1,7 @@
 import { Store, Navigator, DataType, PathComponent } from "./store";
 import { Position, splitIntoLines, binarySearchSparse, arrayEquals } from "./shared";
 import { Languages } from "./language";
+import { Main } from "./main";
 
 export class Anchor {
     constructor(public position: Position, public fixed: boolean) {
@@ -190,6 +191,14 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
+    getAnchorContext(anchor: string, languages: Languages): string {
+        return this.getPositionContext(this.getAnchor(anchor).position, languages);
+    }
+
+    getCursorContext(anchorIndex: number, languages: Languages): string {
+        return this.getAnchorContext("cursor_" + anchorIndex, languages);
+    }
+
     setLine(index: number, text: string): void {
         this.clone().goKey("lines").goIndex(index).setString(text);
     }
@@ -252,14 +261,10 @@ export class DocumentNavigator extends Navigator {
         let matchLeft = foundLeft >= 0 && this._getContextChange(foundLeft) === first;
         let matchRight = foundRight >= 0 && this._getContextChange(foundRight) === last;
         
-        console.log(contexts.getJson());
-        console.log(foundLeft + " --- " + foundRight + "   (" + matchLeft + ", " + matchRight + ")");
-
         let toInsert = [];
 
         if ((foundLeft === -1 && !arrayEquals(this.getBaseContext(), context)
-            || (foundLeft >= 0 && !arrayEquals(contexts.clone().goIndex(foundLeft)
-                                    , context))))
+            || (foundLeft >= 0 && !arrayEquals(this._getContextContent(foundLeft), context))))
         {
             toInsert.push([first, context]);
         }
@@ -390,26 +395,63 @@ export class DocumentNavigator extends Navigator {
 }
 
 export class Model {
+    app: Main;
     store: Store;
     documents: DocumentsNavigator;
     subscriptions: SubscriptionsNavigator;
-    views: Navigator;
     project: Navigator;
     
-    constructor() {
+    constructor(app: Main) {
+        this.app = app;
+
         this.store = new Store({
             documents: { },
             subscriptions: { },
-            views: { },
             project: {
-                basePath: process.cwd()
-            }
+                basePath: process.cwd(),
+            },
+            activeWindow: 0
         });
         
         this.documents = this.store.getSpecialNavigator(DocumentsNavigator, ["documents"]);
         this.subscriptions = new SubscriptionsNavigator(this.store.getNavigator());
-        this.views = this.store.getNavigator().goKey("views");
         this.project = this.store.getNavigator().goKey("project");
     }
 
+    getActiveWindow(): number {
+        return this.store.getNavigator().goKey("activeWindow").getNumber();
+    }
+
+    setActiveWindow(index: number): void {
+        this.store.getNavigator().goKey("activeWindow").setNumber(index);
+    }
+
+    getWindowContext(window: number): string {
+        let sub = this.subscriptions.get(window);
+        let parts = sub.split("@");
+
+        if (parts[0] === "doc") {
+            let name = parts[1];
+            let anchorIndex = parseInt(parts[2]);
+            
+            if (name === undefined || name.length < 0 || typeof anchorIndex !== "number") {
+                throw new Error("Can't get context for malformed document subscription");
+            }
+
+            let doc = this.documents.get(name);
+            return doc.getCursorContext(anchorIndex, this.app.languages);
+        } else {
+            return "basic";
+        }
+    }
+
+    getCurrentContext(): string {
+        let window = this.getActiveWindow();
+
+        if (window === null) {
+            return "basic";
+        } else {
+            return this.getWindowContext(window);
+        }
+    }
 }

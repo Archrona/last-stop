@@ -22,7 +22,9 @@ interface LanguageContext {
     extensions: Array<string>,
     tokens: Array<TokenContext>,
     commands: Array<string>,
-    contextChanges: Array<ContextChange>
+    contextChanges: Array<ContextChange>,
+    rawInput: boolean,
+    defaultCasing: string
 }
 
 export class TokenizeResult {

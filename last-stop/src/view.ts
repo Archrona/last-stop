@@ -2,7 +2,7 @@
 //   Windows and the overall View.
 
 import { BrowserWindow } from 'electron';
-import { getRGB, DrawableText, InputMode } from "./shared";
+import { getRGB, DrawableText } from "./shared";
 import { Main } from "./main";
 import { renderSubscription } from "./subscription";
 
@@ -19,7 +19,7 @@ const THEME = {
     token_5: getRGB(0, 128, 0),
 
     anchor_cursor: getRGB(255, 60, 255),
-    anchor_mark: getRGB(255, 60, 150),
+    anchor_mark: getRGB(255, 60, 150), 
     selection: getRGB(20, 40, 80),
  
     accent_keyword: getRGB(255, 150, 190),
@@ -157,16 +157,7 @@ export class View {
     }
 
     getModeAccent() {
-        const mode = this.app.mode;
-        if (mode === InputMode.Direct) {
-            return this.getColor("window_direct_mode_accent");
-        }
-        else if (mode === InputMode.Speech) {
-            return this.getColor("window_speech_mode_accent");
-        }
-        else {
-            return this.getColor("error");
-        }
+        this.getColor("window_speech_mode_accent");
     } 
 
     getColor(name: string) {

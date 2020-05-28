@@ -1,20 +1,22 @@
-// commands.ts
-//   Processes speech to modify state.
 
-import * as fs from "fs";
+// Commands consist of a sequence of tokens
+// Tokens may be:
+//    A literal string ("if", "-", "1")
+//    "$location" (parsed elsewhere - ex. "13.5", "all of 100", "left margin")
+//    "$identifier" (parsed elsewhere - ex. "tower pick 134 hello there")
+//    "$please" (parsed elsewhere - ex. "blah blah 145 if blah please")
+
 import { Main } from "./main";
-import { Position } from "./shared";
-import { Token, TokenIterator } from "./language";
- 
-const COMMANDS_FILENAME = "commands.json";
+import * as fs from "fs";
+import { Executor, EXECUTORS } from "./speech";
 
-type Terminal = (app: Main, arg: Array<string>) => void;
+const COMMANDS_FILENAME = "commands.json";
 
 interface CommandType {
     spoken: Array<string>,
-    special?: string,
+    run?: string,
     insert?: string,
-    identifierCommand?: string
+    arguments?: Array<string>
 }
  
 interface CommandGroupType {
@@ -22,147 +24,118 @@ interface CommandGroupType {
     commands: Array<CommandType>
 }
 
-type CommandsFileType = Array<CommandGroupType>;
+type CommandsFile = Array<CommandGroupType>;
 
 
 
- 
-class TreeNode {
-    commandReached: null | Terminal;
-    children: Map<string, TreeNode>;
-    
-    constructor() {
-        this.commandReached = null;
-        this.children = new Map();
+export class Command {
+    tokens: Array<string>;
+    command: Executor;
+    args: Array<string>;
+
+    constructor(tokens: Array<string>, command: Executor, args: Array<string>) {
+        this.tokens = tokens;
+        this.command = command;
+        this.args = args;
     }
-    
-    setCommand(command: Terminal) {
-        this.commandReached = command;
-        return this;
-    }
-    
-    private addChild(word: string) {
-        const node = new TreeNode();
-        this.children.set(word, node);
-        return node; 
-    }
-    
-    addTerminalAtPath(words: Array<string>, command: Terminal) {
-        if (words.length === 0) {
-            this.setCommand(command);
-            return true;
-        }
-        else {
-            const word = words[0];
-            const rest = words.slice(1);
-            if (!this.children.has(word)) {
-                this.addChild(word);
-            }
-
-            return this.children.get(word).addTerminalAtPath(rest, command);
-        }
-    }
-
-    find(words: Array<string>, startingIndex: number = 0): null | Terminal {
-        if (startingIndex >= words.length) {
-            return this.commandReached;
-        }
-        else if (false) {
-            // TODO: handle specials like $POSITION
-            
-        }
-        else {
-            const child = this.children.get(words[startingIndex]);
-            if (child !== undefined) {
-                return child.find(words, startingIndex + 1);
-            }
-        }
-        
-        return null;
-    }  
 }
 
 
-export class Commands {
-    specialCommands: Map<string, Terminal>;
-    contextTrees: Map<string, TreeNode>;
-    app: Main;
+export class CommandList {
+    // Grouped by first token, which is always a literal word
+    commandIndex: Map<string, Array<Command>>;
 
-    constructor(app: Main) {
-        this.app = app;
+    constructor(app: Main, context: string, commands: CommandsFile) {
+        this.commandIndex = new Map<string, Array<Command>>();
 
-        const commands = JSON.parse(fs.readFileSync(COMMANDS_FILENAME).toString()) as CommandsFileType;
-        const contexts = app.languages.contexts;
-        this.contextTrees = new Map();
-
-        for (const [contextName, info] of contexts) {
-            const root = this.buildCommandTree(commands, info.commands);
-            this.contextTrees.set(contextName, root);
-        }
-    }
-    
-    makeTerminal(command: CommandType) {
-        if (command.special !== undefined) {
-            return (app: Main, arg: Array<string>) => {
-                console.log("special " + command.special);
-            }
-        }
-        else if (command.insert !== undefined) {
-            return (app: Main, arg: Array<string>) => {
-                console.log("insert " + command.insert);
-            }
-        }
-        else if (command.identifierCommand !== undefined) {
-            return (app: Main, arg: Array<string>) => {
-                console.log("identifierCommand " + command.identifierCommand);
-            }
-        }
-        else {
-            throw "invalid command " + command.spoken.toString() + " (makeTerminal: 1)" 
-        }        
-    }
-
-    // TODO create hash table for unnecessary linear search through groups
-    buildCommandTree(commands: CommandsFileType, groups: Array<string>) {
-        const root = new TreeNode();
-
-        for (const groupName of groups) {
+        const ctx = app.languages.contexts.get(context);
+        
+        for (const groupName of ctx.commands) {
             for (const commandGroup of commands) {
                 if (commandGroup.group === groupName) {
                     for (const command of commandGroup.commands) {
-                        const terminal = this.makeTerminal(command);
-                        for (const spoken of command.spoken) {
-                            const words = spoken.trim().split(/\s+/);
-                            if (words.length >= 1) {
-                                root.addTerminalAtPath(words, terminal);
-                            }
-                        }
+                        this._addCommand(command);
                     }
                 }
             }
         }
 
-        return root;
+        let keys = Array.from(this.commandIndex.keys());
+        for (const k of keys) {
+            this.commandIndex.set(k, this.commandIndex.get(k).sort((a, b) => {
+                return b.tokens.length - a.tokens.length;
+            }));
+        }
     }
 
-    onSpokenText(input: string) {
-        console.log("TEXT: \"" + input + "\"");
+    private _addCommand(c: CommandType): void {
+        for (const spoken of c.spoken) {
+            const words = spoken.trim().toLowerCase().split(/\s+/);
 
-        let iterator = new TokenIterator(this.app.languages.tokenize(
-            input, ["spoken_text"], new Position(0, 0), true
-        ).tokens, true);
-        
-        while (iterator.valid()) {
-            console.log(iterator.get());
-            iterator.shift();
+            if (words.length <= 0) {
+                throw new Error("Found empty command, can't parse");
+            }
+
+            let command: Command;
+            if (c.run !== undefined) {
+                let ex = EXECUTORS[c.run];
+                if (ex === undefined) {
+                    throw new Error("Could not find run command " + c.run);
+                }
+
+                let args = c.arguments;
+                if (args === undefined) {
+                    args = [];
+                }
+
+                command = new Command(words, ex, args);
+            }
+            else {
+                let ins = c.insert;
+                if (ins === undefined) {
+                    throw new Error("Could not find insert for " + spoken);
+                }
+
+                let args = [ins];
+                for (const w of words) {
+                    if (w[0] === "$") {
+                        args.push("$" + (args.length));
+                    }
+                }
+
+                command = new Command(words, EXECUTORS.insert, args);
+            }
+
+            const first = words[0];
+            if (this.commandIndex.has(first)) {
+                this.commandIndex.get(first).push(command);
+            } else {
+                this.commandIndex.set(first, [command]);
+            }
         }
- 
-        iterator.reset(true);
-        while (iterator.valid()) {
-            console.log(iterator.get());
-            iterator.shift();
+    }
+}
+
+
+export class Commands {
+    app: Main;
+    languages: Map<string, CommandList>
+    commandsFile: CommandsFile
+
+    constructor(app: Main) {
+        this.app = app;
+
+        this.commandsFile = 
+            JSON.parse(fs.readFileSync(COMMANDS_FILENAME).toString()) as CommandsFile;
+
+        const contexts = app.languages.contexts;
+
+        this.languages = new Map();
+
+        for (const [contextName, ctx] of contexts) {
+            this.languages.set(contextName,
+                new CommandList(app, contextName, this.commandsFile));
         }
- 
-        
-    } 
+    }
+
 }

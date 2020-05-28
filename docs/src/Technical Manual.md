@@ -4,6 +4,12 @@
 
 ### 
 
+Expressions
+
+  - Number
+  - Text
+  - White
+
 Values
 
   - Number(n)
@@ -20,11 +26,14 @@ Parse
 with rules
 
     flat Text/V             -> special("flat", V)
+    tower Text/V            -> special("tower", V)
     pick Number/N Text/V    -> special("pick", N, V)
     Number/N                -> special("to_text", N)
+    White/W                 -> special("white", W)
 
+Expression
 
-    
+    flat/T _/W tower/
 
 Spoken word is applied to the state `S` as follows:
 

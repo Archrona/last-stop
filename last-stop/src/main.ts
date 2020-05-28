@@ -5,38 +5,45 @@ import { View } from "./view";
 import { Model } from "./model";
 import { Languages } from "./language";
 import { ipcMain } from 'electron';
-import { listsContainSameElements, InputMode, Position } from "./shared";
+import { listsContainSameElements, Position } from "./shared";
 import { ConsoleServer } from "./console_server";
 import { Commands } from "./commands";
 
-
 export class Main {
+    headless: boolean;
     languages: Languages;
     view: View;
     model: Model;
     consoleServer: ConsoleServer;
-    mode: InputMode;
     commands: Commands;
  
-    constructor() {
-        this.registerCallbacks();
+    constructor(headless: boolean = false) {
+        this.headless = headless;
 
-        this.mode = InputMode.Speech;
+        if (!headless)
+            this.registerCallbacks();
+
         this.languages = new Languages();
-
         this.commands = new Commands(this);
+  
+        this.model = new Model(this);
 
-        this.model = new Model();
-        this.view = new View(this);
+        if (!headless) {
+            this.view = new View(this);
 
-        let doc = this.model.documents.add("scratchpad", "basic");
-        doc.insert(0, "Hello world!\n\nThis is a test\nOf the emergency broadcasting system :D");
-        doc.setCursor(0, new Position(0, 2));
-        doc.setMark(0, new Position(2, 5));
+            let doc = this.model.documents.add("scratchpad", "basic");
+            doc.insert(0, "Hello world!\n\nThis is a test\nOf the emergency broadcasting system :D");
+            doc.setCursor(0, new Position(0, 2));
+            doc.setMark(0, new Position(2, 5));
 
-        this.model.subscriptions.set(11, "doc@scratchpad@0");
-        
-        this.consoleServer = new ConsoleServer(this);
+            this.model.subscriptions.set(11, "doc@scratchpad@0");
+            this.model.setActiveWindow(11);
+
+            
+        }
+
+        if (!headless)
+            this.consoleServer = new ConsoleServer(this);
     }
 
     registerCallbacks() {

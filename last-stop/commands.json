@@ -1,98 +1,43 @@
 [
     {
         "group": "universal",
+        
         "commands": [
             {
                 "spoken": ["skip"],
-                "special": "SkipOnceCommand"
+                "run": "skip",
+                "arguments": ["1"]
             },
             {
                 "spoken": ["jump"],
-                "special": "SkipTwiceCommand"
+                "run": "skip",
+                "arguments": ["2"]
             },
             {
-                "spoken": ["hurdle", "leap"],
-                "special": "SkipThriceCommand"
+                "spoken": ["leap", "hurdle"],
+                "run": "skip",
+                "arguments": ["3"]
             },
             {
-                "spoken": ["wrap up", "rap up"],
-                "special": "ClearInsertionPointsCommand"
+                "spoken": ["go $position"],
+                "run": "go",
+                "arguments": ["$1"]
             },
             {
-                "spoken": ["go $POSITION", "go to $POSITION"],
-                "special": "GoCommand"
-            }  
-        ]
-    },
-
-    {
-        "group": "standard_grouping",
-        "commands": [
-            {
-                "spoken": ["call"],
-                "insert": "$/() $_"
+                "spoken": ["below", "is below", "less than", "is less than"],
+                "insert": "<"
             },
             {
-                "spoken": ["of"],
-                "insert": "$/($_) $_"
-            },
-            {
-                "spoken": ["group"],
-                "insert": "($_) $_"
-            }
-        ]
-    },
-
-    {
-        "group": "identifiers",
-        "commands": [
-            {
-                "spoken": ["flat"],
-                "identifierCommand": "FlatCasing"
-            },
-            {
-                "spoken": ["snake"],
-                "identifierCommand": "SnakeCasing"
-            },
-            {
-                "spoken": ["camel"],
-                "identifierCommand": "CamelCasing"
-            },
-            {
-                "spoken": ["big", "huge"],
-                "identifierCommand": "TypeCasing"
-            }
-        ]
-    },
-
-    {
-        "group": "numbers",
-        "commands": [
-            {
-                "spoken": ["one", "won"],
-                "insert": "1"
-            },
-            {
-                "spoken": ["two", "too"],
-                "insert": "2"
-            }
-        ]
-    },
-
-    {
-        "group": "standard_operators",
-        "commands": [
-            {
-                "spoken": ["+", "plus", "added to"],
+                "spoken": ["plus", "plus equals"],
                 "insert": "+"
             },
             {
-                "spoken": ["-", "minas", "minus"],
-                "insert": "-"
+                "spoken": ["group"],
+                "insert": "($_)"
             },
             {
-                "spoken": ["negate", "negative"],
-                "insert": "-$/"
+                "spoken": ["iterate $identifier"],
+                "insert": "for (let $1 = 0; $1 < $_; $1++) {$u$_$d}$n"
             }
         ]
     }

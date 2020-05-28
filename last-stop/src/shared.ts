@@ -3,10 +3,6 @@
 
 import { DocumentNavigator } from "./model";
 
-export enum InputMode {
-    Speech,
-    Direct
-}
 
 export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";

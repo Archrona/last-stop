@@ -4,7 +4,7 @@ import { Main } from "../src/main";
 import { Position, binarySearchSparse } from "../src/shared";
 
 test("model constructor, empty doc", t => {
-    let model = new Model();
+    let model = new Main(true).model;
 
     let d = model.documents.add("scratchpad", "basic", null);
     t.is(d.node, model.documents.get("scratchpad").node);
@@ -17,7 +17,7 @@ test("model constructor, empty doc", t => {
 });
 
 test("doc write", t => {
-    let model = new Model();
+    let model = new Main(true).model;
     let d = model.documents.add("scratchpad", "basic", null);
 
     d.setCheckpoint();
@@ -45,7 +45,7 @@ test("doc write", t => {
 });
 
 test("doc insert", t => {
-    let model = new Model();
+    let model = new Main(true).model;
     let d = model.documents.add("scratchpad", "basic", null);
 
     d.insert(0, "Hello!");
@@ -64,7 +64,7 @@ test("doc insert", t => {
 })
 
 test("document remove/cursor replace", t => {
-    let model = new Model();
+    let model = new Main(true).model;
     let document = model.documents.add("scratchpad", "basic", null);
     
     document.insert(0, "Testing\n345\n\nFish");
@@ -75,7 +75,6 @@ test("document remove/cursor replace", t => {
     t.is(document.getText(), "Te45\n\nFish");
     t.deepEqual(document.getAnchor("cursor_0").position, new Position(2, 4));
     t.deepEqual(document.getAnchor("test").position, new Position(2, 3));
-    t.log(document.getAnchor("test_2").position);
     t.deepEqual(document.getAnchor("test_2").position, new Position(0, 4));
     
     document.setCursor(0, new Position(0, 2));
@@ -91,7 +90,7 @@ test("document remove/cursor replace", t => {
 });
 
 test("can get line context", t => {
-    let model = new Model();
+    let model = new Main(true).model;
     let document = model.documents.add("scratchpad", "basic", null);
     
     t.deepEqual(document.getLineContext(0), ["basic"]);
@@ -132,7 +131,7 @@ test("can get line context", t => {
 });
 
 test.failing("can set line context", t => {
-    let model = new Model();
+    let model = new Main(true).model;
     let document = model.documents.add("scratchpad", "basic", null);
     document.insert(0, "\n\n\n\n\n\n\n\n\n");
 

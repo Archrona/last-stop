@@ -21,7 +21,9 @@
             }
         ],
         "commands": [],
-        "contextChanges": []
+        "contextChanges": [],
+        "rawInput": true,
+        "defaultCasing": "raw"
     },
     {
         "name": "basic",
@@ -65,8 +67,7 @@
             }
         ],
         "commands": [
-            "universal", "standard_grouping", "identifiers", "numbers",
-            "standard_operators"
+            "universal"
         ],
         "contextChanges": [
             {
@@ -75,7 +76,9 @@
                 "target": "double_quoted_string",
                 "style": "string_delimiter"
             }
-        ]
+        ],
+        "rawInput": false,
+        "defaultCasing": "camel"
     },
     {
         "name": "double_quoted_string",
@@ -111,6 +114,8 @@
                 "action": "pop",
                 "style": "string_delimiter"
             }
-        ]
+        ],
+        "rawInput": true,
+        "defaultCasing": "raw"
     }
 ]

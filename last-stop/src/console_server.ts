@@ -30,7 +30,9 @@ export class ConsoleServer {
         this.expressServer.post("/", (request, response) => {
             if (request.body.text !== undefined) {
                 const spokenText = request.body.text.toString();
-                app.commands.onSpokenText(spokenText);
+
+                // TODO PATCH IN
+                //app.commands.onSpokenText(spokenText);
             }
              
             response.send("ok");

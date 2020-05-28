@@ -4,6 +4,10 @@
         
         "commands": [
             {
+                "spoken": ["stop"],
+                "run": "nop"
+            },
+            {
                 "spoken": ["skip"],
                 "run": "skip",
                 "arguments": ["1"]

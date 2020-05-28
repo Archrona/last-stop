@@ -3,11 +3,12 @@
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
 import { Position } from "./shared";
-import { Model } from "./model";
+import { Model, DocumentNavigator } from "./model";
 import { CommandList, Command } from "./commands";
 
+export const INSERTION_POINT = "▢";
 
-export type Executor = (model: Model, args: Array<any>) => void;
+export type Executor = (model: Model, args: Array<any>) => void
 
 export const EXECUTORS = {
     nop: (model: Model, args: Array<any>) => {
@@ -23,11 +24,15 @@ export const EXECUTORS = {
     },
 
     insert: (model: Model, args: Array<any>) => {
-        
+        model.doActiveDocument((doc, ai) => {
+            doc.insert(ai, args[0]);
+        })
     },
 
     insertExact: (model: Model, args: Array<any>) => {
-        
+        model.doActiveDocument((doc, ai) => {
+            doc.insert(ai, args[0]);
+        })
     },
 }
 
@@ -296,6 +301,12 @@ export class Speech {
             
             const lower = this.tokens[j].text.toLowerCase();
 
+            if (this.tokens[j].type === "punctuation") break;
+            if (this.tokens[j].type === "white") {
+                j++;
+                continue;
+            }
+
             // Break if possibly command.
             // First word is exempt. Always interpret as identifier.
             if (j > i && cmdList.commandIndex.has(lower)) {
@@ -344,7 +355,7 @@ export class Speech {
             }
 
             // Well, it's got to be an identifier now!
-            identifier = casing.append(identifier, word);
+            identifier = casing.append(identifier, this.tokens[j].text);
             j++;
         }
         
@@ -386,7 +397,7 @@ export class Speech {
             
             if (exec.executor !== EXECUTORS.nop)
                 this.executed.push(exec);
-                
+
             
             i += exec.length;
         }

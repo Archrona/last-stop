@@ -9,6 +9,31 @@ export class Anchor {
     }
 }
 
+export abstract class Subscription {
+    constructor(public type: string) { }
+}
+
+export class DocumentSubscription extends Subscription {
+    document: string;
+    anchorIndex: number;
+
+    constructor(document: string, anchorIndex: number) {
+        super("doc");
+        this.document = document;
+        this.anchorIndex = anchorIndex;
+    }
+}
+
+export class LineSubscription extends Subscription {
+    line: number;
+
+    constructor(type: string, line: number) {
+        super(type);
+        this.line = line;
+    }
+}
+
+
 export class SubscriptionsNavigator extends Navigator {
     constructor(base: Navigator) {
         super(base.store, base.age, base.path.concat("subscriptions"));
@@ -23,6 +48,34 @@ export class SubscriptionsNavigator extends Navigator {
         return this.clone().goKey(windowId.toString()).getString();
     }
     
+    getDetails(windowId: number): Subscription {
+        let str = this.get(windowId);
+
+        let parts = str.trim().split("@");
+        if (parts.length <= 0) {
+            throw new Error("Empty subscription on window " + windowId);
+        }
+
+        switch (parts[0]) {
+            case "doc": 
+                if (parts.length <= 2 || parts[1].length <= 0 || !/^\d+$/.test(parts[2])) {
+                    throw new Error("Invalid doc subscription");
+                }   
+                return new DocumentSubscription(parts[1], parseInt(parts[2]));
+
+            case "project":
+            case "documents":
+            case "imagination":
+                if (parts.length <= 1 || !/^\d+$/.test(parts[1])) {
+                    throw new Error("Invalid " + parts[0] + " subscription");
+                }
+                return new LineSubscription(parts[0], parseInt(parts[1]));
+
+            default:
+                throw new Error("Invalid subscription type " + parts[0]);
+        }
+    }
+
     remove(windowId: number): SubscriptionsNavigator {
         this.clearKey(windowId.toString());
         return this;
@@ -343,7 +396,7 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
-    insert(anchorIndex: number, text: string): DocumentNavigator {
+    insert(anchorIndex: number, text: string, lockMark: boolean = false): DocumentNavigator {
         let cursor = this.getAnchor("cursor_" + anchorIndex);
         let mark = this.getAnchor("mark_" + anchorIndex);
 
@@ -351,7 +404,13 @@ export class DocumentNavigator extends Navigator {
             this.removeAt(cursor.position, mark.position);
         }
  
-        return this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position);
+        let result = this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position);
+
+        if (lockMark) {
+            this.setMark(anchorIndex, mark.position);
+        }
+        
+        return result;
     }
 
 
@@ -424,6 +483,26 @@ export class Model {
 
     setActiveWindow(index: number): void {
         this.store.getNavigator().goKey("activeWindow").setNumber(index);
+    }
+
+    getActiveDocument(): [DocumentNavigator, number] | null {
+        let info = this.subscriptions.getDetails(this.getActiveWindow());
+
+        if (info instanceof DocumentSubscription) {
+            const docName = (info as DocumentSubscription).document;
+            if (this.documents.hasKey(docName)) {
+                return [this.documents.get(docName), (info as DocumentSubscription).anchorIndex];
+            }
+        }
+
+        return null;
+    }
+    
+    doActiveDocument(callback: (doc: DocumentNavigator, anchorIndex: number) => void) {
+        let doc: [DocumentNavigator, number];
+        if ((doc = this.getActiveDocument()) !== null) {
+            callback(doc[0], doc[1]);
+        }
     }
 
     getWindowContext(window: number): string {

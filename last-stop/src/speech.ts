@@ -208,6 +208,9 @@ export class Speech {
         return new Executed(i, length, executor, args, undoIndex, context);
     }
 
+
+
+    
     private runMaybeCommand(i: number, context: string, cmd: Command): Executed {
         const matched = [];
 

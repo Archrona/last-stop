@@ -8,34 +8,68 @@
         <div class="container">
             <h1>Technical Manual</h1>
 <h2>Command Parsing</h2>
-<p>Spoken word is applied to the state <code>S</code> as follows:</p>
-<ul>
-<li>Acquire a new spoken word string <code>SW</code>.</li>
-<li>Apply the lexing function <code>L(SW) = TS</code> to generate token stream <code>TS</code>.
-<ul>
-<li>Tokens consist of a <code>tag</code> and a <code>text</code>.</li>
-<li>Tags are initially set by the lexer to <code>white</code>, <code>identifier</code>, <code>number</code>, <code>punctuation</code>.</li>
-</ul>
-</li>
-<li>Let <code>I = 0</code>.</li>
-<li>While <code>I &lt; TS.length</code>:
-<ul>
-<li>Let <code>CTX</code> equal the current context in state <code>S</code>.</li>
-<li>Let <code>CMDS</code> equal the list of active commands of <code>CTX</code>.</li>
-<li>For each command <code>C</code> of <code>CMDS</code>:
-<ul>
-<li>Attempt to match <code>C</code> with tokens starting at <code>TS[I]</code></li>
-<li>Keep track of longest match found</li>
-</ul>
-</li>
-<li>If no matches found:
-<ul>
-<li>Process the current token as an identifier.</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
+<p>Command special parses:</p>
+<table>
+<thead>
+<tr>
+<th>Parse</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$position</code></td>
+<td>A position somewhere in the editor.</td>
+</tr>
+<tr>
+<td><code>$identifier</code></td>
+<td>The name of a thing.</td>
+</tr>
+</tbody>
+</table>
+<p>Insert escapes:</p>
+<table>
+<thead>
+<tr>
+<th>Escape</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$n</code></td>
+<td>Hit enter and match indentation.</td>
+</tr>
+<tr>
+<td><code>$u</code></td>
+<td>Hit enter, indent up 1.</td>
+</tr>
+<tr>
+<td><code>$d</code></td>
+<td>Hit enter, indent down 1.</td>
+</tr>
+<tr>
+<td><code>$t</code></td>
+<td>Hit tab.</td>
+</tr>
+<tr>
+<td><code>$$</code></td>
+<td>Type <code>$</code>.</td>
+</tr>
+<tr>
+<td><code>$_</code></td>
+<td>Insertion point.</td>
+</tr>
+<tr>
+<td><code>$1</code></td>
+<td>Substitute first match from command.</td>
+</tr>
+<tr>
+<td><code>$2</code></td>
+<td>Substitute second match from command.</td>
+</tr>
+</tbody>
+</table>
   
         </div>
     </body>

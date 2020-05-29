@@ -14,20 +14,24 @@ function getApp() {
     return app;
 }
 
-test("identifiers", t => {
+test("basic speech, spacing", t => {
     let app = getApp();
     let doc = app.model.getActiveDocument()[0];
 
     doc.insert(0, "if () {");
     doc.setCursor(0, new Position(0, 4));
     doc.setMark(0, new Position(0, 4));
-
     let speech = Speech.execute(app, "  3 is below tower test name [ x . length ( ) ] ");
 
     t.is(doc.getText(), "if (3 < TEST_NAME[x.length()]) {");
 });
 
+test("substitutions", t => {
+    let app = getApp();
+    let doc = app.model.getActiveDocument()[0];
 
+
+});
 
 
 
@@ -35,11 +39,9 @@ test("identifiers", t => {
 
 /* TODOs
 
-  - Figure out what to do with contextual glue
   - Build out command features one by one
-  - Data-drive colors from json file 
+  - Data-drive colors from json file
   - Get scratchpad working completely minus all of the project/etc features
   - Get project/filesystem shit working
   
 */
- 

@@ -1,4 +1,4 @@
-import { getRGB, binarySearchSparse, splitIntoLines, listsContainSameElements, arrayEquals } from "../src/shared";
+import { getRGB, binarySearchSparse, splitIntoLines, listsContainSameElements, arrayEquals, IndentationPolicy } from "../src/shared";
 import test from "ava";
 
 test("getRGB", t => {
@@ -42,3 +42,17 @@ test("sparse binary search", t => {
         }
     }
 });
+
+test("whitespace policy", t => {
+    t.is(IndentationPolicy.tabs(2).toString(), "Tabs: 2 sp/tab");
+    t.is(IndentationPolicy.spaces(4).toString(), "Spaces: 4");
+
+    t.is(IndentationPolicy.tabs(2).normalize("    grgr asd"), "\t\tgrgr asd");
+    t.is(IndentationPolicy.tabs(4).normalize("    grgr"), "\tgrgr");
+    t.is(IndentationPolicy.tabs(4).normalize("     grgr"), "\t\tgrgr");
+    t.is(IndentationPolicy.spaces(4).normalize("    \tgrgr"), "        grgr");
+    t.is(IndentationPolicy.spaces(2).normalize(" asd"), "  asd");
+    t.is(IndentationPolicy.spaces(4).normalize("   \t  "), "            ");
+});
+
+ 

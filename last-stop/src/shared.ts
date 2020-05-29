@@ -157,3 +157,56 @@ export class DrawableText {
     }
 }
 
+export class IndentationPolicy {
+    useSpaces: boolean;
+    spacesPerTab: number;
+    spacesRe: RegExp;
+    
+    private constructor(useSpaces: boolean, quantity: number) {
+        this.useSpaces = useSpaces;
+        this.spacesPerTab = quantity;
+        this.spacesRe = new RegExp(" ".repeat(this.spacesPerTab), "g");
+    }
+    
+    static tabs(quantity: number): IndentationPolicy {
+        return new IndentationPolicy(false, quantity);
+    }
+    
+    static spaces(quantity: number): IndentationPolicy {
+        return new IndentationPolicy(true, quantity);
+    }
+
+    static splitMarginContent(line: string): [string, string] {
+        let match = line.match(/^(\s*)(.*)$/);
+        let leadingWhite = match[1];
+        let trailingContent = match[2];
+        return [leadingWhite, trailingContent];
+    } 
+
+    toString(): string {
+        if (this.useSpaces) {
+            return "Spaces: " + this.spacesPerTab;
+        }
+        else {
+            return "Tabs: " + this.spacesPerTab + " sp/tab";
+        }
+    }
+
+    normalize(s: string): string {
+        let [leadingWhite, trailingContent] = IndentationPolicy.splitMarginContent(s);
+  
+        if (this.useSpaces) {
+            let result = leadingWhite.replace(/\t/g, " ".repeat(this.spacesPerTab));
+            let remainder = result.length % this.spacesPerTab;
+            if (remainder !== 0) {
+                result += " ".repeat(this.spacesPerTab - remainder);
+            }
+            return result + trailingContent;
+        }
+        else {
+            let result = leadingWhite.replace(this.spacesRe, "\t");
+            return result.replace(/ +/g, "\t") + trailingContent;
+        }
+    }  
+}
+ 

@@ -1,0 +1,30 @@
+{
+    "group": "universal",
+    
+    "commands": [
+        {
+            "spoken": ["stop", "nop"],
+            "run": "nop"
+        },
+        {
+            "spoken": ["step"],
+            "run": "step",
+            "arguments": ["1"]
+        },
+        {
+            "spoken": ["jump"],
+            "run": "step",
+            "arguments": ["2"]
+        },
+        {
+            "spoken": ["leap", "hurdle"],
+            "run": "step",
+            "arguments": ["3"]
+        },
+        {
+            "spoken": ["go $position"],
+            "run": "go",
+            "arguments": ["$1"]
+        }
+    ]
+}

@@ -4,6 +4,7 @@
 import { Position, splitIntoLines } from "./shared";
 import * as fs from "fs";
 import { inspect } from "util";
+import * as glob from "glob";
 
 interface TokenContext {
     type: string,
@@ -63,7 +64,12 @@ export class Languages {
     }
     
     static loadContexts(filename: string) {
-        let data = JSON.parse(fs.readFileSync(filename).toString()) as Array<LanguageContext>;
+        let data = [] as Array<LanguageContext>;
+
+        for (let fn of glob.sync("./contexts/*.json", {})) {
+            data.push(JSON.parse(fs.readFileSync(fn).toString()));
+        }
+
         let result = new Map();
 
         for (const languageData of data) {
@@ -73,13 +79,13 @@ export class Languages {
 
             for (const rule of languageData.spacing) {
                 if (rule.after !== undefined || rule.before !== undefined) {
-                    rule.afterRe = (rule.after ? new RegExp("^(?:" + rule.after + ")", "") : null);
-                    rule.beforeRe = (rule.before ? new RegExp("(?:" + rule.before + ")$", "") : null);
+                    rule.afterRe = (rule.after ? new RegExp("^(?:" + rule.after + ")", "u") : null);
+                    rule.beforeRe = (rule.before ? new RegExp("(?:" + rule.before + ")$", "u") : null);
                     rule.orMode = false;
                     rule.isDefault = false;
                 } else if (rule.either !== undefined) {
-                    rule.afterRe = new RegExp("^(?:" + rule.either + ")");
-                    rule.beforeRe = new RegExp("(?:" + rule.either + ")$");
+                    rule.afterRe = new RegExp("^(?:" + rule.either + ")", "u");
+                    rule.beforeRe = new RegExp("(?:" + rule.either + ")$", "u");
                     rule.orMode = true;
                     rule.isDefault = false;
                 } else {
@@ -135,10 +141,10 @@ export class Languages {
             }
 
             if (!found) {
-                tokens.push(new Token(text[i], pos, "unknown", context));
+                tokens.push(new Token(text[i], pos.clone(), "unknown", context));
                 foundText = text[i];
                 i++;
-                pos.column++;
+                pos.column += 1;
             }
 
             for (const change of lang.contextChanges) {

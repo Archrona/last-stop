@@ -1,0 +1,35 @@
+{
+    "group": "test",
+
+    "commands": [
+        {
+            "spoken": ["below", "is below", "less than", "is less than"],
+            "insert": "<"
+        },
+        {
+            "spoken": ["plus", "plus equals"],
+            "insert": "+"
+        },
+        {
+            "spoken": ["group"],
+            "insert": "($_)"
+        },
+        {
+            "spoken": ["iterate"],
+            "insert": "for (let $_ = 0; $_ < $_; $_++) {$u$_$d}$n"
+        },
+        {
+            "spoken": ["if"],
+            "insert": "if ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["finish"],
+            "run": "insertAtEOL",
+            "arguments": [";$n"]
+        },
+        {
+            "spoken": ["call"],
+            "insert": "$g()"
+        }
+    ]
+}

@@ -6,7 +6,7 @@ test("getRGB", t => {
 })
 
 test("sparse binary search", t => {
-    for (let trials = 0; trials < 100; trials++) {
+    for (let trials = 0; trials < 10; trials++) {
         for (let changes = 0; changes < 10; changes++) {
             let dense = [];
             let sparse = [];
@@ -43,7 +43,7 @@ test("sparse binary search", t => {
     }
 });
 
-test("whitespace policy", t => {
+test("indentation policy", t => {
     t.is(IndentationPolicy.tabs(2).toString(), "Tabs: 2 sp/tab");
     t.is(IndentationPolicy.spaces(4).toString(), "Spaces: 4");
 
@@ -53,6 +53,21 @@ test("whitespace policy", t => {
     t.is(IndentationPolicy.spaces(4).normalize("    \tgrgr"), "        grgr");
     t.is(IndentationPolicy.spaces(2).normalize(" asd"), "  asd");
     t.is(IndentationPolicy.spaces(4).normalize("   \t  "), "            ");
+
+    t.is(IndentationPolicy.spaces(2).indent("    hello"), "      hello");
+    t.is(IndentationPolicy.spaces(4).indent("    hello"), "        hello");
+    t.is(IndentationPolicy.spaces(4).indent("     hello"), "            hello");
+    t.is(IndentationPolicy.spaces(4).indent("   hello", 3), "                hello");
+    t.is(IndentationPolicy.tabs(2).indent("    hello", 2), "\t\t\t\thello");
+
+    t.is(IndentationPolicy.spaces(3).unindent("   hello"), "hello");
+    t.is(IndentationPolicy.spaces(3).unindent("    hello"), "   hello");
+    t.is(IndentationPolicy.spaces(3).unindent("  hello"), "hello");
+    t.is(IndentationPolicy.spaces(3).unindent("      hello", 2), "hello");
+    t.is(IndentationPolicy.spaces(3).unindent("      hello", 200), "hello");
+    t.is(IndentationPolicy.tabs(4).unindent("    \thello"), "\thello");
+    t.is(IndentationPolicy.tabs(4).unindent("\t\t\t\thello", 3), "\thello");
+    t.is(IndentationPolicy.tabs(4).unindent("\t\t\t\thello", 5), "hello");
 });
 
  

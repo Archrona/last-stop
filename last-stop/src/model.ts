@@ -1,7 +1,16 @@
 import { Store, Navigator, DataType, PathComponent } from "./store";
-import { Position, splitIntoLines, binarySearchSparse, arrayEquals } from "./shared";
+import { Position, splitIntoLines, binarySearchSparse, arrayEquals, IndentationPolicy, INSERTION_POINT } from "./shared";
 import { Languages } from "./language";
 import { Main } from "./main";
+import { Speech } from "./speech";
+
+export interface InsertOptions {
+    lockMark?: boolean,
+    enforceSpacing?: boolean,
+    explainSpacing?: boolean,
+    escapes?: boolean,
+    escapeArguments?: Array<string>
+}
 
 export class Anchor {
     constructor(public position: Position, public fixed: boolean) {
@@ -124,11 +133,7 @@ export class DocumentsNavigator extends Navigator {
     }
 }
 
-export interface InsertOptions {
-    lockMark?: boolean,
-    enforceSpacing?: boolean,
-    explainSpacing?: boolean
-}
+
 
 export class DocumentNavigator extends Navigator {
     app: Main;
@@ -253,6 +258,60 @@ export class DocumentNavigator extends Navigator {
         return this.getAnchorContext("cursor_" + anchorIndex, languages);
     }
 
+    getIndentationPolicy(): IndentationPolicy {
+        // TODO
+        // TODO
+        // TODO
+
+        return IndentationPolicy.spaces(4);
+    }
+
+    getSelection(anchorIndex: number): string {
+        return this.getRange(this.getCursor(anchorIndex), this.getMark(anchorIndex));
+    }
+
+    findInRange(s: string, p1: Position, p2: Position, onlyFirst: boolean = false): Array<Position> {
+        if (s.length <= 0) {
+            throw new Error("findInRange: search string must not be empty");
+        }
+
+        let [left, right] = Position.orderNormalize(p1, p2, this);
+        let nav = this.clone().goKey("lines").goIndex(left.row);
+        let result = [];
+
+        for (let line = left.row; line <= right.row; line++, nav.goNextSibling()) {
+            let text = nav.getString();
+
+            let margin = (line === left.row ? left.column : 0);
+            let inScope = text.substring(
+                line === left.row ? left.column : 0,
+                line === right.row ? right.column : undefined
+            );
+
+            let col = inScope.indexOf(s);
+            while (col !== -1) {
+                result.push(new Position(line, margin + col));
+                if (onlyFirst) {
+                    return result;
+                }
+
+                col = inScope.indexOf(s, col + s.length);
+            }
+        }
+
+        return result;
+    }
+
+    findFirstInRange(s: string, p1: Position, p2: Position): Position | null {
+        let result = this.findInRange(s, p1, p2, true);
+
+        if (result.length === 0) {
+            return null;
+        } else {
+            return result[0];
+        }
+    }
+
     setLine(index: number, text: string): void {
         this.clone().goKey("lines").goIndex(index).setString(text);
     }
@@ -284,6 +343,26 @@ export class DocumentNavigator extends Navigator {
     
     setMark(anchorIndex: number, position: Position): DocumentNavigator {
         this.setAnchorPosition("mark_" + anchorIndex, position);
+        return this;
+    }
+
+    setCursorAndMark(anchorIndex: number, position: Position): DocumentNavigator {
+        this.setCursor(anchorIndex, position);
+        this.setMark(anchorIndex, position);
+        return this;
+    }
+
+    setSelection(anchorIndex: number, p1: Position, p2: Position): DocumentNavigator {
+        let [left, right] = Position.orderNormalize(p1, p2, this);
+        this.setMark(anchorIndex, left);
+        this.setCursor(anchorIndex, right);
+        return this;
+    }
+
+    setSelectionEOL(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        cursor.column = this.getLine(cursor.row).length;
+        this.setCursorAndMark(anchorIndex, cursor);
         return this;
     }
     
@@ -325,7 +404,7 @@ export class DocumentNavigator extends Navigator {
             }
 
             this.clone().goKey("contexts").setIndex(i, lineStartContext);
-            lineStartContext = Main.getApp().languages.tokenize(
+            lineStartContext = this.app.languages.tokenize(
                 this.getLine(i), lineStartContext,
                 new Position(i, 0), false
             ).finalContextStack;
@@ -373,8 +452,78 @@ export class DocumentNavigator extends Navigator {
         this._updateContexts(pos.row, pos.row + lines.length);
     }
 
-    insertAt(text: string, position: Position, options: InsertOptions = {}): DocumentNavigator {
+    protected _insertProcessEscapes(text: string, options: InsertOptions, targetLine: string): string {
+        if (options.escapes !== true) {
+            return text;
+        }
         
+        let leading = IndentationPolicy.splitMarginContent(targetLine)[0];
+        let policy = this.getIndentationPolicy();
+        let result = "";
+        let i = 0;
+        
+        while (i < text.length) {
+            if (text[i] === "$" && i + 1 < text.length) {
+                switch (text[i + 1]) {
+                    case "$":
+                        result += "$";
+                        break;
+
+                    case "n":
+                        result += "\n" + leading;
+                        break;
+
+                    case "u":
+                        leading = policy.indent(leading);
+                        result += "\n" + leading;
+                        break;
+
+                    case "d":
+                        leading = policy.unindent(leading);
+                        result += "\n" + leading;
+                        break;
+
+                    case "t":
+                        result += "\t";
+                        break;
+
+                    case "g":
+                        // no-op. glue doesn't output anything
+                        break;
+
+                    case "_":
+                        result += INSERTION_POINT;
+                        break;
+
+                    case "1":
+                    case "2":
+                    case "3":
+                        {
+                            let index = parseInt(text[i + 1]) - 1;
+                            if (options.escapeArguments === undefined || index >= options.escapeArguments.length) {
+                                throw new Error("_insertProcessEscapes: argument " + (index + 1) + " not found");
+                            }
+                            
+                            result += options.escapeArguments[index];
+                        }
+                        break;
+                    
+                    default:
+                        result += text[i + 1];
+                }
+
+                i += 2;
+            }
+            else {
+                result += text[i];
+                i += 1;
+            }
+        }
+
+        return result;
+    }
+
+    insertAt(text: string, position: Position, options: InsertOptions = {}): DocumentNavigator {
         const pos = position.normalize(this);
         let targetLine = this.getLine(pos.row);
         let before = targetLine.substring(0, pos.column);
@@ -402,12 +551,11 @@ export class DocumentNavigator extends Navigator {
             }
         }
 
-        const linesToInsert = splitIntoLines(text);
-        
-        
+        const escaped = this._insertProcessEscapes(text, options, targetLine);
+        const linesToInsert = splitIntoLines(escaped);
 
         if (linesToInsert.length === 1) {
-            this.setLine(pos.row, before + text + after);
+            this.setLine(pos.row, before + escaped + after);
         } else {
             const toInsert = linesToInsert.slice(1);
             toInsert[toInsert.length - 1] += after;
@@ -421,6 +569,15 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    seekInsertionPoint(anchorIndex: number, from: Position, to: Position): void {
+        let found = this.findInRange(INSERTION_POINT, from, to);
+        if (found.length > 0) {
+            this.setMark(anchorIndex, found[0]);
+            found[0].column++;
+            this.setCursor(anchorIndex, found[0]);
+        }
+    }
+
     insert(anchorIndex: number, text: string, options: InsertOptions = {}): DocumentNavigator {
         let cursor = this.getAnchor("cursor_" + anchorIndex);
         let mark = this.getAnchor("mark_" + anchorIndex);
@@ -429,14 +586,21 @@ export class DocumentNavigator extends Navigator {
             this.removeAt(cursor.position, mark.position);
         }
  
-        let result = this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position, options);
+        let pos = this.getCursor(anchorIndex);
+        let result = this.insertAt(text, pos, options);
 
         if (options.lockMark === true) {
             this.setMark(anchorIndex, mark.position);
+        } else {
+            if (options.escapes === true) {
+                this.seekInsertionPoint(anchorIndex, pos, this.getCursor(anchorIndex));
+            }
         }
 
         return result;
     }
+
+
 
     protected _removeUpdateAnchors(left: Position, right: Position): void {
         let names = this.getAnchorNames();
@@ -494,6 +658,65 @@ export class DocumentNavigator extends Navigator {
         let mark = this.getAnchor("mark_" + anchorIndex);
             
         return this.removeAt(cursor.position, mark.position);
+    }
+
+    removeLine(index: number): DocumentNavigator {
+        if (index < 0 || index >= this.getLineCount()) {
+            throw new Error("removeLine: Can't remove nonexistent line (out of range)");
+        }
+
+        return this.removeAt(new Position(index, 0), new Position(index + 1, 0));
+    }
+
+    removeAdjacentInsertionPoints(anchorIndex: number): DocumentNavigator {
+        if (this.getSelection(anchorIndex).trim() === INSERTION_POINT) {
+            this.remove(anchorIndex);
+        } else {
+            let [first, last] = Position.orderNormalize(
+                this.getCursor(anchorIndex), this.getMark(anchorIndex), this);
+
+            let lastNext = new Position(last.row, last.column + 1);
+            if (this.getRange(last, lastNext) === INSERTION_POINT) {
+                this.removeAt(last, lastNext);
+            }
+
+            if (first.column > 0) {
+                let firstPrev = new Position(first.row, first.column - 1);
+                if (this.getRange(firstPrev, first) === INSERTION_POINT) {
+                    this.removeAt(firstPrev, first);
+                }
+            }
+        }
+        
+        return this;
+    }
+
+    spongeIfEmptyLine(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        let line = this.getLine(cursor.row);
+        
+        if (/^\s*$/.test(line)) {
+            this.removeLine(cursor.row);
+            this.setCursorAndMark(anchorIndex, new Position(cursor.row - 1, Number.MAX_SAFE_INTEGER));
+        }
+
+        return this;
+    }
+
+    step(anchorIndex: number): DocumentNavigator {
+        this.removeAdjacentInsertionPoints(anchorIndex);
+
+        let cursor = this.getCursor(anchorIndex);
+        let endScope = new Position(cursor.row + 10, Number.MAX_SAFE_INTEGER);
+        
+        let found = this.findFirstInRange(INSERTION_POINT, cursor, endScope);
+
+        if (found !== null) {
+            let nextChar = new Position(found.row, found.column + 1);
+            this.setSelection(anchorIndex, found, nextChar);
+        }
+
+        return this;
     }
 }
 

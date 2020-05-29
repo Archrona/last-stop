@@ -16,6 +16,7 @@ Escape | Meaning
 `$n` | Hit enter and match indentation.
 `$u` | Hit enter, indent up 1.
 `$d` | Hit enter, indent down 1.
+`$g` | Glue to neighbor (no space).
 `$t` | Hit tab.
 `$$` | Type `$`.
 `$_` | Insertion point.

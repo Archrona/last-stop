@@ -50,7 +50,7 @@
             // textChangeMonitor
             // 
             this.textChangeMonitor.Enabled = true;
-            this.textChangeMonitor.Interval = 30;
+            this.textChangeMonitor.Interval = 20;
             this.textChangeMonitor.Tick += new System.EventHandler(this.textChangeMonitor_Tick);
             // 
             // Window

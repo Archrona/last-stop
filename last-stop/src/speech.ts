@@ -2,20 +2,31 @@
 
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
-import { Position } from "./shared";
+import { Position, INSERTION_POINT } from "./shared";
 import { Model, DocumentNavigator } from "./model";
 import { CommandList, Command } from "./commands";
 
 
 export type Executor = (model: Model, args: Array<any>) => void
 
+
+
 export const EXECUTORS = {
     nop: (model: Model, args: Array<any>) => {
         // literally do nothing
     },
 
-    skip: (model: Model, args: Array<any>) => {
+    step: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            let times = 1;
+            if (args[0] !== undefined && /^[1-9]$/.test(args[0])) {
+                times = parseInt(args[0]);
+            }
 
+            for (; times > 0; times--) {
+                doc.step(ai);
+            }
+        })
     },
 
     go: (model: Model, args: Array<any>) => {
@@ -24,15 +35,26 @@ export const EXECUTORS = {
 
     insert: (model: Model, args: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
-            doc.insert(ai, args[0], { enforceSpacing: true });
-        })
+            doc.insert(ai, args[0], {
+                enforceSpacing: true,
+                escapes: true,
+                escapeArguments: ["+$1", "+$2", "+$3"]
+            });
+        });
     },
 
     insertExact: (model: Model, args: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
             doc.insert(ai, args[0], { enforceSpacing: true });
-        })
+        });
     },
+
+    insertAtEOL: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.setSelectionEOL(ai);
+            EXECUTORS.insert(model, args);
+        });
+    }
 }
 
 class Executed {

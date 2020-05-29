@@ -9,6 +9,7 @@
 import { Main } from "./main";
 import * as fs from "fs";
 import { Executor, EXECUTORS } from "./speech";
+import * as glob from "glob";
 
 const COMMANDS_FILENAME = "commands.json";
 
@@ -125,8 +126,11 @@ export class Commands {
     constructor(app: Main) {
         this.app = app;
 
-        this.commandsFile = 
-            JSON.parse(fs.readFileSync(COMMANDS_FILENAME).toString()) as CommandsFile;
+        this.commandsFile = [];
+
+        for (let fn of glob.sync("./commands/*.json")) {
+            this.commandsFile.push(JSON.parse(fs.readFileSync(fn).toString()));
+        }
 
         const contexts = app.languages.contexts;
 

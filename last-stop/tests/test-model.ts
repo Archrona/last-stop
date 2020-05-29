@@ -172,3 +172,31 @@ test("position context", t => {
     t.is(document.getPositionContext(new Position(2, 5)), "basic");
     t.is(document.getPositionContext(new Position(2, 100)), "basic");
 })
+
+test("find in range", t => {
+    let app = new Main(true);
+    let model = app.model;
+    let document = model.documents.add("scratchpad", "basic", null);
+    document.insert(0, "abcd\nef ef eeff\n  aaaabaaa");
+
+    t.deepEqual(
+        document.findInRange("bc", new Position(0, 0), new Position(0, 4)),
+        [new Position(0, 1)]
+    );
+    t.deepEqual(
+        document.findInRange("bc", new Position(0, 0), new Position(0, 1)),
+        []
+    );
+    t.deepEqual(
+        document.findInRange("bc", new Position(0, 4), new Position(0, 1)),
+        [new Position(0, 1)]
+    );
+    t.deepEqual(
+        document.findInRange("ef", new Position(0, 0), new Position(2, 100)),
+        [new Position(1, 0), new Position(1, 3), new Position(1, 7)]
+    );
+    t.deepEqual(
+        document.findInRange("aaa", new Position(2, 2), new Position(2, 100)),
+        [new Position(2, 2), new Position(2, 7)]
+    );
+});

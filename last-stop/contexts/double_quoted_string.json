@@ -1,0 +1,44 @@
+{
+    "name": "double_quoted_string",
+    "extensions": [],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "string_punctuation",
+            "pattern": "[!\"#$%&'*+,-./:;<=>?@\\^_`|~]"
+        },
+        {
+            "type": "string_escape",
+            "pattern": "\\\\."
+        },
+        {
+            "type": "string_text",
+            "pattern": "[0-9A-Za-z]+" 
+        }
+    ],
+    "commands": [
+        "universal"
+    ],
+    "contextChanges": [
+        {
+            "token": "\"",
+            "action": "pop",
+            "style": "string_delimiter"
+        }
+    ],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "spacing": [
+        {
+            "what": "never automatically insert space",
+            "rule": false
+        }
+    ]
+}

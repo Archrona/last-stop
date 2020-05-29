@@ -3,7 +3,7 @@
 
 import { DocumentNavigator } from "./model";
 
-export const INSERTION_POINT = "▢";
+export const INSERTION_POINT = "□";
 
 export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";
@@ -165,7 +165,7 @@ export class IndentationPolicy {
     private constructor(useSpaces: boolean, quantity: number) {
         this.useSpaces = useSpaces;
         this.spacesPerTab = quantity;
-        this.spacesRe = new RegExp(" ".repeat(this.spacesPerTab), "g");
+        this.spacesRe = new RegExp(" ".repeat(this.spacesPerTab), "gu");
     }
     
     static tabs(quantity: number): IndentationPolicy {
@@ -192,21 +192,53 @@ export class IndentationPolicy {
         }
     }
 
-    normalize(s: string): string {
-        let [leadingWhite, trailingContent] = IndentationPolicy.splitMarginContent(s);
-  
+    normalizeWhite(s: string): string {
         if (this.useSpaces) {
-            let result = leadingWhite.replace(/\t/g, " ".repeat(this.spacesPerTab));
+            let result = s.replace(/\t/g, " ".repeat(this.spacesPerTab));
             let remainder = result.length % this.spacesPerTab;
             if (remainder !== 0) {
                 result += " ".repeat(this.spacesPerTab - remainder);
             }
-            return result + trailingContent;
+            return result;
         }
         else {
-            let result = leadingWhite.replace(this.spacesRe, "\t");
-            return result.replace(/ +/g, "\t") + trailingContent;
+            let result = s.replace(this.spacesRe, "\t");
+            return result.replace(/ +/g, "\t");
         }
+    }  
+
+    normalize(s: string): string {
+        let [leadingWhite, trailingContent] = IndentationPolicy.splitMarginContent(s);
+
+        return this.normalizeWhite(leadingWhite) + trailingContent;
+    }
+
+    indent(s: string, times: number = 1): string {
+        let [leading, trailing] = IndentationPolicy.splitMarginContent(s);
+        leading = this.normalizeWhite(leading);
+        
+        if (this.useSpaces) {
+            leading += " ".repeat(times * this.spacesPerTab);
+        }
+        else {
+            leading += "\t".repeat(times);
+        }
+        
+        return leading + trailing;
+    }
+
+    unindent(s: string, times: number = 1): string {
+        let [leading, trailing] = IndentationPolicy.splitMarginContent(s);
+        leading = this.normalizeWhite(leading);
+        
+        if (this.useSpaces) {
+            leading = leading.substring(0, Math.max(0, leading.length - times * this.spacesPerTab));
+        }
+        else {
+            leading = leading.substring(0, Math.max(0, leading.length - times));
+        }
+        
+        return leading + trailing;
     }  
 }
  

@@ -8,13 +8,14 @@ import { ipcMain } from 'electron';
 import { listsContainSameElements, Position } from "./shared";
 import { ConsoleServer } from "./console_server";
 import { Commands } from "./commands";
-import { Speech } from "./speech";
+import { Controller } from "./controller";
 
 export class Main {
     headless: boolean;
     languages: Languages;
     view: View;
     model: Model;
+    controller: Controller;
     consoleServer: ConsoleServer;
     commands: Commands;
  
@@ -25,11 +26,14 @@ export class Main {
     }
 
     constructor(headless: boolean = false) {
-        if (!headless && Main.app !== null) {
-            throw new Error("Cannot create more than one non-headless Main - it's a singleton");
-        }
-        Main.app = this;
+        if (!headless) {
+            if (Main.app !== null) {
+                throw new Error("Cannot create more than one non-headless Main");
+            }
 
+            Main.app = this;
+        }
+        
         this.headless = headless;
 
         if (!headless)
@@ -42,15 +46,15 @@ export class Main {
 
         if (!headless) {
             this.view = new View(this);
+            this.controller = new Controller(this);
 
             let doc = this.model.documents.add("scratchpad", "basic");
 
             this.model.subscriptions.set(11, "doc@scratchpad@0");
             this.model.setActiveWindow(11);
-        }
 
-        if (!headless)
             this.consoleServer = new ConsoleServer(this);
+        }
     }
 
     registerCallbacks() {

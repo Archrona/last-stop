@@ -1,0 +1,37 @@
+{
+    "name": "spoken_text",
+    "extensions": [],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "\\s+"
+        },
+        {
+            "type": "identifier",
+            "pattern": "[$a-zA-Z_']+" 
+        },
+        {
+            "type": "number",
+            "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+        },
+        {
+            "type": "punctuation",
+            "pattern": "[!\"#%&*+,-./:;<=>?@\\^_`|~(){}\\[\\]]"
+        }
+    ],
+    "commands": [],
+    "contextChanges": [],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "spacing": [
+        {
+            "what": "adjacent whitespace",
+            "either": "\\.| |\\t",
+            "rule": false
+        },
+        {
+            "what": "default fallthrough",
+            "rule": true
+        }
+    ]
+}

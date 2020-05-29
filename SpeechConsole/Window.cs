@@ -68,7 +68,7 @@ namespace SpeechConsole
         private void textChangeMonitor_Tick(object sender, EventArgs e) {
             if (textChanged) {
                 ticksSinceChanged++;
-                if (ticksSinceChanged >= 3) {
+                if (ticksSinceChanged >= 2) {
                     Program.informText(input.Text);
                     textChanged = false;
                     ticksSinceChanged = 0;

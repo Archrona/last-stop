@@ -217,4 +217,10 @@ export class View {
         }
 
     } 
+
+    updateAllWindows(): void {
+        for (const window of this.windows) {
+            window.needsUpdate();
+        }
+    }
 }

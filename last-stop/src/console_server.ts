@@ -31,8 +31,7 @@ export class ConsoleServer {
             if (request.body.text !== undefined) {
                 const spokenText = request.body.text.toString();
 
-                // TODO PATCH IN
-                //app.commands.onSpokenText(spokenText);
+                this.app.controller.onSpeech(spokenText);
             }
              
             response.send("ok");
@@ -50,6 +49,9 @@ export class ConsoleServer {
             return;
 
         this.consoleProcess = execFile("../SpeechConsole/SpeechConsole.exe");
+
+        // TODO what if .exe isn't there, etc
+        
         this.consoleProcess.on("exit", (code, signal) => {
             console.log("Console process exited...");
             this.consoleProcess = null;

@@ -23,7 +23,18 @@
         "commands": [],
         "contextChanges": [],
         "rawInput": true,
-        "defaultCasing": "raw"
+        "defaultCasing": "raw",
+        "spacing": [
+            {
+                "what": "adjacent whitespace",
+                "either": "\\.| |\\t",
+                "rule": false
+            },
+            {
+                "what": "default fallthrough",
+                "rule": true
+            }
+        ]
     },
     {
         "name": "basic",
@@ -78,7 +89,44 @@
             }
         ],
         "rawInput": false,
-        "defaultCasing": "camel"
+        "defaultCasing": "camel",
+        "spacing": [
+            {
+                "what": "adjacent whitespace",
+                "either": "\\.| |\\t",
+                "rule": false
+            },
+            {
+                "what": "start of line",
+                "before": "^",
+                "rule": false
+            },
+            {
+                "what": "end of line",
+                "after": "$",
+                "rule": false
+            },
+            {
+                "what": "before close of group",
+                "after": "\\)|\\]",
+                "rule": false
+            },
+            {
+                "what": "after open of group",
+                "before": "\\(|\\[",
+                "rule": false
+            },
+            {
+                "what": "before index or call",
+                "before": "[a-zA-Z0-9_\\)\\]\\.]",
+                "after": "\\(|\\[",
+                "rule": false
+            },
+            {
+                "what": "default fallthrough",
+                "rule": true
+            }
+        ]
     },
     {
         "name": "double_quoted_string",
@@ -116,6 +164,12 @@
             }
         ],
         "rawInput": true,
-        "defaultCasing": "raw"
+        "defaultCasing": "raw",
+        "spacing": [
+            {
+                "what": "never automatically insert space",
+                "rule": false
+            }
+        ]
     }
 ]

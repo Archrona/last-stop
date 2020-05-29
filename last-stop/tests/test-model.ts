@@ -160,15 +160,15 @@ test("position context", t => {
     let document = model.documents.add("scratchpad", "basic", null);
     document.insert(0, "hello\nUm, \"Greg\nI am\" an onion");
 
-    t.is(document.getPositionContext(new Position(0, 0), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(0, 1), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(0, 5), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(1, 0), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(1, 4), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(1, 5), app.languages), "double_quoted_string");
-    t.is(document.getPositionContext(new Position(1, 100), app.languages), "double_quoted_string");
-    t.is(document.getPositionContext(new Position(2, 0), app.languages), "double_quoted_string");
-    t.is(document.getPositionContext(new Position(2, 4), app.languages), "double_quoted_string");
-    t.is(document.getPositionContext(new Position(2, 5), app.languages), "basic");
-    t.is(document.getPositionContext(new Position(2, 100), app.languages), "basic");
+    t.is(document.getPositionContext(new Position(0, 0)), "basic");
+    t.is(document.getPositionContext(new Position(0, 1)), "basic");
+    t.is(document.getPositionContext(new Position(0, 5)), "basic");
+    t.is(document.getPositionContext(new Position(1, 0)), "basic");
+    t.is(document.getPositionContext(new Position(1, 4)), "basic");
+    t.is(document.getPositionContext(new Position(1, 5)), "double_quoted_string");
+    t.is(document.getPositionContext(new Position(1, 100)), "double_quoted_string");
+    t.is(document.getPositionContext(new Position(2, 0)), "double_quoted_string");
+    t.is(document.getPositionContext(new Position(2, 4)), "double_quoted_string");
+    t.is(document.getPositionContext(new Position(2, 5)), "basic");
+    t.is(document.getPositionContext(new Position(2, 100)), "basic");
 })

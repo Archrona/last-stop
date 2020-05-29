@@ -24,13 +24,13 @@ export const EXECUTORS = {
 
     insert: (model: Model, args: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
-            doc.insert(ai, args[0]);
+            doc.insert(ai, args[0], { enforceSpacing: true });
         })
     },
 
     insertExact: (model: Model, args: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
-            doc.insert(ai, args[0]);
+            doc.insert(ai, args[0], { enforceSpacing: true });
         })
     },
 }
@@ -213,9 +213,16 @@ export class Speech {
 
         let j = i;
         let ti = 0;
+        
+        let verbose = false;
 
         while (ti < cmd.tokens.length && j < this.tokens.length) {
             const token = cmd.tokens[ti];
+
+            if (this.tokens[j].type === "white") {
+                j++;
+                continue;
+            }
 
             switch (token) {
                 case "$location":

@@ -124,6 +124,12 @@ export class DocumentsNavigator extends Navigator {
     }
 }
 
+export interface InsertOptions {
+    lockMark?: boolean,
+    enforceSpacing?: boolean,
+    explainSpacing?: boolean
+}
+
 export class DocumentNavigator extends Navigator {
     app: Main;
 
@@ -218,12 +224,12 @@ export class DocumentNavigator extends Navigator {
         return contexts.getJson() as Array<string>;
     }
 
-    getPositionContext(position: Position, languages: Languages): string {
+    getPositionContext(position: Position): string {
         position = position.normalize(this);
         const lineContext = this.getLineContext(position.row);
         const lineText = this.getLine(position.row);
 
-        const tokenization = languages.tokenize(
+        const tokenization = this.app.languages.tokenize(
             lineText, lineContext, new Position(position.row, 0), true
         );
         
@@ -240,7 +246,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     getAnchorContext(anchor: string, languages: Languages): string {
-        return this.getPositionContext(this.getAnchor(anchor).position, languages);
+        return this.getPositionContext(this.getAnchor(anchor).position);
     }
 
     getCursorContext(anchorIndex: number, languages: Languages): string {
@@ -367,13 +373,38 @@ export class DocumentNavigator extends Navigator {
         this._updateContexts(pos.row, pos.row + lines.length);
     }
 
-    insertAt(text: string, position: Position): DocumentNavigator {
-        const linesToInsert = splitIntoLines(text);
+    insertAt(text: string, position: Position, options: InsertOptions = {}): DocumentNavigator {
+        
         const pos = position.normalize(this);
-
         let targetLine = this.getLine(pos.row);
         let before = targetLine.substring(0, pos.column);
         let after = targetLine.substring(pos.column);
+
+        if (options.enforceSpacing === true) {
+            let context = this.getPositionContext(position);
+            let spaceLeft = this.app.languages.shouldSpace(context, before, text);
+            let spaceRight = this.app.languages.shouldSpace(context, text, after);
+
+            if (options.explainSpacing === true) {
+                console.log("---");
+                console.log("BEFORE to TEXT: ");
+                console.log(this.app.languages.shouldSpaceExplain(context, before, text));
+                console.log("TEXT to AFTER: ");
+                console.log(this.app.languages.shouldSpaceExplain(context, text, after));
+            }
+            
+            if (spaceLeft) {
+                text = " " + text;
+            }
+
+            if (spaceRight) {
+                text += " ";
+            }
+        }
+
+        const linesToInsert = splitIntoLines(text);
+        
+        
 
         if (linesToInsert.length === 1) {
             this.setLine(pos.row, before + text + after);
@@ -390,7 +421,7 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
-    insert(anchorIndex: number, text: string, lockMark: boolean = false): DocumentNavigator {
+    insert(anchorIndex: number, text: string, options: InsertOptions = {}): DocumentNavigator {
         let cursor = this.getAnchor("cursor_" + anchorIndex);
         let mark = this.getAnchor("mark_" + anchorIndex);
 
@@ -398,15 +429,14 @@ export class DocumentNavigator extends Navigator {
             this.removeAt(cursor.position, mark.position);
         }
  
-        let result = this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position);
+        let result = this.insertAt(text, this.getAnchor("cursor_" + anchorIndex).position, options);
 
-        if (lockMark) {
+        if (options.lockMark === true) {
             this.setMark(anchorIndex, mark.position);
         }
 
         return result;
     }
-
 
     protected _removeUpdateAnchors(left: Position, right: Position): void {
         let names = this.getAnchorNames();

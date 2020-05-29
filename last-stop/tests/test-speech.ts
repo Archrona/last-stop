@@ -1,8 +1,8 @@
-import { Model, Anchor } from "../src/model";
+import { Model } from "../src/model";
 import test from "ava";
 import { Main } from "../src/main";
-import { Position, binarySearchSparse } from "../src/shared";
 import { Speech } from "../src/speech";
+import { Position } from "../src/shared";
 
 function getApp() {
     let app = new Main(true);
@@ -16,18 +16,30 @@ function getApp() {
 
 test("identifiers", t => {
     let app = getApp();
+    let doc = app.model.getActiveDocument()[0];
 
-    let speech = Speech.execute(app, "flat test name stop snake test name");
+    doc.insert(0, "if () {");
+    doc.setCursor(0, new Position(0, 4));
+    doc.setMark(0, new Position(0, 4));
 
-    t.is(speech.executed.length, 2);
+    let speech = Speech.execute(app, "  3 is below tower test name [ x . length ( ) ] ");
+
+    t.is(doc.getText(), "if (3 < TEST_NAME[x.length()]) {");
 });
+
+
+
+
+
 
 
 /* TODOs
 
-  3. Figure out what to do with contextual glue
-  4. Build out command features one by one
-  5. Get scratchpad working completely minus all of the project/etc features
-  6. Get project/filesystem shit working
+  - Figure out what to do with contextual glue
+  - Build out command features one by one
+  - Data-drive colors from json file 
+  - Get scratchpad working completely minus all of the project/etc features
+  - Get project/filesystem shit working
   
 */
+ 

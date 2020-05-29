@@ -3,6 +3,7 @@
 
 import { Position, splitIntoLines } from "./shared";
 import * as fs from "fs";
+import { inspect } from "util";
 
 interface TokenContext {
     type: string,
@@ -17,6 +18,20 @@ interface ContextChange {
     style: string,
 }
 
+interface SpacingRule {
+    before?: string,
+    after?: string,
+    either?: string,
+    rule: boolean,
+    what: string,
+
+    // Computed properties
+    beforeRe: RegExp | null,
+    afterRe: RegExp | null,
+    orMode: boolean
+    isDefault: boolean
+}
+
 interface LanguageContext {
     name: string,
     extensions: Array<string>,
@@ -24,7 +39,8 @@ interface LanguageContext {
     commands: Array<string>,
     contextChanges: Array<ContextChange>,
     rawInput: boolean,
-    defaultCasing: string
+    defaultCasing: string,
+    spacing: Array<SpacingRule>
 }
 
 export class TokenizeResult {
@@ -53,6 +69,23 @@ export class Languages {
         for (const languageData of data) {
             for (const tokenTypeInformation of languageData.tokens) {
                 tokenTypeInformation.re = new RegExp(tokenTypeInformation.pattern, 'my');
+            }
+
+            for (const rule of languageData.spacing) {
+                if (rule.after !== undefined || rule.before !== undefined) {
+                    rule.afterRe = (rule.after ? new RegExp("^(?:" + rule.after + ")", "") : null);
+                    rule.beforeRe = (rule.before ? new RegExp("(?:" + rule.before + ")$", "") : null);
+                    rule.orMode = false;
+                    rule.isDefault = false;
+                } else if (rule.either !== undefined) {
+                    rule.afterRe = new RegExp("^(?:" + rule.either + ")");
+                    rule.beforeRe = new RegExp("(?:" + rule.either + ")$");
+                    rule.orMode = true;
+                    rule.isDefault = false;
+                } else {
+                    rule.isDefault = true;
+                }
+
             }
             result.set(languageData.name, languageData);
         }
@@ -123,6 +156,59 @@ export class Languages {
         }
 
         return new TokenizeResult(tokens, contextStack);
+    }
+
+    shouldSpace(context: string, before: string, after: string): boolean {
+        let rules = this.contexts.get(context).spacing;
+
+        for (let rule of rules) {
+            if (rule.isDefault) {
+                return rule.rule;
+            } else if (rule.orMode) {
+                if (rule.beforeRe !== null && rule.beforeRe.test(before)) {
+                    return rule.rule;
+                } else if (rule.afterRe !== null && rule.afterRe.test(after)) {
+                    return rule.rule;
+                }
+            } else {
+                if ((rule.beforeRe === null || rule.beforeRe.test(before)) &&
+                    (rule.afterRe === null || rule.afterRe.test(after)))
+                {
+                    return rule.rule;
+                }
+            }
+        }
+
+        throw new Error("shouldSpace: spacing rules for ctx " + context + " not exhaustive");
+    }
+
+    shouldSpaceExplain(context: string, before: string, after: string): string {
+        let rules = this.contexts.get(context).spacing;
+
+        for (let rule of rules) {
+            let desc = (rule.rule + "").toUpperCase() + " by " + rule.what + "\n";
+            if (rule.isDefault) {
+                return desc + "  --> Triggered default";
+            } else if (rule.orMode) {
+                if (rule.beforeRe !== null && rule.beforeRe.test(before)) {
+                    return desc + "  --> before (\"" + before + "\") matched " + inspect(rule.beforeRe);
+                } else if (rule.afterRe !== null && rule.afterRe.test(after)) {
+                    return desc + "  --> after (\"" + after + "\") matched " + inspect(rule.afterRe);
+                }
+            } else {
+                if ((rule.beforeRe === null || rule.beforeRe.test(before)) &&
+                    (rule.afterRe === null || rule.afterRe.test(after)))
+                {
+                    desc += "  --> before " + (rule.beforeRe === null ? "was absent"
+                        : "(\"" + before + "\") matched " + inspect(rule.beforeRe));
+                    desc += "  --> after " + (rule.afterRe === null ? "was absent"
+                        : "(\"" + after + "\") matched " + inspect(rule.afterRe));
+                    return desc;
+                }
+            }
+        }
+
+        return "THROWS by fallthrough";
     }
 }
 

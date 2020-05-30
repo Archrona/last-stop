@@ -1,5 +1,5 @@
 import { Store, Navigator, DataType, PathComponent } from "./store";
-import { Position, splitIntoLines, binarySearchSparse, arrayEquals, IndentationPolicy, INSERTION_POINT } from "./shared";
+import { Position, splitIntoLines, binarySearchSparse, arrayEquals, IndentationPolicy, INSERTION_POINT, replaceAll } from "./shared";
 import { Languages } from "./language";
 import { Main } from "./main";
 import { Speech } from "./speech";
@@ -312,6 +312,19 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
+    replaceInRange(from: string, to: string, p1: Position, p2: Position): DocumentNavigator {
+        let text = this.getRange(p1, p2);
+        let replaced = replaceAll(text, from, to);
+
+        if (text !== replaced) {
+            let [left, right] = Position.orderNormalize(p1, p2, this);
+            this.removeAt(left, right);
+            this.insertAt(replaced, left);
+        }
+
+        return this;
+    }
+
     setLine(index: number, text: string): void {
         this.clone().goKey("lines").goIndex(index).setString(text);
     }
@@ -331,6 +344,7 @@ export class DocumentNavigator extends Navigator {
 
     setAnchorPosition(name: string, position: Position): DocumentNavigator {
         let nav = this.clone().goKey("anchors").goKey(name);
+        position = position.normalize(this);
         nav.goKey("row").setNumber(position.row);
         nav.goSiblingKey("column").setNumber(position.column);
         return this;
@@ -359,10 +373,18 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
-    setSelectionEOL(anchorIndex: number): DocumentNavigator {
-        let cursor = this.getCursor(anchorIndex);
-        cursor.column = this.getLine(cursor.row).length;
-        this.setCursorAndMark(anchorIndex, cursor);
+    setSelectionEOL(anchorIndex: number, removeInsertionPoints: boolean = false): DocumentNavigator {
+        let [left, right] = Position.orderNormalize(
+            this.getCursor(anchorIndex), this.getMark(anchorIndex), this);
+
+        if (removeInsertionPoints) {
+            let eol = new Position(left.row, this.getLine(left.row).length);
+            this.replaceInRange(INSERTION_POINT, "", left, eol);
+        }
+
+        this.setCursorAndMark(anchorIndex, 
+            new Position(right.row, this.getLine(right.row).length));
+            
         return this;
     }
     
@@ -705,6 +727,7 @@ export class DocumentNavigator extends Navigator {
 
     step(anchorIndex: number): DocumentNavigator {
         this.removeAdjacentInsertionPoints(anchorIndex);
+        this.spongeIfEmptyLine(anchorIndex);
 
         let cursor = this.getCursor(anchorIndex);
         let endScope = new Position(cursor.row + 10, Number.MAX_SAFE_INTEGER);

@@ -206,7 +206,7 @@ k | `kilo` | `kirby` | `khartoum`
 l | `lima` | `lamarr` | `london`
 m | `mike` | `mitchell` | `madrid`
 n | `november` | `neville` | `norway`
-o | `oscar` | `oliver` | `orlando`
+o | `oscar` | `olivia` | `orlando`
 p | `papa` | `preston` | `poland`
 q | `quebec` | `quentin` | `qatar`
 r | `romeo` | `richard` | `russia`
@@ -328,7 +328,7 @@ Operator | Spoken Form
 `[]` | `list` (standalone), `at` (attached left)
 `{}` | `record` (one line), `block` (multiline)
 `<>` | `of type`
-`""` | `quotes`
+`""` | `quotes`, `say`
 `''` | `drops`
 ``` `` ``` | `backs`
 `//` | `slashes`

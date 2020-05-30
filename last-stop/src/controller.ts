@@ -27,5 +27,6 @@ export class Controller {
         description += " (" + this.lastSpeech.executed.length + " cmds)"
 
         console.log(description);
+
     }
 }

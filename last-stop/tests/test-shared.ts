@@ -1,9 +1,15 @@
-import { getRGB, binarySearchSparse, splitIntoLines, listsContainSameElements, arrayEquals, IndentationPolicy } from "../src/shared";
+import { getRGB, binarySearchSparse, splitIntoLines, listsContainSameElements, arrayEquals, IndentationPolicy, replaceAll } from "../src/shared";
 import test from "ava";
 
 test("getRGB", t => {
     t.is(getRGB(20, 40, 60), "rgb(20,40,60)");
 })
+
+test("replace all", t => {
+    t.is(replaceAll("abab", "b", "c"), "acac");
+    
+});
+
 
 test("sparse binary search", t => {
     for (let trials = 0; trials < 10; trials++) {

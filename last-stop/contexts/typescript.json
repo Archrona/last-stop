@@ -12,11 +12,11 @@
         },
         {
             "type": "accent_keyword",
-            "pattern": "export|import|if|for|while"
+            "pattern": "(?:interface|class|enum|try|catch|if|for|while|switch)(?=[^a-zA-Z0-9])"
         },
         {
             "type": "keyword",
-            "pattern": "class|this|constructor|let|const"
+            "pattern": "(?:break|case|catch|const|continue|default|do|else|false|finally|for|if|new|null|return|switch|this|throw|true|try|void|while|async|await|class|constructor|delete|export|extends|in|of|function|import|as|from|instanceof|let|super|undefined|var|yield|abstract|declare|enum|implements|interface|readonly|protected|private|public|static|type|any|never|object|number|bigint|symbol|string|boolean)(?=[^a-zA-Z0-9])"
         },
         {
             "type": "type_identifier",
@@ -90,6 +90,12 @@
             "what": "before index or call",
             "before": "[a-zA-Z0-9_\\)\\]\\.]",
             "after": "\\(|\\[",
+            "rule": false
+        },
+        {
+            "what": "negative numbers",
+            "before": "(?:^|[~!@#$%^&*([{:'\"<,./?+-|])\\s*-",
+            "after": "[0-9a-zA-Z_]",
             "rule": false
         },
         {

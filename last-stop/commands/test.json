@@ -22,11 +22,7 @@
             "spoken": ["if"],
             "insert": "if ($_) {$u$_$d}$n$_"
         },
-        {
-            "spoken": ["finish"],
-            "run": "insertAtEOL",
-            "arguments": [";$n"]
-        },
+        
         {
             "spoken": ["call"],
             "insert": "$g()"

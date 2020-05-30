@@ -24,7 +24,8 @@
         }
     ],
     "commands": [
-        "universal"
+        "universal",
+        "string_escapes"
     ],
     "contextChanges": [
         {

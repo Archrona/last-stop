@@ -5,67 +5,10 @@ import { Main } from "./main";
 import { Position, INSERTION_POINT } from "./shared";
 import { Model, DocumentNavigator } from "./model";
 import { CommandList, Command } from "./commands";
-
+import { inspect } from "util";
+import * as fs from "fs";
 
 export type Executor = (model: Model, args: Array<any>) => void
-
-
-
-export const EXECUTORS = {
-    nop: (model: Model, args: Array<any>) => {
-        // literally do nothing
-    },
-
-    step: (model: Model, args: Array<any>) => {
-        model.doActiveDocument((doc, ai) => {
-            let times = 1;
-            if (args[0] !== undefined && /^[1-9]$/.test(args[0])) {
-                times = parseInt(args[0]);
-            }
-
-            for (; times > 0; times--) {
-                doc.step(ai);
-            }
-        })
-    },
-
-    go: (model: Model, args: Array<any>) => {
-
-    },
-
-    insert: (model: Model, args: Array<any>) => {
-        model.doActiveDocument((doc, ai) => {
-            doc.insert(ai, args[0], {
-                enforceSpacing: true,
-                escapes: true,
-                escapeArguments: ["+$1", "+$2", "+$3"]
-            });
-        });
-    },
-
-    insertExact: (model: Model, args: Array<any>) => {
-        model.doActiveDocument((doc, ai) => {
-            doc.insert(ai, args[0], { enforceSpacing: true });
-        });
-    },
-
-    insertAtEOL: (model: Model, args: Array<any>) => {
-        model.doActiveDocument((doc, ai) => {
-            doc.setSelectionEOL(ai);
-            EXECUTORS.insert(model, args);
-        });
-    }
-}
-
-class Executed {
-    constructor(
-        public first: number,
-        public length: number,
-        public executor: Executor,
-        public args: Array<any>,
-        public undoIndex: number,
-        public context: string) {}
-}
 
 enum Capitalization {
     Raw,
@@ -141,6 +84,116 @@ const TAKE = new Map<string, number>([
     ["triple", 3],
     ["quadruple", 4]
 ]);
+
+
+
+interface AlphabetFile {
+    contextual: Array<Array<string>>;
+    lower: Array<Array<string>>;
+    upper: Array<Array<string>>;
+}
+
+class AlphabetEntry {
+    constructor(public character: string, public casing: Casing) { }
+}
+
+class Alphabet {
+    alphabet: Map<string, AlphabetEntry>;
+    
+    constructor() {
+        let data = JSON.parse(
+            fs.readFileSync("./specials/alphabet.json").toString()
+        ) as AlphabetFile;
+
+        this.alphabet = new Map();
+
+        for (let i = 0, c = 97; i < 26; i++, c++) {
+            for (const [list, caps] of [
+                [data.contextual, Capitalization.Raw],
+                [data.lower, Capitalization.Lower],
+                [data.upper, Capitalization.Upper]])
+            {
+                for (const word of list[i]) {
+                    this.alphabet.set(word, 
+                        new AlphabetEntry(String.fromCharCode(c), new Casing(
+                            caps as Capitalization, caps as Capitalization, Glue.None
+                        ))
+                    );
+                }
+            }
+        }
+    }
+}
+
+export const ALPHABET = new Alphabet();
+
+
+
+export const EXECUTORS = {
+    nop: (model: Model, args: Array<any>) => {
+        // literally do nothing
+    },
+
+    step: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            let times = 1;
+            if (args[0] !== undefined && /^[1-9]$/.test(args[0])) {
+                times = parseInt(args[0]);
+            }
+
+            for (; times > 0; times--) {
+                doc.step(ai);
+            }
+        })
+    },
+
+    go: (model: Model, args: Array<any>) => {
+
+    },
+
+    insert: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.insert(ai, args[0], {
+                enforceSpacing: true,
+                escapes: true,
+                escapeArguments: ["+$1", "+$2", "+$3"]
+            });
+        });
+    },
+
+    insertExact: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.insert(ai, args[0], { enforceSpacing: true });
+        });
+    },
+
+    insertAtEOL: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.setSelectionEOL(ai, true);
+            EXECUTORS.insert(model, args);
+        });
+    }
+}
+
+class Executed {
+    constructor(
+        public first: number,
+        public length: number,
+        public executor: Executor,
+        public args: Array<any>,
+        public undoIndex: number,
+        public context: string) { }
+}
+
+class DeferredWhite {
+    constructor(public first: number, public text: string) { }
+}
+
+
+
+
+
+
 
 export class Speech {
     speech: string;
@@ -263,6 +316,10 @@ export class Speech {
             if (token === this.tokens[j].text.toLowerCase()) {
                 ti++;
                 j++;
+
+                while (j < this.tokens.length && this.tokens[j].type === "white") {
+                    j++;
+                }
             } else {
                 return null;
             }
@@ -299,7 +356,7 @@ export class Speech {
         return null;
     }
 
-    private runText(i: number, context: string, cmdList: CommandList): Executed {
+    private runText(i: number, context: string, cmdList: CommandList): Executed | DeferredWhite {
         const raw = this.getRawInput(context);
         const word = this.tokens[i].text;
 
@@ -308,7 +365,8 @@ export class Speech {
             if (!raw) {
                 return this.runExecutor(i, 1, EXECUTORS.nop, [], context);
             } else {
-                return this.runExecutor(i, 1, EXECUTORS.insertExact, [word], context);
+                return new DeferredWhite(i, word);
+                //return this.runExecutor(i, 1, EXECUTORS.insertExact, [word], context);
             }
         }
 
@@ -333,17 +391,24 @@ export class Speech {
             const lower = this.tokens[j].text.toLowerCase();
 
             if (this.tokens[j].type === "punctuation") break;
+
             if (this.tokens[j].type === "white") {
                 j++;
                 continue;
             }
 
             // Check for literally T
-            if (lower === "literally" && j + 1 < this.tokens.length)
+            if (lower === "literally")
             {
-                const next = this.tokens[j + 1].text;
-                identifier = casing.append(identifier, next);
-                j += 2;
+                j++;
+                while (j < this.tokens.length && this.tokens[j].type === "white") {
+                    j++;
+                }
+                if (j < this.tokens.length) {
+                    const next = this.tokens[j].text;
+                    identifier = casing.append(identifier, next);   
+                }
+                j++;
                 continue;
             }
 
@@ -351,6 +416,19 @@ export class Speech {
             // First word is exempt. Always interpret as identifier.
             if (j > i && cmdList.commandIndex.has(lower)) {
                 break;
+            }
+
+            // Check for alphabet
+            if (ALPHABET.alphabet.has(lower)) {
+                let info = ALPHABET.alphabet.get(lower);
+                if (info.casing.firstCaps == Capitalization.Raw) {
+                    // use local casing instead
+                    identifier = casing.append(identifier, info.character);
+                } else {
+                    identifier = info.casing.append(identifier, info.character);
+                }
+                j++;
+                continue;
             }
 
             // Check for casing commands
@@ -397,40 +475,63 @@ export class Speech {
         }
     }
 
-    private runOne(i: number, context: string, cmdList: CommandList): Executed {
+    private runOne(
+        i: number,
+        context: string,
+        cmdList: CommandList,
+        deferred: DeferredWhite[]
+    ): (Executed | DeferredWhite)[]
+    {
         const word = this.tokens[i].text;
         const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
 
-        if (possibleCommands === undefined) {
-            return this.runText(i, context, cmdList);
-        } else {
+        if (possibleCommands !== undefined) {
             let maybe = this.runMaybeCommandList(i, context, possibleCommands);
-            if (maybe !== null) return maybe;
-
-            return this.runText(i, context, cmdList);
+            if (maybe !== null) return [maybe];
         }
+
+        let exec = [];
+
+        for (let d of deferred) {
+            exec.push(this.runExecutor(d.first, 1, EXECUTORS.insertExact, [d.text], context));
+        }
+
+        exec.push(this.runText(i, context, cmdList));
+        return exec;
     }
 
     private run(): void {
         let i = 0;
+        let deferred: DeferredWhite[] = [];
 
         while (i < this.tokens.length) {
             const context = this.getContext();
+            //console.log("run ctx " + context + ": tok " + i + " = \"" + this.tokens[i].text + "\"");
+            //console.log("   deferred: " + inspect(deferred));
+
             const cmdList = this.getCommandList(context);
             if (cmdList === undefined) {
                 throw new Error("run: no command list for context \"" + context + "\"");
             }
 
-            let exec = this.runOne(i, context, cmdList);
-            if (exec === null || exec.length <= 0) {
+            let exec = this.runOne(i, context, cmdList, deferred);
+            if (exec === null || (exec instanceof Executed && exec.length <= 0)) {
                 throw new Error("run: execution must consume at least 1 token");
             }
             
-            if (exec.executor !== EXECUTORS.nop)
-                this.executed.push(exec);
-
+            //console.log(exec);
             
-            i += exec.length;
+            for (let e of exec) {
+                if (e instanceof Executed) {
+                    if (e.executor !== EXECUTORS.nop)
+                        this.executed.push(e);
+                    deferred = [];
+                    i = e.first + e.length;
+                } else {
+                    deferred.push(e);
+                    i = e.first + 1;
+                }
+            }
         }
     }
 

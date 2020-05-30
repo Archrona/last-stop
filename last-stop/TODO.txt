@@ -1,0 +1,32 @@
+[DONE]  step correctly removes empty lines
+[DONE]  okay, and then remove insertion points
+[DONE]  fix literally
+[DONE]  don't syntax highlight identifiers like ifWhile as keywords
+[DONE]  add keywords to syntax highlighting for ts
+[DONE]  deal with spacing at quotes transition correctly (don't space)
+go command, position parsing
+keyboard/mouse commands and <<>> collapsing in speech console
+add whitespace control commands
+[DONE]  fix spacing of - when used as a unary op
+[DONE]  phonetic alphabet support in custom json file
+configurable spoken forms for hardcoded names in speech parser (identifiers)
+contextual capitalization on forms like "new", "extends", "class"
+allow finish and other EOL commands from within strings
+implement other string contexts '' `` //
+implement regular expression spoken forms
+implement clipboard internal (ring)
+implement and document external clipboard commands
+think of better name for "quotes" – Dragon sometimes parses it
+wordwrap rather than cut off long lines
+use background color (?) To indicate
+fix broken pick commands
+implement the actual "pick" command
+get a better token index display than the stupid dots
+get a bit more whitespace on display between left margin and code
+display line numbers in display on RHS
+
+
+--
+
+Implement $identifier
+… Do everything else

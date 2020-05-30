@@ -9,6 +9,28 @@ export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";
 }
 
+export function replaceAll(s: string, from: string, to: string): string {
+    let result = "";
+    let i = 0;
+
+    if (from.length <= 0)
+        return s;
+
+    while (i < s.length) {
+        if (s.substring(i, i + from.length) === from) {
+            result += to;
+            i += from.length;
+        }
+        else {
+            result += s[i];
+            i += 1;
+        }
+    }
+    
+    return result;
+}
+ 
+
 export function splitIntoLines(str: string) {
     const re = /\r\n|\n|\r/;
     return str.split(re);

@@ -196,7 +196,7 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
             const lineText = doc.getLine(lineIndex);
             const context = doc.getLineContext(lineIndex);
             const tokenization = app.languages.tokenize(
-                lineText + "\n", context, new Position(lineIndex, 0), false);
+                lineText, context, new Position(lineIndex, 0), false);
     
             for (let tokenIndex = 0; tokenIndex < tokenization.tokens.length; tokenIndex++) {
                 longLineIndicator = renderDocumentToken(tokenization, tokenIndex, view,
@@ -207,6 +207,7 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
         return content;
 
     } catch (e) {
+        console.log(e);
         return renderError("error rendering document: " + e.message, app);
     }
 }

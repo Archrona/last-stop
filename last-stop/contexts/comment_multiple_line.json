@@ -1,5 +1,5 @@
 {
-    "name": "double_quoted_string",
+    "name": "comment_multiple_line",
     "extensions": [],
     "tokens": [
         {
@@ -11,25 +11,23 @@
             "pattern": "\\r|\\n|\\r\\n" 
         },
         {
-            "type": "string_escape",
-            "pattern": "\\\\."
+            "type": "comment_terminator",
+            "pattern": "\\*\\/"
         },
         {
-            "type": "string_text",
-            "pattern": "[^ \"\\t\\\\]+" 
+            "type": "comment",
+            "pattern": "[^ \\t\\r\\n*]+|\\*(?!\/)" 
         }
     ],
     "commands": [
         "universal",
-        "string_escapes",
-        "eol_semi",
         "comment_doc"
     ],
     "contextChanges": [
         {
-            "token": "\"",
+            "token": "*/",
             "action": "pop",
-            "style": "string_delimiter"
+            "style": "comment"
         }
     ],
     "rawInput": true,

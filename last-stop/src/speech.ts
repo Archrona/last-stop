@@ -72,10 +72,10 @@ const CASING = new Map<string, Casing>([
     ["snake", new Casing(Capitalization.Lower, Capitalization.Lower, Glue.Underscores)],
     ["camel", new Casing(Capitalization.Lower, Capitalization.First, Glue.None)],
     ["big", new Casing(Capitalization.First, Capitalization.First, Glue.None)],
-    ["great", new Casing(Capitalization.First, Capitalization.First, Glue.None)],
     ["tower", new Casing(Capitalization.Upper, Capitalization.Upper, Glue.Underscores)],
     ["shout", new Casing(Capitalization.Upper, Capitalization.Upper, Glue.None)],
     ["midline", new Casing(Capitalization.Lower, Capitalization.Lower, Glue.Dashes)],
+    ["raw", new Casing(Capitalization.Raw, Capitalization.Raw, Glue.None)]
 ]);
 
 const TAKE = new Map<string, number>([
@@ -126,6 +126,39 @@ class Alphabet {
 }
 
 export const ALPHABET = new Alphabet();
+
+
+
+interface RemapFileEntry {
+    spoken: string,
+    internal: string
+}
+
+class Remap {
+    replacements: Map<string, string>;
+    
+    constructor() {
+        let data = JSON.parse(
+            fs.readFileSync("./specials/remap.json").toString()
+        ) as Array<RemapFileEntry>;
+        
+        this.replacements = new Map();
+        
+        for (const entry of data) {
+            this.replacements.set(entry.spoken, entry.internal);
+        }
+    }
+    
+    remap(word: string): string {
+        let perhaps = this.replacements.get(word);
+        if (perhaps !== undefined) {
+            return perhaps;
+        }
+        return word;
+    }
+}
+
+export const REMAP = new Remap();
 
 
 
@@ -372,7 +405,7 @@ export class Speech {
 
         // Numbers and punctuation cannot lead identifiers - they stand alone.
         // Raw also outputs as-is.
-        if (raw
+        if ((raw && REMAP.remap(this.tokens[i].text.toLowerCase()) !== "literally")
             || this.tokens[i].type === "number"
             || this.tokens[i].type === "punctuation")
         {
@@ -387,8 +420,8 @@ export class Speech {
         let identifier = "";
 
         while (j < this.tokens.length) {
-            
             const lower = this.tokens[j].text.toLowerCase();
+            const remapped = REMAP.remap(lower);
 
             if (this.tokens[j].type === "punctuation") break;
 
@@ -398,7 +431,7 @@ export class Speech {
             }
 
             // Check for literally T
-            if (lower === "literally")
+            if (remapped === "literally")
             {
                 j++;
                 while (j < this.tokens.length && this.tokens[j].type === "white") {
@@ -409,6 +442,12 @@ export class Speech {
                     identifier = casing.append(identifier, next);   
                 }
                 j++;
+
+                if (raw) {
+                    // just read this one "literally"; don't do anything else
+                    break;
+                }
+
                 continue;
             }
 
@@ -421,19 +460,21 @@ export class Speech {
             // Check for alphabet
             if (ALPHABET.alphabet.has(lower)) {
                 let info = ALPHABET.alphabet.get(lower);
+
                 if (info.casing.firstCaps == Capitalization.Raw) {
                     // use local casing instead
                     identifier = casing.append(identifier, info.character);
                 } else {
                     identifier = info.casing.append(identifier, info.character);
                 }
+
                 j++;
                 continue;
             }
 
             // Check for casing commands
             let maybeCasing: Casing;
-            if ((maybeCasing = CASING.get(lower)) !== undefined) {
+            if ((maybeCasing = CASING.get(REMAP.remap(remapped))) !== undefined) {
                 casing = maybeCasing;
                 j++;
                 continue;
@@ -441,26 +482,45 @@ export class Speech {
 
             // Check for take commands
             let maybeTake: number;
-            if ((maybeTake = TAKE.get(lower)) !== undefined) {
-                if (j + 1 < this.tokens.length
-                    && this.tokens[j + 1].type === "identifier")
-                {
-                    const next = this.tokens[j + 1].text;
-                    identifier = casing.append(identifier, next.substring(0, maybeTake));
-                    j += 2;
-                    continue;
-                }
-                else {
-                    identifier = casing.append(identifier, word);
+            if ((maybeTake = TAKE.get(remapped)) !== undefined) {
+                j++;
+                while (j < this.tokens.length && this.tokens[j].type === "white") {
                     j++;
-                    continue;
                 }
+                if (j < this.tokens.length && this.tokens[j].type === "identifier") {
+                    const next = this.tokens[j].text;
+                    identifier = casing.append(identifier, next.substring(0, maybeTake));
+                    j++;
+                }
+                continue;
             }
 
             // Check for pick N word
-            if (lower === "pick") {
-                // /^\d+$/.test(this.tokens[j + 1].text)
-                break; // TODO
+            if (remapped === "pick") {
+                j++;
+                while (j < this.tokens.length && this.tokens[j].type === "white") {
+                    j++;
+                }
+                if (j < this.tokens.length && /^[1-9]+$/.test(this.tokens[j].text)) {
+                    const digits = this.tokens[j].text;
+                    j++;
+                    while (j < this.tokens.length && this.tokens[j].type === "white") {
+                        j++;
+                    }
+                    if (j < this.tokens.length && this.tokens[j].type === "identifier") {
+                        const word = this.tokens[j].text;
+                        let result = "";
+                        for (const c of digits) {
+                            let d = parseInt(c) - 1;
+                            if (d < word.length) {
+                                result += word[d];
+                            }
+                        }
+                        identifier = casing.append(identifier, result);
+                        j++;
+                    }
+                }
+                continue;
             }
 
             // Well, it's got to be an identifier now!

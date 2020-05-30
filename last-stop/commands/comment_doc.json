@@ -1,0 +1,12 @@
+{
+    "group": "comment_doc",
+    
+    "commands": [
+        {
+            "spoken": ["drop doc", "drop dock"],
+            "run": "insertAtEOL",
+            "arguments": ["$n* $_"]
+        }
+    ]
+}
+

@@ -1,5 +1,5 @@
 {
-    "name": "double_quoted_string",
+    "name": "back_quoted_string_js",
     "extensions": [],
     "tokens": [
         {
@@ -11,25 +11,35 @@
             "pattern": "\\r|\\n|\\r\\n" 
         },
         {
+            "type": "template_open",
+            "pattern": "\\$\\{"
+        },
+        {
             "type": "string_escape",
             "pattern": "\\\\."
         },
         {
             "type": "string_text",
-            "pattern": "[^ \"\\t\\\\]+" 
+            "pattern": "(?:[^ $`\\t\\\\]+)|\\$" 
         }
     ],
     "commands": [
         "universal",
         "string_escapes",
         "eol_semi",
-        "comment_doc"
+        "string_template_js"
     ],
     "contextChanges": [
         {
-            "token": "\"",
+            "token": "`",
             "action": "pop",
             "style": "string_delimiter"
+        },
+        {
+            "token": "${",
+            "action": "push",
+            "target": "typescript",
+            "style": "string_escape"
         }
     ],
     "rawInput": true,

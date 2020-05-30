@@ -1,5 +1,5 @@
 {
-    "name": "double_quoted_string",
+    "name": "single_quoted_string",
     "extensions": [],
     "tokens": [
         {
@@ -16,18 +16,17 @@
         },
         {
             "type": "string_text",
-            "pattern": "[^ \"\\t\\\\]+" 
+            "pattern": "[^ '\\t\\\\]+" 
         }
     ],
     "commands": [
         "universal",
         "string_escapes",
-        "eol_semi",
-        "comment_doc"
+        "eol_semi"
     ],
     "contextChanges": [
         {
-            "token": "\"",
+            "token": "'",
             "action": "pop",
             "style": "string_delimiter"
         }

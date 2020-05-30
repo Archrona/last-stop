@@ -17,6 +17,6 @@
         {
             "spoken": ["loose not equals", "loose is not equal", "loose is not equal to"],
             "insert": "!=" 
-        } 
+        }
     ]
 }

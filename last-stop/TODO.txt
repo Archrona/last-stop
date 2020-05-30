@@ -1,32 +1,60 @@
+
+
+----- MS1
+
 [DONE]  step correctly removes empty lines
 [DONE]  okay, and then remove insertion points
 [DONE]  fix literally
 [DONE]  don't syntax highlight identifiers like ifWhile as keywords
 [DONE]  add keywords to syntax highlighting for ts
 [DONE]  deal with spacing at quotes transition correctly (don't space)
+[DONE]  fix spacing of - when used as a unary op
+[DONE]  phonetic alphabet support in custom json file
+[DONE]  configurable spoken forms for hardcoded names in speech parser (identifiers)
+[DONE]  allow finish and other EOL commands from within strings
+[DONE]  implement other string contexts '' ``
+[DONE]  implement regexp literals // (how to deal with slash having context?)
+[DONE]  implement single line comments
+[DONE]  implement multi line comments
+[DONE]  implement doc comments
+[DONE]  think of better name for "quotes" – Dragon sometimes parses it
+[DONE]  fix broken pick commands
+[DONE]  fix literally inside raw context: should still work
+[DONE]  can remap literally
+[DONE]  implement the actual "pick" command
+
 go command, position parsing
 keyboard/mouse commands and <<>> collapsing in speech console
 add whitespace control commands
-[DONE]  fix spacing of - when used as a unary op
-[DONE]  phonetic alphabet support in custom json file
-configurable spoken forms for hardcoded names in speech parser (identifiers)
-contextual capitalization on forms like "new", "extends", "class"
-allow finish and other EOL commands from within strings
-implement other string contexts '' `` //
-implement regular expression spoken forms
-implement clipboard internal (ring)
+commit changes
+large-scale undo (by big blocks) - kb shortcut?
 implement and document external clipboard commands
-think of better name for "quotes" – Dragon sometimes parses it
-wordwrap rather than cut off long lines
-use background color (?) To indicate
-fix broken pick commands
-implement the actual "pick" command
-get a better token index display than the stupid dots
-get a bit more whitespace on display between left margin and code
+implement clipboard internal (ring)
 display line numbers in display on RHS
+get a bit more whitespace on display between left margin and code
+get a better token index display than the stupid dots
+use background color (?) to indicate EOF
+wordwrap rather than cut off long lines
 
 
---
+----- MS2
 
-Implement $identifier
-… Do everything else
+contextual capitalization on forms like "new", "extends", "class"
+make regexp literals into a real context, deal with multiline, etc. fuck me
+implement markdown inside doc comments, lol god hates you
+ensure that including a command multiple times OVERRIDES, not makes a second copy
+implement regular expression spoken forms
+contextChanges "token" key uses regexp rather than raw string
+implement context override signals
+reload all json files at runtime
+generalized config overrides by file, project, language
+override: default casing by file, project (and spoken commands)
+override: tab/space (and spoken commands)
+implement $identifier
+
+AND ALL THE PROJECT STUFF
+
+
+----- MS3
+
+...

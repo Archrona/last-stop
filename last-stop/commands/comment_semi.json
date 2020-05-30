@@ -1,0 +1,19 @@
+{
+    "group": "comment_semi",
+    
+    "commands": [
+        {
+            "spoken": ["remark", "comment"],
+            "run": "insertAtEOL",
+            "arguments": ["// "]
+        },
+        {
+            "spoken": ["big remark", "big comment", "multiline remark", "multiline comment"],
+            "insert": "/* $_ */"
+        },
+        {
+            "spoken": ["doc remark", "dock remark", "documentation remark"],
+            "insert": "/**$n * $_$n*/$_"
+        }
+    ]
+}

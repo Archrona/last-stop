@@ -195,9 +195,9 @@ Character | Active Casing | Lowercase | Uppercase
 a | `alpha` | `andrew` | `atlanta`
 b | `bravo` | `bradley`| `bangkok`
 c | `charlie` | `colby` | `chicago`
-d | `delta` | `douglas` | `dallas`
+d | `delta` | `douglas` | `denver`
 e | `echo` | `edgar` | `egypt`
-f | `foxtrot` | `felix` | `france`
+f | `foxtrot` | `felix` | `frederick`
 g | `golf` | `gregory` | `georgia`
 h | `hotel` | `harvey` | `houston`
 i | `india` | `isaac` | `iceland`
@@ -329,8 +329,8 @@ Operator | Spoken Form
 `{}` | `record` (one line), `block` (multiline)
 `<>` | `of type`
 `""` | `quotes`, `say`
-`''` | `drops`
-``` `` ``` | `backs`
+`''` | `drops`, `speak`
+``` `` ``` | `backs`, `whisper`
 `//` | `slashes`
 
 
@@ -341,6 +341,7 @@ Operator | Spoken Form
 `\\n` | `settle` (in string context)
 `\\t` | `brindle` (in string context)
 `\\\\` | `dorsal` (in string context)
+`${...}` | `template` (in template string)
 
 
 #### Regular Expressions

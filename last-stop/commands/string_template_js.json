@@ -1,0 +1,10 @@
+{
+    "group": "string_template_js",
+    
+    "commands": [
+        {
+            "spoken": ["template"],
+            "insert": "$${$_}$_"
+        }
+    ]
+}

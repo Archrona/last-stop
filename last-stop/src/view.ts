@@ -33,6 +33,8 @@ const THEME = {
     string_punctuation: getRGB(150, 220, 140),
     string_escape: getRGB(180, 180, 120),
     string_text: getRGB(150, 220, 140),
+    comment: getRGB(20, 140, 20),
+    regular_expression: getRGB(80, 180, 20),
 
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),

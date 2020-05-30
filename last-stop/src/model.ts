@@ -3,6 +3,7 @@ import { Position, splitIntoLines, binarySearchSparse, arrayEquals, IndentationP
 import { Languages } from "./language";
 import { Main } from "./main";
 import { Speech } from "./speech";
+import { inspect } from "util";
 
 export interface InsertOptions {
     lockMark?: boolean,
@@ -411,9 +412,9 @@ export class DocumentNavigator extends Navigator {
     // update up to and including lastLine (if it exists)
     // and keep going if necessary until all contexts are updated
     protected _updateContexts(firstLine: number, lastLine: number) {
-        
+
         let lineStartContext = this.app.languages.tokenize(
-            this.getLine(firstLine), this.getLineContext(firstLine),
+            this.getLine(firstLine) + "\n", this.getLineContext(firstLine),
             new Position(firstLine, 0), false
         ).finalContextStack;
 
@@ -427,14 +428,12 @@ export class DocumentNavigator extends Navigator {
 
             this.clone().goKey("contexts").setIndex(i, lineStartContext);
             lineStartContext = this.app.languages.tokenize(
-                this.getLine(i), lineStartContext,
+                this.getLine(i) + "\n", lineStartContext,
                 new Position(i, 0), false
             ).finalContextStack;
 
             i++;
         }
-
-        //console.log("_updateContexts [" + firstLine + ", " + lastLine + ") updated to " + (i - 1));
     }
 
     protected _insertUpdateAnchors(pos: Position, lines: Array<string>) {

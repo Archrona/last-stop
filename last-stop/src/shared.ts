@@ -187,7 +187,7 @@ export class IndentationPolicy {
     private constructor(useSpaces: boolean, quantity: number) {
         this.useSpaces = useSpaces;
         this.spacesPerTab = quantity;
-        this.spacesRe = new RegExp(" ".repeat(this.spacesPerTab), "gu");
+        this.spacesRe = new RegExp(" ".repeat(this.spacesPerTab), "mgu");
     }
     
     static tabs(quantity: number): IndentationPolicy {

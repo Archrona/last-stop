@@ -21,29 +21,40 @@
             "run": "step",
             "arguments": ["3"]
         },
+    
         {
             "spoken": ["go $position"],
             "run": "go",
             "arguments": ["$1"]
         },
 
+        
+        {
+            "spoken": ["drop out", "drop forward"],
+            "insert": "$u"
+        },
+        {
+            "spoken": ["drop in", "drop back"],
+            "insert": "$d"
+        },
+        {
+            "spoken": ["drop", "drop down"],
+            "insert": "$n"
+        },
         {
             "spoken": ["ok", "okay"],
             "run": "insertAtEOL",
             "arguments": ["$n"]
         },
         {
-            "spoken": ["crack"],
-            "insert": "$u"
-        },
-        {
-            "spoken": ["drop"],
-            "insert": "$d"
-        },
-        {
             "spoken": ["expand"],
             "insert": "$u$_$d"
-        }  
-
+        },
+    
+        {
+            "spoken": ["blank"],
+            "run": "insertExact",
+            "arguments": [" "]
+        }
     ]
 }

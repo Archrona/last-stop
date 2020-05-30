@@ -35,11 +35,11 @@
             "insert": "\"$_\"$_"
         },
         {
-            "spoken": ["droplets", "droplet", "drops"],
+            "spoken": ["droplets", "droplet", "drops", "speak", "speaks"],
             "insert": "'$_'$_"
         },
         {
-            "spoken": ["backs", "bax"],
+            "spoken": ["backs", "bax", "whisper", "whispers"],
             "insert": "`$_`$_"
         },
         {

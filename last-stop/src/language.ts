@@ -15,8 +15,9 @@ interface TokenContext {
 interface ContextChange {
     token: string,
     action: string,
-    target: string | undefined,
+    target?: string,
     style: string,
+    requiresParent?: string
 }
 
 interface SpacingRule {
@@ -79,13 +80,13 @@ export class Languages {
 
             for (const rule of languageData.spacing) {
                 if (rule.after !== undefined || rule.before !== undefined) {
-                    rule.afterRe = (rule.after ? new RegExp("^(?:" + rule.after + ")", "u") : null);
-                    rule.beforeRe = (rule.before ? new RegExp("(?:" + rule.before + ")$", "u") : null);
+                    rule.afterRe = (rule.after ? new RegExp("^(?:" + rule.after + ")", "mu") : null);
+                    rule.beforeRe = (rule.before ? new RegExp("(?:" + rule.before + ")$", "mu") : null);
                     rule.orMode = false;
                     rule.isDefault = false;
                 } else if (rule.either !== undefined) {
-                    rule.afterRe = new RegExp("^(?:" + rule.either + ")", "u");
-                    rule.beforeRe = new RegExp("(?:" + rule.either + ")$", "u");
+                    rule.afterRe = new RegExp("^(?:" + rule.either + ")", "mu");
+                    rule.beforeRe = new RegExp("(?:" + rule.either + ")$", "mu");
                     rule.orMode = true;
                     rule.isDefault = false;
                 } else {
@@ -124,7 +125,7 @@ export class Languages {
                 if (matchResult !== null) {
                     foundText = matchResult[0];
 
-                    if (includeWhite || (type.type !== "white" && type.type !== "newline"))
+                    if (includeWhite || type.type !== "white")
                         tokens.push(new Token(foundText, pos.clone(), type.type, context));
 
                     if (type.type === "newline") {
@@ -148,20 +149,33 @@ export class Languages {
             }
 
             for (const change of lang.contextChanges) {
-                if (change.token === foundText) {
-                    if (change.style !== undefined) {
-                        tokens[tokens.length - 1].type = change.style;
-                    }
-                    if (change.action === "pop") {
-                        contextStack.pop();
-                    } else if (change.action === "push") {
-                        contextStack.push(change.target);
-                    }
+                if (change.token !== foundText) {
+                    continue;
                 }
+
+                if (change.requiresParent !== undefined
+                    && (contextStack.length < 2 
+                        || contextStack[contextStack.length - 2] !== change.requiresParent))
+                {
+                    continue;
+                }
+                
+                if (change.style !== undefined) {
+                    tokens[tokens.length - 1].type = change.style;
+                }
+
+                if (change.action === "pop") {
+                    contextStack.pop();
+                } 
+                else if (change.action === "push") {
+                    contextStack.push(change.target);
+                }
+                break;
             }
         }
 
-        return new TokenizeResult(tokens, contextStack);
+        const result = new TokenizeResult(tokens, contextStack);
+        return result;
     }
 
     shouldSpace(context: string, before: string, after: string): boolean {

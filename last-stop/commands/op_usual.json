@@ -1,0 +1,164 @@
+{
+    "group": "op_usual",
+    
+    "commands": [
+        {
+            "spoken": ["is", "our", "are", "equal", "be"],
+            "insert": "="
+        },
+        {
+            "spoken": [".", "dot"],
+            "insert": "."
+        },
+        {
+            "spoken": ["arrow", "aero"],
+            "insert": "->"
+        },
+        {
+            "spoken": ["becomes", "maps to"],
+            "insert": "=>"
+        },
+        {
+            "spoken": ["spread"],
+            "insert": "..."
+        },
+        {
+            "spoken": ["below", "is below", "less than", "is less than"],
+            "insert": "<"
+        },
+        {
+            "spoken": ["above", "is above", "greater than", "is greater than"],
+            "insert": ">"
+        },
+        {
+            "spoken": [
+                "at most", "is at most",
+                "less than or equal to", "is less than or equal to"
+            ],
+            "insert": "<="
+        },
+        {
+            "spoken": [
+                "at least", "is at least",
+                "greater than or equal to", "is greater than or equal to"
+            ],
+            "insert": ">="
+        },
+        {
+            "spoken": ["plus"],
+            "insert": "+"
+        },
+        {
+            "spoken": ["minas", "minus"],
+            "insert": "-"
+        },
+        {
+            "spoken": ["times"],
+            "insert": "*"
+        },
+        {
+            "spoken": ["divide", "divided by"],
+            "insert": "/"
+        },
+        {
+            "spoken": ["modulo", "remainder"],
+            "insert": "%"
+        },
+        {
+            "spoken": ["exponent"],
+            "insert": "**"
+        },
+        {
+            "spoken": ["shift left"],
+            "insert": "<<"
+        },
+        {
+            "spoken": ["shift right", "shift write"],
+            "insert": ">>"
+        },
+        {
+            "spoken": ["unsigned shift right", "unsigned shift write"],
+            "insert": ">>>"
+        },
+        {
+            "spoken": ["plus equals"],
+            "insert": "+="
+        },
+        {
+            "spoken": ["minas equals", "minus equals"],
+            "insert": "-="
+        },
+        {
+            "spoken": ["times equals"],
+            "insert": "*="
+        },
+        {
+            "spoken": ["divide equals", "divided by equals"],
+            "insert": "/="
+        },
+        {
+            "spoken": ["modulo equals", "remainder equals"],
+            "insert": "%="
+        },
+        {
+            "spoken": ["exponent equals"],
+            "insert": "**="
+        },
+        {
+            "spoken": ["shift left equals"],
+            "insert": "<<="
+        },
+        {
+            "spoken": ["shift right equals", "shift write equals"],
+            "insert": ">>="
+        },
+        {
+            "spoken": ["unsigned shift right equals", "unsigned shift write equals"],
+            "insert": ">>>="
+        },
+        {
+            "spoken": ["increment", "plus plus"],
+            "insert": "++"
+        },
+        {
+            "spoken": ["decrement", "minus minus"],
+            "insert": "--"
+        },
+        {
+            "spoken": ["logical and", "land"],
+            "insert": "&&"
+        },
+        {
+            "spoken": ["logical or", "logical ore", "lore"],
+            "insert": "||"
+        },
+        {
+            "spoken": ["logical not", "not"],
+            "insert": "!"
+        },
+        {
+            "spoken": ["bitwise and", "band"],
+            "insert": "&"
+        },
+        {
+            "spoken": ["bitwise or", "bore", "boar"],
+            "insert": "|"
+        },
+        {
+            "spoken": ["bitwise not"],
+            "insert": "~"
+        },
+        {
+            "spoken": [
+                "exclusive or", "exclusive ore",
+                "bitwise exclusive or",
+                "xor", "bitwise xor"
+            ],
+            "insert": "^"
+        },
+        {
+            "spoken": ["branch"],
+            "insert": "$_ ? $_ : $_"
+        }
+    ]
+}

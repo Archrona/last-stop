@@ -1,0 +1,123 @@
+{
+    "group": "struct_js",
+    
+    "commands": [
+        {
+            "spoken": ["a sink", "async", "asynchronous"],
+            "insert": "async"
+        },
+        {
+            "spoken": ["await", "a weight", "a wait"],
+            "insert": "await"
+        },
+        {
+            "spoken": ["class"],
+            "insert": "class $_ {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["constructor"],
+            "insert": "constructor($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["delete", "deletion"],
+            "insert": "delete"
+        },
+        {
+            "spoken": ["export"],
+            "insert": "export"
+        },
+        {
+            "spoken": ["export default"],
+            "insert": "export default"
+        },
+        {
+            "spoken": ["extends"],
+            "insert": "extends"
+        },
+        {
+            "spoken": ["for in", "four in"],
+            "insert": "for ($_ in $_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["four of", "for of"],
+            "insert": "for ($_ of $_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["iterate"],
+            "insert": "for (let $_; $_; $_++) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["function"],
+            "insert": "function $_($_)$_ {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["lambda function"],
+            "insert": "function ($_) {$_} $_"
+        },
+        {
+            "spoken": ["lambda"],
+            "insert": "($_) => $_"
+        },
+        {
+            "spoken": ["import"],
+            "insert": "import"
+        },
+        {
+            "spoken": ["import type"],
+            "insert": "import type"
+        },
+        {
+            "spoken": ["import all"],
+            "insert": "import * as $_ from $_"
+        },
+        {
+            "spoken": ["import from"],
+            "insert": "import { $_ } from $_"
+        },
+        {
+            "spoken": ["in"],
+            "insert": "in"
+        },
+        {
+            "spoken": ["instance of", "instanceof", "is an instance of"],
+            "insert": "instanceof"
+        },
+        {
+            "spoken": ["let"],
+            "insert": "let"
+        },
+        {
+            "spoken": ["my", "mai"],
+            "insert": "this.$_"
+        },
+        {
+            "spoken": ["super"],
+            "insert": "super"
+        },
+        {
+            "spoken": ["type of", "the type of", "typeof"],
+            "insert": "typeof"
+        },
+        {
+            "spoken": ["undefined"],
+            "insert": "undefined"
+        },
+        {
+            "spoken": ["var", "variable"],
+            "insert": "var"
+        },
+        {
+            "spoken": ["yield"],
+            "insert": "yield"
+        },
+        {
+            "spoken": ["of type", "with type", "with"],
+            "insert": "$g<$_> $_"
+        },
+        {
+            "spoken": ["as"],
+            "insert": "$g: "
+        }
+         
+    ]
+}

@@ -1,0 +1,94 @@
+{
+    "group": "struct_ts",
+    
+    "commands": [
+        {
+            "spoken": ["abstract"],
+            "insert": "abstract"
+        },
+        {
+            "spoken": ["declare"],
+            "insert": "declare"
+        },
+        {
+            "spoken": ["enumeration", "enumerate", "enum"],
+            "insert": "enum $_ {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["implements", "implement"],
+            "insert": "implements"
+        },
+        {
+            "spoken": ["interface"],
+            "insert": "interface $_ {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["read only", "readonly"],
+            "insert": "readonly"
+        },
+        {
+            "spoken": ["protected"],
+            "insert": "protected"
+        },
+        {
+            "spoken": ["private"],
+            "insert": "private"
+        },
+        {
+            "spoken": ["public"],
+            "insert": "public"
+        },
+        {
+            "spoken": ["static"],
+            "insert": "static"
+        },
+        {
+            "spoken": ["type"],
+            "insert": "type"
+        },
+        {
+            "spoken": ["maybe"],
+            "insert": "$g?"
+        },
+        {
+            "spoken": ["cast", "cast as", "cast to"],
+            "insert": "as"
+        },
+        {
+            "spoken": ["any"],
+            "insert": "any"
+        },
+        {
+            "spoken": ["never"],
+            "insert": "never"
+        },
+        {
+            "spoken": ["object"],
+            "insert": "object"
+        },
+        {
+            "spoken": ["number"],
+            "insert": "number"
+        },
+        {
+            "spoken": ["big integer", "big int"],
+            "insert": "bigint"
+        },
+        {
+            "spoken": ["symbol"],
+            "insert": "symbol"
+        },
+        {
+            "spoken": ["string"],
+            "insert": "string"
+        },
+        {
+            "spoken": ["boolean", "bullion", "bool"],
+            "insert": "boolean"
+        },
+        {
+            "spoken": ["array", "a ray"],
+            "insert": "Array<$_> $_" 
+        } 
+    ]
+}

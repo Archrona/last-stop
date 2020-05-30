@@ -48,9 +48,9 @@ export class Main {
             this.view = new View(this);
             this.controller = new Controller(this);
 
-            let doc = this.model.documents.add("scratchpad", "basic");
+            let doc = this.model.documents.add("test.ts", "typescript");
 
-            this.model.subscriptions.set(11, "doc@scratchpad@0");
+            this.model.subscriptions.set(11, "doc@test.ts@0");
             this.model.setActiveWindow(11);
 
             this.consoleServer = new ConsoleServer(this);

@@ -1,0 +1,18 @@
+{
+    "group": "string_escapes",
+    
+    "commands": [
+        {
+            "spoken": ["settle"],
+            "insert": "\\n"
+        },
+        {
+            "spoken": ["brindle"],
+            "insert": "\\t"
+        },
+        {
+            "spoken": ["dorsal"],
+            "insert": "\\\\"
+        }  
+    ]
+}

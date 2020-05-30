@@ -1,0 +1,22 @@
+{
+    "group": "eq_triple",
+    
+    "commands": [
+        {
+            "spoken": ["equals", "is equal", "is equal to"],
+            "insert": "==="
+        },
+        {
+            "spoken": ["not equals", "is not equal", "is not equal to"],
+            "insert": "!=="
+        },
+        {
+            "spoken": ["loose equals", "loose is equal", "loose is equal to"],
+            "insert": "=="
+        },
+        {
+            "spoken": ["loose not equals", "loose is not equal", "loose is not equal to"],
+            "insert": "!=" 
+        } 
+    ]
+}

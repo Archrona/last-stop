@@ -1,0 +1,98 @@
+{
+    "group": "struct_semi",
+    
+    "commands": [
+        {
+            "spoken": ["break"],
+            "insert": "break"
+        },
+        {
+            "spoken": ["case"],
+            "insert": "case $_:$u$_$d$_"
+        },
+        {
+            "spoken": ["catch"],
+            "insert": "catch ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["constant", "const"],
+            "insert": "const"
+        },
+        {
+            "spoken": ["continue"],
+            "insert": "continue"
+        },
+        {
+            "spoken": ["default", "the default", "the fault"],
+            "insert": "default:$u$_$d$_"
+        },
+        {
+            "spoken": ["do", "due"],
+            "insert": "do {$u$_$d} while ($_);$n$_"
+        },
+        {
+            "spoken": ["else"],
+            "insert": "else {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["else if"],
+            "insert": "else if ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["false"],
+            "insert": "false"
+        },
+        {
+            "spoken": ["finally"],
+            "insert": "finally {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["for"],
+            "insert": "for ($_; $_; $_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["if"],
+            "insert": "if ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["new", "knew"],
+            "insert": "new"
+        },
+        {
+            "spoken": ["null", "nothing"],
+            "insert": "null"
+        },
+        {
+            "spoken": ["return"],
+            "insert": "return"
+        },
+        {
+            "spoken": ["switch"],
+            "insert": "switch ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["this", "myself", "me"],
+            "insert": "this"
+        },
+        {
+            "spoken": ["throw"],
+            "insert": "throw"
+        },
+        {
+            "spoken": ["true"],
+            "insert": "true"
+        },
+        {
+            "spoken": ["try"],
+            "insert": "try {$u$_$d}$ncatch ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["void"],
+            "insert": "void"
+        },
+        {
+            "spoken": ["while"],
+            "insert": "while ($_) {$u$_$d}$n$_"
+        }  
+    ]
+}

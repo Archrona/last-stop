@@ -1,0 +1,14 @@
+{
+    "group": "eq_usual",
+    
+    "commands": [
+        {
+            "spoken": ["equals", "is equal", "is equal to"],
+            "insert": "=="
+        },
+        {
+            "spoken": ["not equals", "is not equal", "is not equal to"],
+            "insert": "!="
+        }  
+    ]
+}

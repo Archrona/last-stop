@@ -1,0 +1,100 @@
+{
+    "name": "typescript",
+    "extensions": ["ts"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "accent_keyword",
+            "pattern": "export|import|if|for|while"
+        },
+        {
+            "type": "keyword",
+            "pattern": "class|this|constructor|let|const"
+        },
+        {
+            "type": "type_identifier",
+            "pattern": "[A-Z][a-zA-Z0-9_]*"
+        },            
+        {
+            "type": "identifier",
+            "pattern": "[a-z_][a-zA-Z0-9_]*" 
+        },
+        {
+            "type": "number",
+            "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+        },
+        {
+            "type": "punctuation",
+            "pattern": "[!\"#$%&'*+,-./:;<=>?@\\^_`|~]"
+        },
+        {
+            "type": "grouping",
+            "pattern": "[(){}\\[\\]]"
+        }
+    ],
+    "commands": [
+        "universal",
+        "numbers",
+        "eol_semi",
+        "eq_triple",
+        "grouping_usual",
+        "op_usual",
+        "struct_semi",
+        "struct_js",
+        "struct_ts"
+    ],
+    "contextChanges": [
+        {
+            "token": "\"",
+            "action": "push",
+            "target": "double_quoted_string",
+            "style": "string_delimiter"
+        }
+    ],
+    "rawInput": false,
+    "defaultCasing": "camel",
+    "spacing": [
+        {
+            "what": "adjacent whitespace, period, or glue",
+            "either": "\\.| |\\t|\\$g",
+            "rule": false
+        },
+        {
+            "what": "start of line",
+            "before": "^",
+            "rule": false
+        },
+        {
+            "what": "end of line",
+            "after": "$",
+            "rule": false
+        },
+        {
+            "what": "before closing punctuation",
+            "after": "[)\\]!;:},]|\\+\\+|--",
+            "rule": false
+        },
+        {
+            "what": "after opening punctuation",
+            "before": "[(\\[$#@~\\\\]",
+            "rule": false
+        },
+        {
+            "what": "before index or call",
+            "before": "[a-zA-Z0-9_\\)\\]\\.]",
+            "after": "\\(|\\[",
+            "rule": false
+        },
+        {
+            "what": "default fallthrough",
+            "rule": true
+        }
+    ]
+}

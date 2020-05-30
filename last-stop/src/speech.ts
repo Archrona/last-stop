@@ -338,12 +338,6 @@ export class Speech {
                 continue;
             }
 
-            // Break if possibly command.
-            // First word is exempt. Always interpret as identifier.
-            if (j > i && cmdList.commandIndex.has(lower)) {
-                break;
-            }
-
             // Check for literally T
             if (lower === "literally" && j + 1 < this.tokens.length)
             {
@@ -351,6 +345,12 @@ export class Speech {
                 identifier = casing.append(identifier, next);
                 j += 2;
                 continue;
+            }
+
+            // Break if possibly command.
+            // First word is exempt. Always interpret as identifier.
+            if (j > i && cmdList.commandIndex.has(lower)) {
+                break;
             }
 
             // Check for casing commands
@@ -399,7 +399,7 @@ export class Speech {
 
     private runOne(i: number, context: string, cmdList: CommandList): Executed {
         const word = this.tokens[i].text;
-        const possibleCommands = cmdList.commandIndex.get(word);
+        const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
 
         if (possibleCommands === undefined) {
             return this.runText(i, context, cmdList);

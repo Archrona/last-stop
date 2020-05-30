@@ -25,6 +25,25 @@
             "spoken": ["go $position"],
             "run": "go",
             "arguments": ["$1"]
-        }
+        },
+
+        {
+            "spoken": ["ok", "okay"],
+            "run": "insertAtEOL",
+            "arguments": ["$n"]
+        },
+        {
+            "spoken": ["crack"],
+            "insert": "$u"
+        },
+        {
+            "spoken": ["drop"],
+            "insert": "$d"
+        },
+        {
+            "spoken": ["expand"],
+            "insert": "$u$_$d"
+        }  
+
     ]
 }

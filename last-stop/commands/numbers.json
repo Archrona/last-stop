@@ -1,0 +1,50 @@
+{
+    "group": "numbers",
+    
+    "commands": [
+        {
+            "spoken": ["zero"],
+            "insert": "0"
+        },
+        {
+            "spoken": ["one", "won"],
+            "insert": "1"
+        },
+        {
+            "spoken": ["two"],
+            "insert": "2"
+        },
+        {
+            "spoken": ["three"],
+            "insert": "3"
+        },
+        {
+            "spoken": ["four"],
+            "insert": "4"
+        },
+        {
+            "spoken": ["five"],
+            "insert": "5"
+        },
+        {
+            "spoken": ["sex", "six", "sicks"],
+            "insert": "6"
+        },
+        {
+            "spoken": ["seven"],
+            "insert": "7"
+        },
+        {
+            "spoken": ["eight", "ate"],
+            "insert": "8"
+        },
+        {
+            "spoken": ["nine", "nein"],
+            "insert": "9"
+        },
+        {
+            "spoken": ["ten"],
+            "insert": "10"
+        }  
+    ]
+}

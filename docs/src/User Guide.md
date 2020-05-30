@@ -282,6 +282,8 @@ Operator | Spoken Form
 --- | ---
 `==` | `equals`, `[is] equal [to]` (outside JS/TS), `loose equals`
 `===` | `equals` (in JS/TS)
+`!=` | `not equals`, `[is] not equal [to]` (outside JS/TS), `loose ...`
+`!==` | `not equals`, `[is] not equal [to]` (in JS/TS)
 `<` | `[is] below`, `[is] less than`
 `>` | `[is] above`, `[is] greater than`
 `<=` | `[is] at most`, `[is] less than or equal to`

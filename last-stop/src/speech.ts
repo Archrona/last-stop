@@ -324,8 +324,6 @@ export class Speech {
 
         let j = i;
         let ti = 0;
-        
-        let verbose = false;
 
         while (ti < cmd.tokens.length && j < this.tokens.length) {
             const token = cmd.tokens[ti];
@@ -337,8 +335,16 @@ export class Speech {
 
             switch (token) {
                 case "$location":
+                    // let [loc, next_j] = this.parseLocation();
+                    // if (loc !== null) {
+                    //     matched.push(loc);
+                    //     j = next_j;
+                    //     break;
+                    // } else {
+                    //     return null;
+                    // }
                     return null;
-
+                    
                 case "$identifier":
                     return null;
 
@@ -399,7 +405,6 @@ export class Speech {
                 return this.runExecutor(i, 1, EXECUTORS.nop, [], context);
             } else {
                 return new DeferredWhite(i, word);
-                //return this.runExecutor(i, 1, EXECUTORS.insertExact, [word], context);
             }
         }
 

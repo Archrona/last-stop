@@ -1,6 +1,6 @@
 
 
------ MS1
+----- MS1 Monday 6/1/2020
 
 [DONE]  step correctly removes empty lines
 [DONE]  okay, and then remove insertion points
@@ -22,23 +22,26 @@
 [DONE]  fix literally inside raw context: should still work
 [DONE]  can remap literally
 [DONE]  implement the actual "pick" command
+[DONE]  enable commit changes (ctrl-S)
+[DONE]  allow copy to clipboard and clear (ctrl-enter)
 
 go command, position parsing
 keyboard/mouse commands and <<>> collapsing in speech console
 add whitespace control commands
-enable commit changes
 large-scale undo (by big blocks) - kb shortcut?
 implement and document external clipboard commands
 implement clipboard internal (ring)
 display line numbers in display on RHS
+operators parse as whole tokens rather than individual characters
+"else" and block openers parse with accent
 wordwrap rather than cut off long lines
 get a bit more whitespace on display between left margin and code
 get a better token index display than the stupid dots
 indicate EOF
+T<> has glued spacing inside
+make token for standalone _ in ident, add to alphabet?
 
-
-
------ MS2
+----- MS2 Wednesday 6/10/2020
 
 contextual capitalization on forms like "new", "extends", "class"
 make regexp literals into a real context, deal with multiline, etc. fuck me
@@ -52,6 +55,7 @@ generalized config overrides by file, project, language
 override: default casing by file, project (and spoken commands)
 override: tab/space (and spoken commands)
 implement $identifier
+
 
 AND ALL THE PROJECT STUFF
 

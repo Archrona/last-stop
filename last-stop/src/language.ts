@@ -262,7 +262,7 @@ export class TokenIterator {
     
     private offsetExcludingWhite(offset: number): number | null {
         let delta = (offset < 0 ? - 1 : 1);
-        let positiveOffset = (offset < 0 ? - offset : offset);
+        let positiveOffset = (offset < 0 ? -offset : offset);
         let current = this.index;
         
         current = this.absorbWhite(current, delta);
@@ -284,7 +284,7 @@ export class TokenIterator {
             return null;
         }
     }
-
+    
     private offset(offset: number) {
         if (this.includeWhite) {
             return this.offsetIncludingWhite(offset);

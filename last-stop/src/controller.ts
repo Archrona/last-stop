@@ -1,8 +1,11 @@
 import { Speech } from "./speech";
 import { Main } from "./main";
+import { replaceAll, INSERTION_POINT } from "./shared";
+import { clipboard } from "electron";
 
 
 export class Controller {
+    
     app: Main;
     lastSpeech: Speech | null;
 
@@ -28,5 +31,22 @@ export class Controller {
 
         console.log(description);
 
+    }
+
+    onCopyAndErase() {
+        let doc = this.app.model.getActiveDocument();
+
+        if (doc === null) {
+            return;
+        }
+
+        let text = doc[0].getText();
+        text = replaceAll(text, INSERTION_POINT, "");
+
+        clipboard.writeText(text);
+    }
+
+    onCommitChanges() {
+        this.lastSpeech = null;
     }
 }

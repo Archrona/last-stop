@@ -62,14 +62,20 @@ namespace SpeechConsole
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
-            
+            if (e.KeyCode == Keys.C && e.Control && e.Shift) {
+                Program.onCopyAndErase();
+            }
+
+            if (e.KeyCode == Keys.S && e.Control) {
+                Program.onCommitChanges();
+            }
         }
 
         private void textChangeMonitor_Tick(object sender, EventArgs e) {
             if (textChanged) {
                 ticksSinceChanged++;
                 if (ticksSinceChanged >= 2) {
-                    Program.informText(input.Text);
+                    Program.onSpeech(input.Text);
                     textChanged = false;
                     ticksSinceChanged = 0;
                 }

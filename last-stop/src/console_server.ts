@@ -11,8 +11,8 @@ import { TouchBarSlider } from 'electron';
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
-const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 1000;
-const SERVER_RESTART_DELAY = 1000;
+const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 200;
+const SERVER_RESTART_DELAY = 200;
 
 
 export class ConsoleServer {
@@ -28,13 +28,7 @@ export class ConsoleServer {
         this.expressServer.use(express.json());
 
         this.expressServer.post("/", (request, response) => {
-            if (request.body.text !== undefined) {
-                const spokenText = request.body.text.toString();
-
-                this.app.controller.onSpeech(spokenText);
-            }
-             
-            response.send("ok");
+            this.processIncoming(request, response);
         });
 
         this.nodeServer = null;
@@ -42,6 +36,34 @@ export class ConsoleServer {
 
         this.consoleProcess = null;
         this.spawnConsoleProcess();
+    }
+
+    processIncoming(request: any, response: any): void {
+        if (request.body.command === undefined) {
+            response.send("error: undefined command");
+            return;
+        }
+
+        switch (request.body.command) {
+            case "speech":
+                const spokenText = request.body.text.toString();
+                this.app.controller.onSpeech(spokenText);
+                break;
+
+            case "copyAndErase":
+                this.app.controller.onCopyAndErase();
+                break;
+
+            case "commitChanges":
+                this.app.controller.onCommitChanges();
+                break;
+
+            default:
+                response.send("error: unrecognized command");
+                return;
+        }
+         
+        response.send("ok");
     }
 
     spawnConsoleProcess() {

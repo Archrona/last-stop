@@ -22,8 +22,7 @@
     "commands": [
         "universal",
         "string_escapes",
-        "eol_semi",
-        "comment_doc"
+        "eol_semi"
     ],
     "contextChanges": [
         {

@@ -20,37 +20,67 @@ namespace SpeechConsole
         private static readonly HttpClient client = new HttpClient();
 
         public static void transfer() {
-            informText(Server.mainWindow.getText());
+            onSpeech(Server.mainWindow.getText());
         }
 
-        private class TextMessage
+        private class Command
+        {
+            public string command;
+
+            public Command(string command) {
+                this.command = command;
+            }
+        }
+
+        private class SpeechMessage: Command 
         {
             public string text;
+
+            public SpeechMessage(string text): base("speech") {
+                this.text = text;
+            }
         }
-
-        public static void informText(string text) {
-            TextMessage tm = new TextMessage();
-            tm.text = text;
-
-            string json = JsonConvert.SerializeObject(tm);
+        
+        public static void sendMessage(object obj, Action<Task> callback) {
+            string json = JsonConvert.SerializeObject(obj);
 
             Task task = Task.Run(async () => {
                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                 HttpResponseMessage m = await client.PostAsync("http://127.0.0.1:5000/", content);
                 Console.WriteLine("Status: " + m.StatusCode + ", Reason: " + m.ReasonPhrase);
-            }).ContinueWith((Task t) => {
-                if (t.IsFaulted) {
-                    Console.WriteLine("Update could not be sent.");
+            }).ContinueWith(callback);
+        }
+
+        public static void onSpeech(string text) {
+            sendMessage(new SpeechMessage(text), (Task t) => {
+                Console.WriteLine("onSpeech: faulted = " + t.IsFaulted);
+            });
+        }
+
+        public static void onCopyAndErase() {
+            sendMessage(new Command("copyAndErase"), (Task t) => {
+                Console.WriteLine("copyAndErase: faulted = " + t.IsFaulted);
+                if (!t.IsFaulted) {
+                    Server.mainWindow.Invoke((Action)delegate () {
+                        Server.mainWindow.clearText();
+                    });
                 }
-                else {
-                    Console.WriteLine("Update sent.");
+            });
+        }
+
+        public static void onCommitChanges() {
+            sendMessage(new Command("commitChanges"), (Task t) => {
+                Console.WriteLine("commitChanges: faulted = " + t.IsFaulted);
+                if (!t.IsFaulted) {
+                    Server.mainWindow.Invoke((Action)delegate () {
+                        Server.mainWindow.clearText();
+                    });
                 }
             });
         }
 
         [STAThread]
         static void Main() {
-
             client.Timeout = new TimeSpan(0, 0, 0, 0, 250); // 250 ms
 
             Application.EnableVisualStyles();

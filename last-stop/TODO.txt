@@ -26,15 +26,16 @@
 go command, position parsing
 keyboard/mouse commands and <<>> collapsing in speech console
 add whitespace control commands
-commit changes
+enable commit changes
 large-scale undo (by big blocks) - kb shortcut?
 implement and document external clipboard commands
 implement clipboard internal (ring)
 display line numbers in display on RHS
+wordwrap rather than cut off long lines
 get a bit more whitespace on display between left margin and code
 get a better token index display than the stupid dots
-use background color (?) to indicate EOF
-wordwrap rather than cut off long lines
+indicate EOF
+
 
 
 ----- MS2

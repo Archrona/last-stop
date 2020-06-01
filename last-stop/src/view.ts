@@ -194,6 +194,16 @@ export class View {
         return null;
     }
 
+    getWindowFromLineNumber(index: number): Window | null {
+        for (const window of this.windows) {
+            if (index >= window.topRowNumber && index < window.topRowNumber + window.lines) {
+                return window;
+            }
+        }
+        
+        return null;
+    }
+
     maximumWindowId() {
         let highest = 0;
         for (const window of this.windows) {

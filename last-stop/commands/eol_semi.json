@@ -3,7 +3,7 @@
     
     "commands": [
         {
-            "spoken": ["finish"],
+            "spoken": ["finish", "finished"],
             "run": "insertAtEOL",
             "arguments": [";$n"]
         },

@@ -1,6 +1,6 @@
 import { Store, Navigator, DataType, PathComponent } from "./store";
 import { Position, splitIntoLines, binarySearchSparse, arrayEquals, IndentationPolicy, INSERTION_POINT, replaceAll } from "./shared";
-import { Languages } from "./language";
+import { Languages, TokenizeResult } from "./language";
 import { Main } from "./main";
 import { Speech } from "./speech";
 import { inspect } from "util";
@@ -228,6 +228,15 @@ export class DocumentNavigator extends Navigator {
 
         contexts.goIndex(index);
         return contexts.getJson() as Array<string>;
+    }
+
+    getLineTokens(index: number, includeWhite: boolean = false): TokenizeResult {
+        const lineContext = this.getLineContext(index);
+        const lineText = this.getLine(index);
+
+        return this.app.languages.tokenize(
+            lineText, lineContext, new Position(index, 0), includeWhite
+        );
     }
 
     getPositionContext(position: Position): string {

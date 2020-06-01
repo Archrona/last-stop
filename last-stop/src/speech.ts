@@ -3,7 +3,7 @@
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
 import { Position, INSERTION_POINT } from "./shared";
-import { Model, DocumentNavigator } from "./model";
+import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription } from "./model";
 import { CommandList, Command } from "./commands";
 import { inspect } from "util";
 import * as fs from "fs";
@@ -181,7 +181,17 @@ export const EXECUTORS = {
     },
 
     go: (model: Model, args: Array<any>) => {
+        if (args.length > 0) {
+            let location = args[0];
 
+            if (location instanceof SpokenSelection) {
+                location.document.setMark(location.anchorIndex, location.mark);
+                location.document.setCursor(location.anchorIndex, location.cursor);
+                // TODO activate window
+            }
+
+            // TODO other kinds of go reference - window, line, etc.
+        }
     },
 
     insert: (model: Model, args: Array<any>) => {
@@ -225,8 +235,69 @@ class DeferredWhite {
 
 
 
+export abstract class SpokenLocation {
+    constructor() {
+        // do nothing
+    }
+}
 
+export class SpokenSelection extends SpokenLocation {
+    document: DocumentNavigator;
+    anchorIndex: number;
+    cursor: Position;
+    mark: Position;
+    
+    constructor(document: DocumentNavigator, anchorIndex: number, cursor: Position, mark: Position) {
+        super();
+        this.document = document;
+        this.anchorIndex = anchorIndex;
+        this.cursor = cursor;
+        this.mark = mark;
+    }
+}
 
+export class SpokenWindowReference extends SpokenLocation {
+    window: number;
+    
+    constructor(window: number) {
+        super();
+        this.window = window;
+    }
+}
+
+export class SpokenLineReference extends SpokenWindowReference {
+    line: number;
+
+    constructor(window: number, line: number) {
+        super(window);
+        this.line = line;
+    }
+}
+
+export class SpokenTokenReference extends SpokenLineReference {
+    token: number;
+    
+    constructor(window: number, line: number, token: number) {
+        super(window, line);
+        this.token = token;
+    }
+}
+
+class NumericReference {
+    private _line: number | null;
+    private _token: number | null;
+    
+    constructor(line: number | null, token: number | null) {
+        this._line = line;
+        this._token = token;
+    }
+    
+    getLine(): number | null { return this._line; } 
+    getToken(): number | null { return this._token; } 
+    
+    hasLine(): boolean { return this._line !== null; } 
+    hasToken(): boolean { return this._token !== null; } 
+}
 
 export class Speech {
     speech: string;
@@ -316,8 +387,252 @@ export class Speech {
         return new Executed(i, length, executor, args, undoIndex, context);
     }
 
+    private consumeWhite(index: number): number {
+        while (index < this.tokens.length && this.tokens[index].type === "white") {
+            index++;
+        }
+
+        return index;
+    }
+
+    private convertNumericIntoLocation(numeric: NumericReference): SpokenLocation {
+
+        // Try to parse a plain number as a window reference.
+        if (!numeric.hasToken() && numeric.hasLine()) {
+            const id = numeric.getLine();
+            const window = this.app.view.getWindow(id);
+            const hasSubscription = this.app.model.subscriptions.has(id);
+            if (window !== null && hasSubscription === true) {
+                return new SpokenWindowReference(id);
+            }
+
+            // Fall through if it's not a window.
+        }
+
+        // We need to resolve the line number reference (which might not exist,
+        // in which case it refers to the line of the cursor in the active document)
+        // to a line index into a non-document window or a line index into a document.
+        // Very finicky!
+
+        // If we have only a token, get current document's cursor.
+        // Offset into the current line using the token index.
+        if (numeric.hasToken() &&! numeric.hasLine()) {
+            const document = this.app.model.getActiveDocument();
+            if (document === null) {
+                return null;
+            }
+            
+            const cursor = document[0].getCursor(document[1]);
+            const mark = document[0].getMark(document[1]);
+            
+            const [left, right] = Position.orderNormalize(cursor, mark, document[0]);
+            const tokens = document[0].getLineTokens(right.row);
+            let tokenIndex = numeric.getToken();
+            tokenIndex = Math.max(0, Math.min(tokens.tokens.length -1, tokenIndex));
+            const token = tokens.tokens[tokenIndex];
+
+            return new SpokenSelection(
+                document[0],
+                document[1],
+                token.position,
+                new Position(token.position.row, 
+                    token.position.column + token.text.length)
+            );
+
+        }
+
+        // We have a line number reference now. Let's figure out if it refers
+        // to a valid position or not. Once we figure out what window it's part of,
+        // we can get the subscription of that window and determine whether
+        // we are talking about a document or something else.
+
+        // Ensure that we have a line number. (This should be the case…)
+        if (!numeric.hasLine()) {
+            return null;
+        }
+
+        // Ensure we have a valid window reference.
+        const window = this.app.view.getWindowFromLineNumber(numeric.getLine());
+        if (window === null) {
+            return null;
+        }
+
+        const hasSubscription = this.app.model.subscriptions.has(window.id);
+        if (hasSubscription === false) {
+            return null;
+        }
+
+        // Ensure the window has a valid subscription.
+        const subscription = this.app.model.subscriptions.getDetails(window.id);
+        const windowLineOffset = numeric.getLine() - window.topRowNumber;
+
+        // If we have a document on our hands…
+        if (subscription instanceof DocumentSubscription) {
+            const document = this.app.model.documents.get(subscription.document);
+            const view = document.getView(subscription.anchorIndex);
+            const documentLine = view.row + windowLineOffset;
+            
+            if (numeric.hasToken()) {
+                const pos = new Position(documentLine, 0).normalize(document);
+                const tokens = document.getLineTokens(pos.row);
+                let tokenIndex = numeric.getToken();
+                tokenIndex = Math.max(0, Math.min(tokens.tokens.length - 1, tokenIndex));
+                const token = tokens.tokens[tokenIndex];
+
+                return new SpokenSelection(
+                    document,
+                    subscription.anchorIndex,
+                    token.position,
+                    new Position(token.position.row, token.position.column + token.text.length)
+                );
+            }
+            else {
+                return new SpokenSelection(
+                    document, 
+                    subscription.anchorIndex,
+                    new Position(documentLine, 0).normalize(document),
+                    new Position(documentLine + 1, 0).normalize(document)
+                );
+            }
+        }
+
+        // Line subscriptions constitute all non-document subscriptions with
+        // meaningful line number references.
+        else if (subscription instanceof LineSubscription) {
+            // TODO
+            return null;
+        }
+        
+        // If nothing above has matched, then we don't have a valid position.
+        return null;
+    }
 
 
+    static NUMERIC_REFERENCE_PATTERN = /^(?!^\.?$)(\d+)?(?:\.(\d+))?$/;
+
+    private parseNumericReference(index: number): NumericReference {
+        const text = this.tokens[index].text;
+        let match = Speech.NUMERIC_REFERENCE_PATTERN.exec(text);
+        
+        if (match !== null) {
+            // Reminder: Unmatched groups in successful RE return [undefined].
+            const integer = match[1] === undefined ? null : parseInt(match[1]);
+            const decimal = match[2] === undefined ? null : parseInt(match[2]);
+            return new NumericReference(integer, decimal);
+        }
+        else {
+            return null;
+        }
+    }
+
+    
+    private parseLocation(index: number, recursingFrom: boolean = false): [SpokenLocation, number] {
+        index = this.consumeWhite(index);
+        if (index >= this.tokens.length) {
+            return [null, 0];
+        }
+
+        // Try parsing raw number. [30], [.2], [30.2]
+        let numeric = this.parseNumericReference(index);
+        if (numeric !== null) {
+            // A remark on error handling:
+            // convertNumericIntoLocation() returns [null] on failure.
+            // This is how *we* return failure, too.
+            return [this.convertNumericIntoLocation(numeric), index + 1];
+        }
+
+        const lower = this.tokens[index].text.toLowerCase();
+        const operation = REMAP.remap(lower);
+
+        if (!["to", "all", "before", "after", "from"].includes(operation)) {
+            return [null, 0];
+        }
+
+        index++;
+        index = this.consumeWhite(index);
+        if (index >= this.tokens.length) {
+            return [null, 0];
+        }
+
+        numeric = this.parseNumericReference(index);
+        if (numeric === null) {
+            return [null, 0];
+        }
+
+        let location = this.convertNumericIntoLocation(numeric)
+        if (location === null) {
+            return [null, 0];
+        }
+
+        index++;
+
+        switch (operation) {
+            case "to":
+                // no modifications needed
+                break;
+            
+            case "all":
+                if (location instanceof SpokenSelection) {
+                    location.mark.column = 0;
+                    location.cursor.column = 
+                        location.document.getLine(location.cursor.row).length;
+                } 
+                break;
+
+            case "before":
+                if (location instanceof SpokenSelection) {
+                    location.cursor = location.mark = Position.min(location.cursor, location.mark);
+                }
+                break;
+
+            case "after":
+                if (location instanceof SpokenSelection) {
+                    location.cursor = location.mark = Position.max(location.cursor, location.mark);
+                }
+                break;
+
+            case "from":
+                if (recursingFrom) {
+                    return [null, 0];
+                }
+
+                if (location instanceof SpokenSelection) {
+                    index = this.consumeWhite(index);
+                    if (index >= this.tokens.length) {
+                        return [null, 0];
+                    }
+
+                    let [location2, index2] = this.parseLocation(index, true);
+                    
+                    if (location2 instanceof SpokenSelection 
+                        && location2.document.node === location.document.node
+                        && location2.anchorIndex === location.anchorIndex)
+                    {
+                        let left = Position.min(
+                            Position.min(location.mark, location.cursor),
+                            Position.min(location2.mark, location2.cursor)
+                        );
+
+                        let right = Position.max(
+                            Position.max(location.mark, location.cursor),
+                            Position.max(location2.mark, location2.cursor)
+                        ); 
+
+                        return [new SpokenSelection(
+                            location.document, location.anchorIndex, left, right
+                        ), index2];
+                    } else {
+                        return [null, 0];
+                    }
+                }
+                break;
+
+            default:
+                return [null, 0];
+        }
+
+        return [location, index];
+    }
     
     private runMaybeCommand(i: number, context: string, cmd: Command): Executed {
         const matched = [];
@@ -333,34 +648,40 @@ export class Speech {
                 continue;
             }
 
+            // At this point, [ti] will point at the token "$location" and [j] will
+            // point at a non-white token in the spoken input.
             switch (token) {
                 case "$location":
-                    // let [loc, next_j] = this.parseLocation();
-                    // if (loc !== null) {
-                    //     matched.push(loc);
-                    //     j = next_j;
-                    //     break;
-                    // } else {
-                    //     return null;
-                    // }
-                    return null;
+                    let [loc, nextIndex] = this.parseLocation(j);
+                    // console.log(loc);
+                    // console.log(nextIndex);
+
+                    if (loc !== null) {
+                        matched.push(loc);
+                        ti++;
+                        j = nextIndex;
+                        break;
+                    } else {
+                        return null;
+                    }
                     
                 case "$identifier":
                     return null;
 
                 case "$please":
                     return null;
+
+                default:
+                    if (token === this.tokens[j].text.toLowerCase()) {
+                        ti++;
+                        j++;
+                    } else {
+                        return null;
+                    }
             }
 
-            if (token === this.tokens[j].text.toLowerCase()) {
-                ti++;
+            while (j < this.tokens.length && this.tokens[j].type === "white") {
                 j++;
-
-                while (j < this.tokens.length && this.tokens[j].type === "white") {
-                    j++;
-                }
-            } else {
-                return null;
             }
         }
 

@@ -394,7 +394,7 @@ Command | Meaning
 `go all [of] L` | Selects all of line `L` including the trailing newline.
 `go all [of] L1 to L2` | Selects all of lines `L1` through `L2`, including the trailing newline.
 `go before L.T` | Places the cursor immediately before `L.T`.
-`go after L.T` | Places the cursor immediately after `L.T`.in
+`go after L.T` | Places the cursor immediately after `L.T`.
 `go from L1[.T] to L2[.T]` &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; | Selects from the beginning of `L1` or `L1.T` to the end of `L2` or `L2.T`. Does not include trailing newlines of `L2`.
 
 Documents maintain up to 99 **spots** each. A spot can be used as a location by prefacing its spot index with the word `spot`. The syntax `spot N` can be used anywhere `L` or `L.T` can be used. 

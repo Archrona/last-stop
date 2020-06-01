@@ -23,7 +23,7 @@
         },
     
         {
-            "spoken": ["go $position"],
+            "spoken": ["go $location"],
             "run": "go",
             "arguments": ["$1"]
         },

@@ -15,21 +15,30 @@ export class Controller {
     }
 
     onSpeech(text: string) {
-        let description = "Speech: " + this.app.model.store.getUndoCount();
+        let t0 = process.hrtime.bigint();
 
+        let description = "Speech: " + this.app.model.store.getUndoCount();
         if (this.lastSpeech !== null) {
             this.lastSpeech.undo();
         }
 
-        description += " -> " + this.app.model.store.getUndoCount();
+        let t1 = process.hrtime.bigint();
 
+        description += " -> " + this.app.model.store.getUndoCount();
         this.lastSpeech = Speech.execute(this.app, text);
+
+        let t2 = process.hrtime.bigint();
+
         this.app.view.updateAllWindows();
+        
+        let t3 = process.hrtime.bigint();
 
         description += " -> " + this.app.model.store.getUndoCount();
-        description += " (" + this.lastSpeech.executed.length + " cmds)"
-
+        //description += " (" + this.lastSpeech.executed.length + " cmds)"
+        description += "  undo " + (t1 - t0) + " ns; action " + (t2 - t1) + " ns; view " + (t3 - t2) + " ns";
+        description += "  rss " + process.memoryUsage().rss;
         console.log(description);
+        
 
     }
 

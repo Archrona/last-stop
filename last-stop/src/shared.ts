@@ -145,6 +145,14 @@ export class Position {
         return result;
     }
 
+    static min(p1: Position, p2: Position) {
+        return p1.compareTo(p2) <= 0 ? p1 : p2;
+    }
+
+    static max(p1: Position, p2: Position) {
+        return p1.compareTo(p2) <= 0 ? p2 : p1;
+    }
+
     static order(p1: Position, p2: Position) {
         if (p1.compareTo(p2) <= 0) {
             return [p1, p2];

@@ -25,14 +25,18 @@
 [DONE]  enable commit changes (ctrl-S)
 [DONE]  allow copy to clipboard and clear (ctrl-enter)
 
-go command, position parsing
+[DONE]  go command, position parsing
+
 keyboard/mouse commands and <<>> collapsing in speech console
 add whitespace control commands
 large-scale undo (by big blocks) - kb shortcut?
 implement and document external clipboard commands
 implement clipboard internal (ring)
 display line numbers in display on RHS
-operators parse as whole tokens rather than individual characters
+operators parse/space as whole tokens rather than individual characters
+match!== null
+! numeric.hasToken()
+length -1
 "else" and block openers parse with accent
 wordwrap rather than cut off long lines
 get a bit more whitespace on display between left margin and code
@@ -40,6 +44,7 @@ get a better token index display than the stupid dots
 indicate EOF
 T<> has glued spacing inside
 make token for standalone _ in ident, add to alphabet?
+return[] -> return []
 
 ----- MS2 Wednesday 6/10/2020
 
@@ -55,8 +60,7 @@ generalized config overrides by file, project, language
 override: default casing by file, project (and spoken commands)
 override: tab/space (and spoken commands)
 implement $identifier
-
-
+COMMENTS
 AND ALL THE PROJECT STUFF
 
 

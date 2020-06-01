@@ -36,14 +36,21 @@ namespace SpeechConsole
             HttpListenerRequest request = context.Request;
 
             List<string[]> query = new List<string[]>();
-            if (request.Url.Query.Length > 1)
-                query = request.Url.Query.Substring(1).Split('&').Select(x => x.Split('=')).ToList<string[]>();
+            if (request.Url.Query.Length > 1) {
+                query = request.Url.Query
+                    .Substring(1)
+                    .Split('&')
+                    .Select(x => x.Split('='))
+                    .ToList<string[]>();
+            }
 
             string path = request.Url.AbsolutePath.Substring(1);
 
             HttpListenerResponse response = context.Response;
 
             object resp = "unknown route";
+
+
 
             if (path == "clear") {
                 resp = serveClear();

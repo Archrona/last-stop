@@ -13,10 +13,10 @@
 - implement and document external clipboard commands
 - implement clipboard internal (ring)
 - display line numbers in display on RHS
-- operators parse/space as whole tokens ratherIn than individual characters
+- operators parse/space as whole tokens rather than individual characters
 - wordwrap rather than cut off long lines
 - get a better token index display than the stupid dots
-- T<> has glued spacing inside
+- T<> needs glued spacing inside
 - closing speech console commits changes (or restores original text?)
 
 
@@ -34,7 +34,7 @@
 - implement $identifier
 - COMMENTS/DOCS
 - AND ALL THE PROJECT STUFF
-
+- focusing one window focuses all windows
 
 
 

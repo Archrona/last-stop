@@ -33,7 +33,7 @@ class Application {
         this.charWidth = 0;
         this.charHeight = 0;
         this.lineHeight = 0;
-        this.lineSpacing = 1.32;
+        this.lineSpacing = 1.35;
         this.margin = 20;
         this.isLoaded = false;
         
@@ -93,6 +93,11 @@ class Application {
             event.preventDefault();
         });
 
+        window.addEventListener("wheel", (event) => {
+            this.onWheelEvent(event.deltaX, event.deltaY, event.deltaMode);
+            event.preventDefault();
+        });
+        
         ipcRenderer.on("update", (event, data) => {
             const subscription = data.subscription;
             const text = data.text as Array<DrawableText>;
@@ -146,7 +151,17 @@ class Application {
         
         this.sendKeyboardMessage(type, key, modifiers);
     }  
-    
+
+    onWheelEvent(x: number, y: number, mode: number): void {
+        if (mode === 0) {
+            const ratio = window.devicePixelRatio / this.lineHeight;
+            x *= ratio;
+            y *= ratio;
+        }
+        
+        this.sendScrollMessage(x, y);
+    } 
+
     getGraphics() {
         let graphics = this.canvas.getContext("2d");
         graphics.font = (this.fontSize * window.devicePixelRatio) + "px " + this.fontFace;
@@ -257,6 +272,18 @@ class Application {
             type: type,
             key: key,
             modifiers: modifiers
+        });
+    }
+
+    sendScrollMessage(x: number, y: number): void {
+        if (this.id === - 1) {
+            return;
+        }
+        
+        ipcRenderer.send("scroll", {
+            id: this.id,
+            x: x,
+            y: y
         });
     }
 } 

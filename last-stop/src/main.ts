@@ -58,43 +58,11 @@ export class Main {
     }
 
     registerCallbacks() {
-        ipcMain.on("resize", (event, info) => {
-            const window = this.view.getWindow(info.id);
-            if (window !== null) {
-                window.onResize(info.lines, info.columns);
-            }
-        });
-
-        ipcMain.on("mouse", (event, info) => {
-            const window = this.view.getWindow(info.id);
-            if (window !== null) {
-                if (info.type === "down") {
-                    window.onMouseDown(info.row, info.column, info.button);
-                }
-                else if (info.type === "up") {
-                    window.onMouseUp(info.row, info.column, info.button);
-                }
-            }
-        });
-
-        ipcMain.on("key", (event, info) => {
-            const window = this.view.getWindow(info.id);
-            if (window !== null) {
-                if (info.type === "down") {
-                    window.onKeyDown(info.key, info.modifiers);
-                }
-                else if (info.type === "up") {
-                    window.onKeyUp(info.key, info.modifiers);
-                }
-            }
-        });
-
-        ipcMain.on("ready", (event, info) => {
-            const window = this.view.getWindow(info.id);
-            if (window !== null) {
-                window.onReady();
-            }
-        })
+        ipcMain.on("resize", (event, info) => this.controller.onRendererResize(info));
+        ipcMain.on("mouse", (event, info) => this.controller.onRendererMouseClick(info));
+        ipcMain.on("key", (event, info) => this.controller.onRendererKey(info));
+        ipcMain.on("ready", (event, info) => this.controller.onRendererReady(info));
+        ipcMain.on("scroll", (event, info) => this.controller.onRendererScroll(info));
     }
 
     handleGlobalHotkeys(windowId: number, key: string, modifiers: Array<string>) {

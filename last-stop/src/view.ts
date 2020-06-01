@@ -112,7 +112,11 @@ export class Window {
     onKeyUp(key: string, modifiers: Array<string>) {
         console.log("  up " + key + " " + modifiers);
     }
-
+    
+    onScroll(x: number, y: number): void {
+        console.log(`scrl: ${x}, ${y}`);
+    };
+    
     onReady() {
         console.log("Window id " + this.id + " is ready UwU OwO >w<");
         this.isReady = true;

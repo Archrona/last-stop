@@ -7,7 +7,6 @@ import express from 'express';
 import { Main } from './main';
 import { execFile, ChildProcess } from "child_process";
 import { createServer, Server } from 'http';
-import { TouchBarSlider } from 'electron';
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
@@ -47,15 +46,15 @@ export class ConsoleServer {
         switch (request.body.command) {
             case "speech":
                 const spokenText = request.body.text.toString();
-                this.app.controller.onSpeech(spokenText);
+                this.app.controller.onConsoleSpeech(spokenText);
                 break;
 
             case "copyAndErase":
-                this.app.controller.onCopyAndErase();
+                this.app.controller.onConsoleCopyAndErase();
                 break;
 
             case "commitChanges":
-                this.app.controller.onCommitChanges();
+                this.app.controller.onConsoleCommitChanges();
                 break;
 
             default:

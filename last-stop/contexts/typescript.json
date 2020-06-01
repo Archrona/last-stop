@@ -12,7 +12,7 @@
         },
         {
             "type": "accent_keyword",
-            "pattern": "(?:interface|class|enum|try|catch|if|for|while|switch)(?=[^a-zA-Z0-9])"
+            "pattern": "(?:interface|case|default|do|finally|extends|export|import|declare|class|enum|try|catch|if|else|for|while|switch)(?=[^a-zA-Z0-9])"
         },
         {
             "type": "keyword",
@@ -113,23 +113,23 @@
         },
         {
             "what": "before closing punctuation",
-            "after": "[)\\]}!;:},]|\\+\\+|--",
+            "after": "[)\\]};:},]|\\+\\+|--",
             "rule": false
         },
         {
             "what": "after opening punctuation",
-            "before": "[(\\[{$#@~\\\\]",
+            "before": "[(\\[{$#@~\\\\!]",
             "rule": false
         },
         {
             "what": "before index or call",
-            "before": "[a-zA-Z0-9_\\)\\]\\.]",
+            "before": "[a-zA-Z0-9_\\)\\]\\.](?<!const|new|null|return|throw|await|delete|export|in|of|import|as|instanceof|let|var|yield|abstract|declare|readonly|protected|private|public|static|type)",
             "after": "\\(|\\[",
             "rule": false
         },
         {
             "what": "negative numbers",
-            "before": "(?:^|[~!@#$%^&*([{:'\"<,./?+-|])\\s*-",
+            "before": "(?:^|[~!@#$%^&*([{:'\"<,.\\/?+\\-|])\\s*-",
             "after": "[0-9a-zA-Z_]",
             "rule": false
         },

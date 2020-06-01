@@ -6,7 +6,7 @@ import { Position, DrawableText, splitIntoLines } from "./shared";
 import { Anchor } from "./model";
 import { TokenizeResult } from "./language";
 
-const LEFT_MARGIN_COLUMNS = 5;
+const LEFT_MARGIN_COLUMNS = 6;
 
 function parseSubscription(sub: string) {
     let words = [];
@@ -53,7 +53,7 @@ function renderMargin(topRow: number, rows: number, app: Main) : Array<DrawableT
     for (let i = 0; i < rows; i++) {
         const line = topRow + i;
         const lineString = line.toString();
-        const column = LEFT_MARGIN_COLUMNS - lineString.length - 1;
+        const column = LEFT_MARGIN_COLUMNS - lineString.length - 2;
         
         result.push(new DrawableText(
             lineString,
@@ -184,7 +184,15 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
 
         for (let viewRow = 0; viewRow < rows; viewRow++) {
             const lineIndex = view.row + viewRow;
-            if (lineIndex < 0 || lineIndex >= lines) continue;
+
+            // Indicate EOF by subtle marker
+            if (lineIndex < 0 || lineIndex >= lines) {
+                let eofColor = app.view.getColor("EOF");
+                content.push(new DrawableText(
+                    "░", "", viewRow, LEFT_MARGIN_COLUMNS, eofColor, null
+                ));
+                continue;
+            }
 
             renderDocumentSelection(
                 selectionLeft, selectionRight, lineIndex, content,

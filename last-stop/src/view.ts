@@ -38,6 +38,7 @@ const THEME = {
 
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),
+    EOF: getRGB(60, 60, 60)
 };
 
 export class Window {

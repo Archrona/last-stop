@@ -59,7 +59,8 @@ class Casing {
     }
 
     append(original: string, next: string) {
-        if (original.length <= 0) {
+        // Apply firstCaps if ident so far is only underscores or empty
+        if (/^_*$/.test(original)) {
             return this.applyCaps(next, this.firstCaps);
         } else {
             return original + this.getGlue() + this.applyCaps(next, this.laterCaps);
@@ -91,6 +92,7 @@ interface AlphabetFile {
     contextual: Array<Array<string>>;
     lower: Array<Array<string>>;
     upper: Array<Array<string>>;
+    other: Array<[string, Array<string>]>;
 }
 
 class AlphabetEntry {
@@ -120,6 +122,14 @@ class Alphabet {
                         ))
                     );
                 }
+            }
+        }
+
+        for (const [character, spoken] of data.other) {
+            for (const word of spoken) {
+                this.alphabet.set(word, new AlphabetEntry(character, new Casing(
+                    Capitalization.Raw, Capitalization.Raw, Glue.None
+                )));
             }
         }
     }

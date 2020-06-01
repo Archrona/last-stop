@@ -56,7 +56,7 @@
         ["young"],
         ["zachary"]  
     ],
-    
+
     "upper": [
         ["atlanta"],
         ["bangkok"],
@@ -84,5 +84,9 @@
         ["xiamen"],
         ["yemen"],
         ["zambia"]  
+    ],
+
+    "other": [
+        ["_", ["under"]]
     ]
 }

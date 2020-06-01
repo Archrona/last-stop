@@ -471,10 +471,20 @@ export class Speech {
             const document = this.app.model.documents.get(subscription.document);
             const view = document.getView(subscription.anchorIndex);
             const documentLine = view.row + windowLineOffset;
-            
+            const pos = new Position(documentLine, 0).normalize(document);
+            const tokens = document.getLineTokens(pos.row);
+
+            // If line is all whitespace, just put us at EOL
+            if (tokens.tokens.length === 0) {
+                return new SpokenSelection(
+                    document,
+                    subscription.anchorIndex,
+                    new Position(documentLine, document.getLine(documentLine).length),
+                    new Position(documentLine, document.getLine(documentLine).length)
+                );
+            }
+
             if (numeric.hasToken()) {
-                const pos = new Position(documentLine, 0).normalize(document);
-                const tokens = document.getLineTokens(pos.row);
                 let tokenIndex = numeric.getToken();
                 tokenIndex = Math.max(0, Math.min(tokens.tokens.length - 1, tokenIndex));
                 const token = tokens.tokens[tokenIndex];
@@ -487,11 +497,19 @@ export class Speech {
                 );
             }
             else {
+                const tokens = document.getLineTokens(documentLine, false);
+                const left = tokens.tokens[0].position;
+                const last = tokens.tokens[tokens.tokens.length - 1];
+                const right = new Position(
+                    last.position.row,
+                    last.position.column + last.text.length
+                );
+
                 return new SpokenSelection(
                     document, 
                     subscription.anchorIndex,
-                    new Position(documentLine, 0).normalize(document),
-                    new Position(documentLine + 1, 0).normalize(document)
+                    right.normalize(document),
+                    left.normalize(document)
                 );
             }
         }
@@ -574,8 +592,10 @@ export class Speech {
             case "all":
                 if (location instanceof SpokenSelection) {
                     location.mark.column = 0;
-                    location.cursor.column = 
-                        location.document.getLine(location.cursor.row).length;
+                    location.cursor = new Position(
+                        location.mark.row + 1,
+                        0
+                    ).normalize(location.document);
                 } 
                 break;
 

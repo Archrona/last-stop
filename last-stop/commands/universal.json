@@ -30,7 +30,7 @@
 
         
         {
-            "spoken": ["drop out", "drop forward"],
+            "spoken": ["dropout", "drop out", "drop forward"],
             "insert": "$u"
         },
         {

@@ -45,6 +45,7 @@ indicate EOF
 T<> has glued spacing inside
 make token for standalone _ in ident, add to alphabet?
 return[] -> return []
+go 30 ok puts NL on 32
 
 ----- MS2 Wednesday 6/10/2020
 

@@ -314,7 +314,7 @@ Operator | Spoken Form
 `||` | `logical or`, `lore`
 `!` | `logical not`, `not`
 `&` | `bitwise and`, `band`
-`|` | `bitwise or`, `bore`, `boar`
+`|` | `bitwise or`, `bore`, `boar`, `boring`
 `~` | `bitwise not`
 `^` | `[bitwise] exclusive or`, `[bitwise] xor`
 `?:` | `branch`

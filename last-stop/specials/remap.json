@@ -14,6 +14,8 @@
     { "spoken": "quadruple", "internal": "quadruple" },
     { "spoken": "pick", "internal": "pick" },
     { "spoken": "literally", "internal": "literally" },
-    { "spoken": "precisely", "internal": "literally" }
-    
+    { "spoken": "precisely", "internal": "literally" },
+    { "spoken": "through", "internal": "to" },
+    { "spoken": "thru", "internal": "to" },
+    { "spoken": "long", "internal": "all" }
 ]

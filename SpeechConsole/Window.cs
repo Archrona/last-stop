@@ -42,7 +42,7 @@ namespace SpeechConsole
         }
 
         public void setLanguageInfo(string info) {
-            this.Text = "Last Stop SC";
+            this.Text = "Last Stop Speech Console";
         }
 
         public Window() {
@@ -83,6 +83,13 @@ namespace SpeechConsole
                 ticksSinceChanged = 0;
             }
             
+        }
+
+        public void appendKey(int window, string k) {
+            if (input.Text.Length > 0 && input.Text[input.Text.Length - 1] != ' ') {
+                input.Text += " ";
+            }
+            input.Text += Program.ESCAPE_START + Program.ESCAPE_KEY + window + Program.ESCAPE_SUBSPLIT + k + Program.ESCAPE_END;
         }
     }
 }

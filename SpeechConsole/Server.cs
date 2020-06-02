@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -14,27 +15,131 @@ namespace SpeechConsole
         public static Window mainWindow;
         public static bool finalText;
 
-        public class SimpleResult
+        public class Result
         {
             public bool success;
 
-            public SimpleResult(bool success) {
+            public Result(bool success) {
                 this.success = success;
             }
         }
 
-        public static SimpleResult serveClear() {
+        public class ErrorResult : Result
+        {
+            public string message;
+
+            public ErrorResult(string message): base(false) {
+                this.message = message;
+            }
+        }
+
+        public class KeyEvent
+        {
+            public int window;
+            public bool down;
+            public string key;
+            public List<string> modifiers;
+        }
+
+        public class MouseEvent
+        {
+            public int window;
+            public bool down;
+            public int row;
+            public int column;
+            public int button;
+        }
+
+        public class ScrollEvent
+        {
+            public int window;
+            public double x;
+            public double y;
+        }
+
+/*
             mainWindow.Invoke((Action)delegate () {
                 mainWindow.clearText();
             });
+*/
 
-            return new SimpleResult(true);
+        public static object onKey(string json) {
+            try {
+                var e = JsonConvert.DeserializeObject<KeyEvent>(json);
+                Console.WriteLine("Key " + e.key + ", down " + e.down);
+
+                if (e.down && !e.modifiers.Contains("control") && !e.modifiers.Contains("alt")) {
+                    mainWindow.Invoke((Action)delegate () {
+                        mainWindow.appendKey(e.window, e.key);
+                    });
+                }
+
+                return new Result(true);
+            } catch (Exception e) {
+                return new ErrorResult("could not parse body of key event");
+            }
+        }
+
+        public static object onMouse(string json) {
+            try {
+                var e = JsonConvert.DeserializeObject<MouseEvent>(json);
+                Console.WriteLine("Mouse " + e.button + ", down " 
+                    + e.down + ", (" + e.row + ", " + e.column + ")");
+
+                return new Result(true);
+            }
+            catch (Exception e) {
+                return new ErrorResult("could not parse body of mouse event");
+            }
+        }
+
+        public static object onScroll(string json) {
+            try {
+                var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
+                Console.WriteLine("Scroll (" + e.x + ", " + e.y + ")");
+
+                return new Result(true);
+            }
+            catch (Exception e) {
+                return new ErrorResult("could not parse body of scroll event");
+            }
         }
 
         public static bool serveOneRequest() {
             HttpListenerContext context = listener.GetContext();
             HttpListenerRequest request = context.Request;
+            HttpListenerResponse response = context.Response;
 
+            Console.WriteLine("serving request:");
+
+            var sr = new StreamReader(request.InputStream, Encoding.UTF8);
+            string body = sr.ReadToEnd();
+            Console.WriteLine(body);
+
+            string path = request.Url.AbsolutePath;
+            Console.WriteLine(path);
+
+            object resp = new ErrorResult("fell through");
+
+            switch (path) {
+                case "/key":
+                    resp = onKey(body);
+                    break;
+
+                case "/mouse":
+                    resp = onMouse(body);
+                    break;
+
+                case "/scroll":
+                    resp = onScroll(body);
+                    break;
+
+                default:
+                    resp = new ErrorResult("unknown route");
+                    break;
+            }
+
+/*
             List<string[]> query = new List<string[]>();
             if (request.Url.Query.Length > 1) {
                 query = request.Url.Query
@@ -45,17 +150,8 @@ namespace SpeechConsole
             }
 
             string path = request.Url.AbsolutePath.Substring(1);
-
-            HttpListenerResponse response = context.Response;
-
-            object resp = "unknown route";
-
-
-
-            if (path == "clear") {
-                resp = serveClear();
-            }
-
+*/
+            
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(
                 JsonConvert.SerializeObject(resp)
             );

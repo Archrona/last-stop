@@ -95,10 +95,26 @@ export class Window {
 
     onMouseDown(row: number, column: number, button: number) {
         console.log("down " + row + ", " + column + " (" + button + ")");
+
+        this.app.consoleServer.postRequest("mouse", {
+            "window": this.id,
+            "down": true,
+            "row": row,
+            "column": column,
+            "button": button
+        });
     }  
 
     onMouseUp(row: number, column: number, button: number) {
         console.log("  up " + row + ", " + column + " (" + button + ")");
+
+        this.app.consoleServer.postRequest("mouse", {
+            "window": this.id,
+            "down": false,
+            "row": row,
+            "column": column,
+            "button": button
+        });
     }
 
     onKeyDown(key: string, modifiers: Array<string>) {
@@ -107,14 +123,34 @@ export class Window {
         }
          
         console.log("down " + key + " " + modifiers);
+
+        this.app.consoleServer.postRequest("key", {
+            "window": this.id,
+            "down": true,
+            "key": key,
+            "modifiers": modifiers
+        });
     }
     
     onKeyUp(key: string, modifiers: Array<string>) {
         console.log("  up " + key + " " + modifiers);
+
+        this.app.consoleServer.postRequest("key", {
+            "window": this.id,
+            "down": false,
+            "key": key,
+            "modifiers": modifiers
+        });
     }
-    
+
     onScroll(x: number, y: number): void {
         console.log(`scrl: ${x}, ${y}`);
+
+        this.app.consoleServer.postRequest("scroll", {
+            "window": this.id,
+            "x": x,
+            "y": y
+        });
     };
     
     onReady() {

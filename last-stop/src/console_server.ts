@@ -7,12 +7,13 @@ import express from 'express';
 import { Main } from './main';
 import { execFile, ChildProcess } from "child_process";
 import { createServer, Server } from 'http';
+import axios, { AxiosResponse } from 'axios';
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
 const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 200;
 const SERVER_RESTART_DELAY = 200;
-
+const CONSOLE_URI = `http://localhost:${CONSOLE_PORT}/`
 
 export class ConsoleServer {
     expressServer: Express;
@@ -100,5 +101,9 @@ export class ConsoleServer {
 
             setTimeout(() => { this.startServer(); }, SERVER_RESTART_DELAY);
         })
+    }
+
+    postRequest(endpoint: string, json: any): Promise<AxiosResponse<any>> {
+        return axios.post(CONSOLE_URI + endpoint, json);
     }
 }

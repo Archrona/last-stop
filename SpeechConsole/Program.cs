@@ -23,6 +23,15 @@ namespace SpeechConsole
             onSpeech(Server.mainWindow.getText());
         }
 
+
+        public static string ESCAPE_START = "▸";
+        public static string ESCAPE_END = "◂";
+        public static string ESCAPE_SPLIT = "‖";
+        public static string ESCAPE_SUBSPLIT = "′";
+        public static string ESCAPE_KEY = "κ";
+        public static string ESCAPE_MOUSE = "μ";
+        public static string ESCAPE_SCROLL = "σ";
+
         private class Command
         {
             public string command;

@@ -11,6 +11,10 @@
             "pattern": "[$a-zA-Z_']+" 
         },
         {
+            "type": "event",
+            "pattern": "▸[^◂]+◂"
+        },
+        {
             "type": "number",
             "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
         },

@@ -94,8 +94,6 @@ export class Window {
     }
 
     onMouseDown(row: number, column: number, button: number) {
-        console.log("down " + row + ", " + column + " (" + button + ")");
-
         this.app.consoleServer.postRequest("mouse", {
             "window": this.id,
             "down": true,
@@ -106,8 +104,6 @@ export class Window {
     }  
 
     onMouseUp(row: number, column: number, button: number) {
-        console.log("  up " + row + ", " + column + " (" + button + ")");
-
         this.app.consoleServer.postRequest("mouse", {
             "window": this.id,
             "down": false,
@@ -122,8 +118,6 @@ export class Window {
             return;
         }
          
-        console.log("down " + key + " " + modifiers);
-
         this.app.consoleServer.postRequest("key", {
             "window": this.id,
             "down": true,
@@ -133,8 +127,6 @@ export class Window {
     }
     
     onKeyUp(key: string, modifiers: Array<string>) {
-        console.log("  up " + key + " " + modifiers);
-
         this.app.consoleServer.postRequest("key", {
             "window": this.id,
             "down": false,
@@ -144,8 +136,6 @@ export class Window {
     }
 
     onScroll(x: number, y: number): void {
-        console.log(`scrl: ${x}, ${y}`);
-
         this.app.consoleServer.postRequest("scroll", {
             "window": this.id,
             "x": x,

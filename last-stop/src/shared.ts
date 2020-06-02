@@ -5,6 +5,15 @@ import { DocumentNavigator } from "./model";
 
 export const INSERTION_POINT = "□";
 
+export const ESCAPE_START = "▸";
+export const ESCAPE_END = "◂";
+export const ESCAPE_SPLIT = "‖";
+export const ESCAPE_SUBSPLIT = "′";
+export const ESCAPE_KEY = "κ";
+export const ESCAPE_MOUSE = "μ";
+export const ESCAPE_SCROLL = "σ";
+export const ESCAPE_DRAG = "δ";
+
 export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";
 }

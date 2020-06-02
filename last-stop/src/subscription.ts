@@ -6,7 +6,7 @@ import { Position, DrawableText, splitIntoLines } from "./shared";
 import { Anchor } from "./model";
 import { TokenizeResult } from "./language";
 
-const LEFT_MARGIN_COLUMNS = 6;
+export const LEFT_MARGIN_COLUMNS = 6;
 
 function parseSubscription(sub: string) {
     let words = [];

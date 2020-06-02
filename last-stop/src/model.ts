@@ -352,9 +352,17 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
-    setAnchorPosition(name: string, position: Position): DocumentNavigator {
+    setAnchorPosition(
+        name: string,
+        position: Position,
+        normalize: boolean = true
+    ): DocumentNavigator {
         let nav = this.clone().goKey("anchors").goKey(name);
-        position = position.normalize(this);
+
+        if (normalize) {
+            position = position.normalize(this);
+        }
+
         nav.goKey("row").setNumber(position.row);
         nav.goSiblingKey("column").setNumber(position.column);
         return this;
@@ -399,7 +407,7 @@ export class DocumentNavigator extends Navigator {
     }
     
     setView(anchorIndex: number, position: Position): DocumentNavigator {
-        this.setAnchorPosition("view_" + anchorIndex, position);
+        this.setAnchorPosition("view_" + anchorIndex, position, false);
         return this;
     }
 

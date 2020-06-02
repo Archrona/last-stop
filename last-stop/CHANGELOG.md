@@ -2,40 +2,51 @@
 ## Version 0.2.0
 ## 6/10/2020
 
+- (DONE)  keyboard/mouse commands and <<>> collapsing in speech console
+- (DONE)  implement control-V
+
+
 - work out proper grammar for locations, implement
 - implement line N
 - implement go L through L without "from"
 - implement go invalid line doesn't dump bullshit, just silently fails
+- implement $identifier
+- implement context override signals
 
-- keyboard/mouse commands and <<>> collapsing in speech console
-- add whitespace control commands
-- large-scale undo (by big blocks) - kb shortcut?
-- implement and document external clipboard commands
+- drag command selects region
+- successive raw keyboard commands collapse without prime
+- drag continuous update
+- clipboard paste/copy/cut are commit-causing events (involving external state...)
+- implement and document remaining external clipboard commands
 - implement clipboard internal (ring)
-- display line numbers in display on RHS
+
+- add whitespace control commands
 - operators parse/space as whole tokens rather than individual characters
-- wordwrap rather than cut off long lines
-- get a better token index display than the stupid dots
 - T<> needs glued spacing inside
-- closing speech console commits changes (or restores original text?)
-
-
+- on drop don't carry the whitespace AFTER the original cursor
 - contextual capitalization on forms like "new", "extends", "class"
 - make regexp literals into a real context, deal with multiline, etc. fuck me
 - implement markdown inside doc comments, lol god hates you
 - ensure that including a command multiple times OVERRIDES, not makes a second copy
 - implement regular expression spoken forms
 - contextChanges "token" key uses regexp rather than raw string
-- implement context override signals
+
+- large-scale undo (by big blocks) - kb shortcut?
+
+- display line numbers in display on RHS
+- wordwrap rather than cut off long lines
+- get a better token index display than the stupid dots
+
+- closing speech console commits changes (or restores original text?)
+- focusing one window focuses all windows
+
+- COMMENTS/DOCS
+
+- AND ALL THE PROJECT STUFF
 - reload all json files at runtime
 - generalized config overrides by file, project, language
 - override: default casing by file, project (and spoken commands)
 - override: tab/space (and spoken commands)
-- implement $identifier
-- COMMENTS/DOCS
-- AND ALL THE PROJECT STUFF
-- focusing one window focuses all windows
-
 
 
 ## Version 0.1.0

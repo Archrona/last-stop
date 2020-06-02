@@ -15,6 +15,8 @@ namespace SpeechConsole
         public static Window mainWindow;
         public static bool finalText;
 
+        public static MouseEvent lastMouse = null;
+
         public class Result
         {
             public bool success;
@@ -68,9 +70,9 @@ namespace SpeechConsole
                 var e = JsonConvert.DeserializeObject<KeyEvent>(json);
                 Console.WriteLine("Key " + e.key + ", down " + e.down);
 
-                if (e.down && !e.modifiers.Contains("control") && !e.modifiers.Contains("alt")) {
+                if (e.down) {
                     mainWindow.Invoke((Action)delegate () {
-                        mainWindow.appendKey(e.window, e.key);
+                        mainWindow.appendKey(e.window, e.key, e.modifiers);
                     });
                 }
 
@@ -86,6 +88,31 @@ namespace SpeechConsole
                 Console.WriteLine("Mouse " + e.button + ", down " 
                     + e.down + ", (" + e.row + ", " + e.column + ")");
 
+                if (e.down) {
+                    lastMouse = e;
+                }
+
+                if (!e.down) {
+                    if (lastMouse != null
+                        && e.button == lastMouse.button
+                        && e.window == lastMouse.window
+                        && (e.row != lastMouse.row || e.column != lastMouse.column)) 
+                    {
+                        mainWindow.Invoke((Action)delegate () {
+                            mainWindow.appendDrag(e.window, e.button, lastMouse.row, lastMouse.column, e.row, e.column);
+                        });
+                    }
+                    else {
+                        mainWindow.Invoke((Action)delegate () {
+                            mainWindow.appendMouse(e.window, e.button, e.down, e.row, e.column);
+                        });
+                    }
+
+                    lastMouse = null;
+                }
+
+                // TODO drag
+
                 return new Result(true);
             }
             catch (Exception e) {
@@ -97,6 +124,10 @@ namespace SpeechConsole
             try {
                 var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
                 Console.WriteLine("Scroll (" + e.x + ", " + e.y + ")");
+
+                mainWindow.Invoke((Action)delegate () {
+                    mainWindow.appendScroll(e.window, e.x, e.y);
+                });
 
                 return new Result(true);
             }

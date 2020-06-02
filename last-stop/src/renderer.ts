@@ -276,7 +276,7 @@ class Application {
     }
 
     sendScrollMessage(x: number, y: number): void {
-        if (this.id === - 1) {
+        if (this.id === -1) {
             return;
         }
         

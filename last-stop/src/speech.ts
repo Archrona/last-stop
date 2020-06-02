@@ -2,11 +2,13 @@
 
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
-import { Position, INSERTION_POINT } from "./shared";
-import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription } from "./model";
+import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG } from "./shared";
+import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription, Subscription } from "./model";
 import { CommandList, Command } from "./commands";
 import { inspect } from "util";
 import * as fs from "fs";
+import { LEFT_MARGIN_COLUMNS } from "./subscription";
+import { clipboard } from "electron";
 
 export type Executor = (model: Model, args: Array<any>) => void
 
@@ -225,7 +227,88 @@ export const EXECUTORS = {
             doc.setSelectionEOL(ai, true);
             EXECUTORS.insert(model, args);
         });
-    }
+    },
+
+    onScroll: (model: Model, args: Array<any>) => {
+        let sub = args[2];
+
+        if (sub instanceof DocumentSubscription) {
+            let x = parseInt(args[3]);
+            let y = parseInt(args[4]);
+            let docName = sub.document;
+            if (model.documents.hasKey(docName)) {
+                let doc = model.documents.get(docName);
+                let view = doc.getView(sub.anchorIndex);
+                //view.column = Math.max(0, view.column + x);
+                view.row = Math.max(-20, Math.min(doc.getLineCount() + 40, view.row + y));
+                doc.setView(sub.anchorIndex, view);
+            }
+        }
+    },
+
+    onMouse: (model: Model, args: Array<any>) => {
+        let sub = args[1];
+
+        if (sub instanceof DocumentSubscription) {
+            let windowRow = args[3];
+            let windowCol = args[4];
+            let docName = sub.document;
+            if (model.documents.hasKey(docName)) {
+                let doc = model.documents.get(docName);
+                let view = doc.getView(sub.anchorIndex);
+                let pos = new Position(
+                    windowRow + view.row,
+                    windowCol - LEFT_MARGIN_COLUMNS + view.column
+                ).normalize(doc);
+                doc.setMark(sub.anchorIndex, pos);
+                if (args[2] === 0) {
+                    doc.setCursor(sub.anchorIndex, pos);
+                }
+            }
+        }
+    },
+
+    onKey: (model: Model, args: Array<any>) => {
+        let sub = args[1];
+
+        if (sub instanceof DocumentSubscription) {
+            let docName = sub.document;
+            if (model.documents.hasKey(docName)) {
+                let doc = model.documents.get(docName);
+                let str = "";
+
+                for (let i = 2; i < args.length; i++) {
+                    let key = args[i];
+
+                    if (typeof key === "string") {
+                        if (key.length === 1) {
+                            str += key;
+                        } else {
+                            if (str.length > 0) {
+                                doc.insert(sub.anchorIndex, str);
+                                str = "";
+                            }
+                            switch (key) {
+                                case "Enter":
+                                    str += "\n";
+                                    break;
+                                
+                                case "C-v":
+                                    let text = clipboard.readText();
+                                    str += text;
+                                    break;
+
+                                default:
+                                    console.log("Unhandled key: \"" + key + "\"");
+                            }
+                        }
+                    }
+                }
+                
+                doc.insert(sub.anchorIndex, str);
+            }
+        }
+    },
 }
 
 class Executed {
@@ -390,7 +473,7 @@ export class Speech {
     }
 
     private runExecutor(i: number, length: number, executor: Executor,
-        args: Array<string>, context: string): Executed
+        args: Array<any>, context: string): Executed
     {
         let undoIndex = this.getUndoIndex();
         executor(this.app.model, args);
@@ -891,6 +974,52 @@ export class Speech {
         }
     }
 
+    private runEvent(i: number, context: string): Executed[] | null {
+        let event = this.tokens[i].text;
+        let parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
+        if (parts.length < 2) {
+            return null;
+        }
+
+        let type = parts[0][0];
+        let windowStr = parts[0].substring(1);
+        let window = parseInt(windowStr);
+        let sub = this.app.model.subscriptions.getDetails(window);
+        if (!sub) {
+            return null;
+        }
+
+        switch (type) {
+            case ESCAPE_KEY:
+                return [this.runExecutor(i, 1, EXECUTORS.onKey, 
+                    ([windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+            
+            case ESCAPE_MOUSE:
+                let result = [];
+
+                for (let index = 1; index + 2 < parts.length; index += 3) {
+                    let button = parseInt(parts[index]);
+                    let row = parseInt(parts[index + 1]);
+                    let column = parseInt(parts[index + 2]);
+                    
+                    result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
+                        [windowStr, sub, button, row, column], context));
+                }
+                return result;
+               
+
+            case ESCAPE_SCROLL:
+                return [this.runExecutor(i, 1, EXECUTORS.onScroll, 
+                    ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+
+            case ESCAPE_DRAG:
+                // TODO
+                break;
+        }
+
+        return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
+    }
+
     private runOne(
         i: number,
         context: string,
@@ -899,8 +1028,13 @@ export class Speech {
     ): (Executed | DeferredWhite)[]
     {
         const word = this.tokens[i].text;
-        const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
 
+        if (this.tokens[i].type === "event") {
+            let maybe = this.runEvent(i, context);
+            if (maybe !== null) return maybe;
+        }
+
+        const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
         if (possibleCommands !== undefined) {
             let maybe = this.runMaybeCommandList(i, context, possibleCommands);
             if (maybe !== null) return [maybe];

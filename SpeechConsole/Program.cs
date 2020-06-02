@@ -31,6 +31,7 @@ namespace SpeechConsole
         public static string ESCAPE_KEY = "κ";
         public static string ESCAPE_MOUSE = "μ";
         public static string ESCAPE_SCROLL = "σ";
+        public static string ESCAPE_DRAG = "δ";
 
         private class Command
         {

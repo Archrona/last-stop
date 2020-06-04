@@ -24,7 +24,7 @@ export abstract class StoreNode {
     // Because this tree will have no references pointing at it afterward (we hope)
     // it'll be queued for destruction
     detach(): any {
-        let json = this.getJson();
+        const json = this.getJson();
         this.parent = null;
         return json;
     }
@@ -96,8 +96,8 @@ export abstract class StoreNode {
         }
         
         if (Array.isArray(data)) {
-            let result = new ListNode(parent, []);
-            let contents = (data as Array<any>).map((item) => {
+            const result = new ListNode(parent, []);
+            const contents = (data as Array<any>).map((item) => {
                 return this.fromJsonHelper(item, result);
             });
             result.list = contents;
@@ -107,7 +107,7 @@ export abstract class StoreNode {
         if (Object.getPrototypeOf(data) === Object.prototype) {
             const contents = new Map<string, StoreNode>();
             const result = new MapNode(parent, contents);
-            for (const key in (data as Object)) {
+            for (const key in (data as Record<string, any>)) {
                 contents.set(key, this.fromJsonHelper(data[key], result));
             }
             return result;
@@ -241,7 +241,7 @@ export class MapNode extends StoreNode {
     }
     
     getJson() {
-        let result = { };
+        const result = { };
         for (const [key, value] of this.map) {
             result[key] = value.getJson();
         }
@@ -303,12 +303,12 @@ export class Store {
     }  
 
     getNavigator(path: Array<PathComponent> = []): Navigator {
-        let result = new Navigator(this, this.age, path);
+        const result = new Navigator(this, this.age, path);
         return result;
     }
 
     getSpecialNavigator<T>(klass: NavigatorConstructor<T>, path: Array<PathComponent> = []): T {
-        let result = new klass(this, this.age, path);
+        const result = new klass(this, this.age, path);
         return result;
     }
 
@@ -337,7 +337,7 @@ export class Store {
         return node;
     }
 
-    undo(times: number = 1) {
+    undo(times = 1) {
         while (this.undoStack.length > 0 && times > 0) {
             const last = this.undoStack.pop();
             last(this);
@@ -380,7 +380,7 @@ export class Navigator {
     }
 
     clone() {
-        let result = new Navigator(this.store, this.age);
+        const result = new Navigator(this.store, this.age);
         result.node = this.node;
         result.path = this.path.slice(0);
         return result;
@@ -391,7 +391,7 @@ export class Navigator {
             return;
         }
         
-        let pathTarget = this.store.followPath(this.path);
+        const pathTarget = this.store.followPath(this.path);
         if (pathTarget === this.node) {
             this.age = this.store.age;
         }
@@ -444,7 +444,7 @@ export class Navigator {
             throw new Error("mapKeys expects map node");
         }
 
-        let nav = this.clone();
+        const nav = this.clone();
         for (const k of this.getKeys()) {
             nav.goKey(k);
             fun(nav);
@@ -720,7 +720,7 @@ export class Navigator {
             throw new TypeError("_popUntracked: not a list node");
         }
         
-        let node = this.node as ListNode;
+        const node = this.node as ListNode;
         if (node.list.length === 0) {
             throw new Error("_popUntracked: can't pop from empty list");
         }
@@ -735,7 +735,7 @@ export class Navigator {
             throw new TypeError("_pushUntracked: not a list node");
         }
         
-        let node = this.node as ListNode;
+        const node = this.node as ListNode;
         node.list.push(StoreNode.fromJson(json, node));
     }  
 
@@ -744,7 +744,7 @@ export class Navigator {
             throw new TypeError("push: not a list node");
         }
         
-        let node = this.node as ListNode;
+        const node = this.node as ListNode;
         const undoPath = this.getPath();
 
         node.list.push(StoreNode.fromJson(json, node));
@@ -760,7 +760,7 @@ export class Navigator {
             throw new TypeError("pop: not a list node");
         }
         
-        let node = this.node as ListNode;
+        const node = this.node as ListNode;
         if (node.list.length === 0) {
             throw new Error("pop: can't pop from empty list");
         }
@@ -791,7 +791,7 @@ export class Navigator {
             throw new TypeError("_setKeyUntracked: not a map node");
         }
 
-        let previous = (this.node as MapNode).map.get(key);
+        const previous = (this.node as MapNode).map.get(key);
         if (previous !== undefined) {
             previous.detachWithoutJson();
         }

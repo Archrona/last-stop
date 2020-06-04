@@ -7,42 +7,103 @@ import { inspect } from "util";
 import * as glob from "glob";
 
 interface TokenContext {
-    type: string,
-    pattern: string,
-    re: RegExp
+    type: string;
+    pattern: string;
+    re: RegExp;
 }
 
+/**
+ * A [ContextChange] describes conditions which, if met, would indicate that
+ * either a new context should be pushed onto the context stack or that
+ * the existing context should be popped from the context stack.
+ * 
+ * [token] is the text of the token which triggers the context change.
+ * 
+ * If [action] is ["pop"], then the context stack should be popped.
+ * If [action] is ["push"], then [target] will be pushed onto the context
+ * stack.
+ * 
+ * If [requiresParent] is provided, the context change will not match
+ * unless the immediate parent of the current context on the stack is
+ * equal to [requiresParent].
+ * 
+ * [style] will be applied to syntax highlight the given token if the
+ * context change is successful.
+ * 
+ * Example:
+ * 
+ *      {
+ *          "token": "/*",
+ *          "action": "push",
+ *          "target": "comment_multiple_line",
+ *          "style": "comment"
+ *      }
+*/
 interface ContextChange {
-    token: string,
-    action: string,
-    target?: string,
-    style: string,
-    requiresParent?: string
+    token: string;
+    action: string;
+    target?: string;
+    style: string;
+    requiresParent?: string;
 }
 
+/**
+ * A [SpacingRule] describes conditions on the text before and after 
+ * the cursor which, if applicable, determine whether whitespace is
+ * desired. This is used to automatically space spoken code.
+ * 
+ * There are two kinds of spacing rule. If [either] is provided, then
+ * it must match on either the left or right or both. In this case,
+ * [orMode] will be true. 
+ * 
+ * On the other hand, if [either] is not provided,
+ * then [before] and [after], if present, must both be satisfied.
+ * [before] is matched on the *left* of the cursor; [after] is matched on
+ * the *right* of the cursor. [orMode] will be false in this case. If only
+ * one of [before] and [after] is provided, only the given pattern must match.
+ * 
+ * The raw JSON file does not support regular expressions, so the
+ * interface has computed properties [beforeRe] and [afterRe] so that
+ * the compiled regular expressions can be cached. These are computed
+ * at load time, and subsequent usage can assume they exist.
+ * 
+ * As an example, the below rule removes spaces after certain symbols:
+ * 
+ *      {
+ *          "what": "after opening punctuation",
+ *          "before": "[(\\[{$#@~\\\\!]",
+ *          "rule": false
+ *      }
+*/
 interface SpacingRule {
-    before?: string,
-    after?: string,
-    either?: string,
-    rule: boolean,
-    what: string,
+    before?: string;
+    after?: string;
+    either?: string;
+    rule: boolean;
+    what: string;
 
     // Computed properties
-    beforeRe: RegExp | null,
-    afterRe: RegExp | null,
-    orMode: boolean
-    isDefault: boolean
+    beforeRe: RegExp | null;
+    afterRe: RegExp | null;
+    orMode: boolean;
+    isDefault: boolean;
 }
 
+/**
+ * A [LanguageContext] is a description of a single context.
+ * 
+ * Each [LanguageContext] is loaded from a .json file in the [./contexts]
+ * directory. For this reason, we use an interface rather than a class.
+*/
 interface LanguageContext {
-    name: string,
-    extensions: Array<string>,
-    tokens: Array<TokenContext>,
-    commands: Array<string>,
-    contextChanges: Array<ContextChange>,
-    rawInput: boolean,
-    defaultCasing: string,
-    spacing: Array<SpacingRule>
+    name: string;
+    extensions: Array<string>;
+    tokens: Array<TokenContext>;
+    commands: Array<string>;
+    contextChanges: Array<ContextChange>;
+    rawInput: boolean;
+    defaultCasing: string;
+    spacing: Array<SpacingRule>;
 }
 
 export class TokenizeResult {
@@ -65,13 +126,13 @@ export class Languages {
     }
     
     static loadContexts(filename: string) {
-        let data = [] as Array<LanguageContext>;
+        const data = [] as Array<LanguageContext>;
 
-        for (let fn of glob.sync("./contexts/*.json", {})) {
+        for (const fn of glob.sync("./contexts/*.json", {})) {
             data.push(JSON.parse(fs.readFileSync(fn).toString()));
         }
 
-        let result = new Map();
+        const result = new Map();
 
         for (const languageData of data) {
             for (const tokenTypeInformation of languageData.tokens) {
@@ -104,11 +165,11 @@ export class Languages {
         if (contextStack.length == 0) throw "zeroed out context stack";
         contextStack = contextStack.slice();
 
-        let baseContext = contextStack[0];
-        let pos = initialPosition.clone();
+        const baseContext = contextStack[0];
+        const pos = initialPosition.clone();
         let i = 0;
 
-        let tokens: Array<Token> = [];
+        const tokens: Array<Token> = [];
 
         while (i < text.length) {
             const context = (contextStack.length > 0 ?
@@ -179,9 +240,9 @@ export class Languages {
     }
 
     shouldSpace(context: string, before: string, after: string): boolean {
-        let rules = this.contexts.get(context).spacing;
+        const rules = this.contexts.get(context).spacing;
 
-        for (let rule of rules) {
+        for (const rule of rules) {
             if (rule.isDefault) {
                 return rule.rule;
             } else if (rule.orMode) {
@@ -203,9 +264,9 @@ export class Languages {
     }
 
     shouldSpaceExplain(context: string, before: string, after: string): string {
-        let rules = this.contexts.get(context).spacing;
+        const rules = this.contexts.get(context).spacing;
 
-        for (let rule of rules) {
+        for (const rule of rules) {
             let desc = (rule.rule + "").toUpperCase() + " by " + rule.what + "\n";
             if (rule.isDefault) {
                 return desc + "  --> Triggered default";
@@ -261,7 +322,7 @@ export class TokenIterator {
     }  
     
     private offsetExcludingWhite(offset: number): number | null {
-        let delta = (offset < 0 ? - 1 : 1);
+        const delta = (offset < 0 ? - 1 : 1);
         let positiveOffset = (offset < 0 ? -offset : offset);
         let current = this.index;
         
@@ -304,13 +365,13 @@ export class TokenIterator {
         }      
     }
 
-    get(offset: number = 0): Token | null {
+    get(offset = 0): Token | null {
         this.checkValid();
         const offsetIndex = this.offset(offset);
         return (offsetIndex === null ? null : this.tokens[offsetIndex]);
     }
 
-    shift(offset: number = 1) {
+    shift(offset = 1) {
         this.checkValid();
         const index = this.offset(offset);
  

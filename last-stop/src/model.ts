@@ -6,11 +6,11 @@ import { Speech } from "./speech";
 import { inspect } from "util";
 
 export interface InsertOptions {
-    lockMark?: boolean,
-    enforceSpacing?: boolean,
-    explainSpacing?: boolean,
-    escapes?: boolean,
-    escapeArguments?: Array<string>
+    lockMark?: boolean;
+    enforceSpacing?: boolean;
+    explainSpacing?: boolean;
+    escapes?: boolean;
+    escapeArguments?: Array<string>;
 }
 
 export class Anchor {
@@ -59,9 +59,9 @@ export class SubscriptionsNavigator extends Navigator {
     }
     
     getDetails(windowId: number): Subscription {
-        let str = this.get(windowId);
+        const str = this.get(windowId);
 
-        let parts = str.trim().split("@");
+        const parts = str.trim().split("@");
         if (parts.length <= 0) {
             throw new Error("Empty subscription on window " + windowId);
         }
@@ -145,7 +145,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     getText(): string {
-        let nav = this.clone().goKey("lines");
+        const nav = this.clone().goKey("lines");
         let result = "";
         let first = true;
         
@@ -159,8 +159,8 @@ export class DocumentNavigator extends Navigator {
     }
 
     getRange(p1: Position, p2: Position) {
-        let [left, right] = Position.orderNormalize(p1, p2, this);
-        let nav = this.clone().goKey("lines").goIndex(left.row);
+        const [left, right] = Position.orderNormalize(p1, p2, this);
+        const nav = this.clone().goKey("lines").goIndex(left.row);
 
         let result = "";
         for (let line = left.row; line <= right.row; line++, nav.goNextSibling()) {
@@ -168,7 +168,7 @@ export class DocumentNavigator extends Navigator {
                 result += "\n";
             }
             
-            let text = nav.getString();
+            const text = nav.getString();
             result += text.substring(
                 line === left.row ? left.column : 0,
                 line === right.row ? right.column : undefined
@@ -195,10 +195,10 @@ export class DocumentNavigator extends Navigator {
     }
 
     getAnchor(name: string): Anchor {
-        let nav = this.clone().goKey("anchors").goKey(name);
-        let row = nav.goKey("row").getNumber();
-        let col = nav.goParent().goKey("column").getNumber();
-        let fixed = nav.goParent().goKey("fixed").getBoolean();
+        const nav = this.clone().goKey("anchors").goKey(name);
+        const row = nav.goKey("row").getNumber();
+        const col = nav.goParent().goKey("column").getNumber();
+        const fixed = nav.goParent().goKey("fixed").getBoolean();
         return new Anchor(new Position(row, col), fixed);
     }
 
@@ -230,7 +230,7 @@ export class DocumentNavigator extends Navigator {
         return contexts.getJson() as Array<string>;
     }
 
-    getLineTokens(index: number, includeWhite: boolean = false): TokenizeResult {
+    getLineTokens(index: number, includeWhite = false): TokenizeResult {
         const lineContext = this.getLineContext(index);
         const lineText = this.getLine(index);
 
@@ -248,7 +248,7 @@ export class DocumentNavigator extends Navigator {
             lineText, lineContext, new Position(position.row, 0), true
         );
         
-        let found = binarySearchSparse(0, tokenization.tokens.length, position.column, (x) =>
+        const found = binarySearchSparse(0, tokenization.tokens.length, position.column, (x) =>
             tokenization.tokens[x].position.column
         );
 
@@ -280,20 +280,20 @@ export class DocumentNavigator extends Navigator {
         return this.getRange(this.getCursor(anchorIndex), this.getMark(anchorIndex));
     }
 
-    findInRange(s: string, p1: Position, p2: Position, onlyFirst: boolean = false): Array<Position> {
+    findInRange(s: string, p1: Position, p2: Position, onlyFirst = false): Array<Position> {
         if (s.length <= 0) {
             throw new Error("findInRange: search string must not be empty");
         }
 
-        let [left, right] = Position.orderNormalize(p1, p2, this);
-        let nav = this.clone().goKey("lines").goIndex(left.row);
-        let result = [];
+        const [left, right] = Position.orderNormalize(p1, p2, this);
+        const nav = this.clone().goKey("lines").goIndex(left.row);
+        const result = [];
 
         for (let line = left.row; line <= right.row; line++, nav.goNextSibling()) {
-            let text = nav.getString();
+            const text = nav.getString();
 
-            let margin = (line === left.row ? left.column : 0);
-            let inScope = text.substring(
+            const margin = (line === left.row ? left.column : 0);
+            const inScope = text.substring(
                 line === left.row ? left.column : 0,
                 line === right.row ? right.column : undefined
             );
@@ -313,7 +313,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     findFirstInRange(s: string, p1: Position, p2: Position): Position | null {
-        let result = this.findInRange(s, p1, p2, true);
+        const result = this.findInRange(s, p1, p2, true);
 
         if (result.length === 0) {
             return null;
@@ -323,11 +323,11 @@ export class DocumentNavigator extends Navigator {
     }
 
     replaceInRange(from: string, to: string, p1: Position, p2: Position): DocumentNavigator {
-        let text = this.getRange(p1, p2);
-        let replaced = replaceAll(text, from, to);
+        const text = this.getRange(p1, p2);
+        const replaced = replaceAll(text, from, to);
 
         if (text !== replaced) {
-            let [left, right] = Position.orderNormalize(p1, p2, this);
+            const [left, right] = Position.orderNormalize(p1, p2, this);
             this.removeAt(left, right);
             this.insertAt(replaced, left);
         }
@@ -345,7 +345,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     setAnchor(name: string, anchor: Anchor): DocumentNavigator {
-        let nav = this.clone().goKey("anchors").goKey(name);
+        const nav = this.clone().goKey("anchors").goKey(name);
         nav.goKey("row").setNumber(anchor.position.row);
         nav.goSiblingKey("column").setNumber(anchor.position.column);
         nav.goSiblingKey("fixed").setBoolean(anchor.fixed);
@@ -355,9 +355,9 @@ export class DocumentNavigator extends Navigator {
     setAnchorPosition(
         name: string,
         position: Position,
-        normalize: boolean = true
+        normalize = true
     ): DocumentNavigator {
-        let nav = this.clone().goKey("anchors").goKey(name);
+        const nav = this.clone().goKey("anchors").goKey(name);
 
         if (normalize) {
             position = position.normalize(this);
@@ -385,18 +385,18 @@ export class DocumentNavigator extends Navigator {
     }
 
     setSelection(anchorIndex: number, p1: Position, p2: Position): DocumentNavigator {
-        let [left, right] = Position.orderNormalize(p1, p2, this);
+        const [left, right] = Position.orderNormalize(p1, p2, this);
         this.setMark(anchorIndex, left);
         this.setCursor(anchorIndex, right);
         return this;
     }
 
-    setSelectionEOL(anchorIndex: number, removeInsertionPoints: boolean = false): DocumentNavigator {
-        let [left, right] = Position.orderNormalize(
+    setSelectionEOL(anchorIndex: number, removeInsertionPoints = false): DocumentNavigator {
+        const [left, right] = Position.orderNormalize(
             this.getCursor(anchorIndex), this.getMark(anchorIndex), this);
 
         if (removeInsertionPoints) {
-            let eol = new Position(left.row, this.getLine(left.row).length);
+            const eol = new Position(left.row, this.getLine(left.row).length);
             this.replaceInRange(INSERTION_POINT, "", left, eol);
         }
 
@@ -412,7 +412,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     newAnchor(name: string, anchor: Anchor): void {
-        let nav = this.clone().goKey("anchors");
+        const nav = this.clone().goKey("anchors");
         if (nav.hasKey(name)) {
             throw new Error("newAnchor: anchor " + name + " already exists");
         }
@@ -436,7 +436,7 @@ export class DocumentNavigator extends Navigator {
         ).finalContextStack;
 
         let i = firstLine + 1;
-        let length = this.getLineCount();
+        const length = this.getLineCount();
 
         while (i < length) {
             if (i >= lastLine && arrayEquals(lineStartContext, this.getLineContext(i))) {
@@ -454,9 +454,9 @@ export class DocumentNavigator extends Navigator {
     }
 
     protected _insertUpdateAnchors(pos: Position, lines: Array<string>) {
-        let names = this.getAnchorNames();
+        const names = this.getAnchorNames();
         for (const name of names) {
-            let anchor = this.getAnchor(name);
+            const anchor = this.getAnchor(name);
 
             if (anchor.fixed) continue;
             if (anchor.position.compareTo(pos) < 0) continue;
@@ -477,10 +477,10 @@ export class DocumentNavigator extends Navigator {
 
     protected _insertUpdateContexts(pos: Position, lines: Array<string>): void {
         // Resize if appropriate
-        let contexts = this.clone().goKey("contexts");
+        const contexts = this.clone().goKey("contexts");
 
         if (lines.length > 1) {
-            let toInsert = [];
+            const toInsert = [];
             for (let i = 1; i < lines.length; i++) {
                 toInsert.push(null);
             }
@@ -496,7 +496,7 @@ export class DocumentNavigator extends Navigator {
         }
         
         let leading = IndentationPolicy.splitMarginContent(targetLine)[0];
-        let policy = this.getIndentationPolicy();
+        const policy = this.getIndentationPolicy();
         let result = "";
         let i = 0;
         
@@ -537,7 +537,7 @@ export class DocumentNavigator extends Navigator {
                     case "2":
                     case "3":
                         {
-                            let index = parseInt(text[i + 1]) - 1;
+                            const index = parseInt(text[i + 1]) - 1;
                             if (options.escapeArguments === undefined || index >= options.escapeArguments.length) {
                                 throw new Error("_insertProcessEscapes: argument " + (index + 1) + " not found");
                             }
@@ -563,14 +563,14 @@ export class DocumentNavigator extends Navigator {
 
     insertAt(text: string, position: Position, options: InsertOptions = {}): DocumentNavigator {
         const pos = position.normalize(this);
-        let targetLine = this.getLine(pos.row);
-        let before = targetLine.substring(0, pos.column);
-        let after = targetLine.substring(pos.column);
+        const targetLine = this.getLine(pos.row);
+        const before = targetLine.substring(0, pos.column);
+        const after = targetLine.substring(pos.column);
 
         if (options.enforceSpacing === true) {
-            let context = this.getPositionContext(position);
-            let spaceLeft = this.app.languages.shouldSpace(context, before, text);
-            let spaceRight = this.app.languages.shouldSpace(context, text, after);
+            const context = this.getPositionContext(position);
+            const spaceLeft = this.app.languages.shouldSpace(context, before, text);
+            const spaceRight = this.app.languages.shouldSpace(context, text, after);
 
             if (options.explainSpacing === true) {
                 console.log("---");
@@ -608,7 +608,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     seekInsertionPoint(anchorIndex: number, from: Position, to: Position): void {
-        let found = this.findInRange(INSERTION_POINT, from, to);
+        const found = this.findInRange(INSERTION_POINT, from, to);
         if (found.length > 0) {
             this.setMark(anchorIndex, found[0]);
             found[0].column++;
@@ -617,15 +617,15 @@ export class DocumentNavigator extends Navigator {
     }
 
     insert(anchorIndex: number, text: string, options: InsertOptions = {}): DocumentNavigator {
-        let cursor = this.getAnchor("cursor_" + anchorIndex);
-        let mark = this.getAnchor("mark_" + anchorIndex);
+        const cursor = this.getAnchor("cursor_" + anchorIndex);
+        const mark = this.getAnchor("mark_" + anchorIndex);
 
         if (cursor.position.compareTo(mark.position) !== 0) {
             this.removeAt(cursor.position, mark.position);
         }
  
-        let pos = this.getCursor(anchorIndex);
-        let result = this.insertAt(text, pos, options);
+        const pos = this.getCursor(anchorIndex);
+        const result = this.insertAt(text, pos, options);
 
         if (options.lockMark === true) {
             this.setMark(anchorIndex, mark.position);
@@ -641,10 +641,10 @@ export class DocumentNavigator extends Navigator {
 
 
     protected _removeUpdateAnchors(left: Position, right: Position): void {
-        let names = this.getAnchorNames();
+        const names = this.getAnchorNames();
 
         for (const name of names) {
-            let anchor = this.getAnchor(name);
+            const anchor = this.getAnchor(name);
             
             if (anchor.fixed || anchor.position.compareTo(left) <= 0) {
                 continue;
@@ -665,7 +665,7 @@ export class DocumentNavigator extends Navigator {
 
     protected _removeUpdateContexts(left: Position, right: Position): void {
         // Resize if appropriate
-        let contexts = this.clone().goKey("contexts");
+        const contexts = this.clone().goKey("contexts");
 
         if (right.row > left.row) {
             contexts.removeItems(left.row + 1, right.row + 1);    
@@ -675,10 +675,10 @@ export class DocumentNavigator extends Navigator {
     }
 
     removeAt(p1: Position, p2: Position): DocumentNavigator {
-        let [left, right] = Position.orderNormalize(p1, p2, this);
+        const [left, right] = Position.orderNormalize(p1, p2, this);
         
-        let before = this.getLine(left.row).substring(0, left.column);
-        let after = this.getLine(right.row).substring(right.column);
+        const before = this.getLine(left.row).substring(0, left.column);
+        const after = this.getLine(right.row).substring(right.column);
         
         if (right.row > left.row) {
             this.clone().goKey("lines").removeItems(left.row + 1, right.row + 1);
@@ -692,8 +692,8 @@ export class DocumentNavigator extends Navigator {
     }
 
     remove(anchorIndex: number): DocumentNavigator {
-        let cursor = this.getAnchor("cursor_" + anchorIndex);
-        let mark = this.getAnchor("mark_" + anchorIndex);
+        const cursor = this.getAnchor("cursor_" + anchorIndex);
+        const mark = this.getAnchor("mark_" + anchorIndex);
             
         return this.removeAt(cursor.position, mark.position);
     }
@@ -710,16 +710,16 @@ export class DocumentNavigator extends Navigator {
         if (this.getSelection(anchorIndex).trim() === INSERTION_POINT) {
             this.remove(anchorIndex);
         } else {
-            let [first, last] = Position.orderNormalize(
+            const [first, last] = Position.orderNormalize(
                 this.getCursor(anchorIndex), this.getMark(anchorIndex), this);
 
-            let lastNext = new Position(last.row, last.column + 1);
+            const lastNext = new Position(last.row, last.column + 1);
             if (this.getRange(last, lastNext) === INSERTION_POINT) {
                 this.removeAt(last, lastNext);
             }
 
             if (first.column > 0) {
-                let firstPrev = new Position(first.row, first.column - 1);
+                const firstPrev = new Position(first.row, first.column - 1);
                 if (this.getRange(firstPrev, first) === INSERTION_POINT) {
                     this.removeAt(firstPrev, first);
                 }
@@ -730,8 +730,8 @@ export class DocumentNavigator extends Navigator {
     }
 
     spongeIfEmptyLine(anchorIndex: number): DocumentNavigator {
-        let cursor = this.getCursor(anchorIndex);
-        let line = this.getLine(cursor.row);
+        const cursor = this.getCursor(anchorIndex);
+        const line = this.getLine(cursor.row);
         
         if (/^\s*$/.test(line)) {
             this.removeLine(cursor.row);
@@ -745,13 +745,13 @@ export class DocumentNavigator extends Navigator {
         this.removeAdjacentInsertionPoints(anchorIndex);
         this.spongeIfEmptyLine(anchorIndex);
 
-        let cursor = this.getCursor(anchorIndex);
-        let endScope = new Position(cursor.row + 10, Number.MAX_SAFE_INTEGER);
+        const cursor = this.getCursor(anchorIndex);
+        const endScope = new Position(cursor.row + 10, Number.MAX_SAFE_INTEGER);
         
-        let found = this.findFirstInRange(INSERTION_POINT, cursor, endScope);
+        const found = this.findFirstInRange(INSERTION_POINT, cursor, endScope);
 
         if (found !== null) {
-            let nextChar = new Position(found.row, found.column + 1);
+            const nextChar = new Position(found.row, found.column + 1);
             this.setSelection(anchorIndex, found, nextChar);
         }
 
@@ -792,7 +792,7 @@ export class Model {
     }
 
     getActiveDocument(): [DocumentNavigator, number] | null {
-        let info = this.subscriptions.getDetails(this.getActiveWindow());
+        const info = this.subscriptions.getDetails(this.getActiveWindow());
 
         if (info instanceof DocumentSubscription) {
             const docName = (info as DocumentSubscription).document;
@@ -812,18 +812,18 @@ export class Model {
     }
 
     getWindowContext(window: number): string {
-        let sub = this.subscriptions.get(window);
-        let parts = sub.split("@");
+        const sub = this.subscriptions.get(window);
+        const parts = sub.split("@");
 
         if (parts[0] === "doc") {
-            let name = parts[1];
-            let anchorIndex = parseInt(parts[2]);
+            const name = parts[1];
+            const anchorIndex = parseInt(parts[2]);
             
             if (name === undefined || name.length < 0 || typeof anchorIndex !== "number") {
                 throw new Error("Can't get context for malformed document subscription");
             }
 
-            let doc = this.documents.get(name);
+            const doc = this.documents.get(name);
             return doc.getCursorContext(anchorIndex, this.app.languages);
         } else {
             return "basic";
@@ -831,7 +831,7 @@ export class Model {
     }
 
     getCurrentContext(): string {
-        let window = this.getActiveWindow();
+        const window = this.getActiveWindow();
 
         if (window === null) {
             return "basic";

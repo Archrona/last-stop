@@ -141,7 +141,7 @@ export class Window {
             "x": x,
             "y": y
         });
-    };
+    }
     
     onReady() {
         console.log("Window id " + this.id + " is ready UwU OwO >w<");
@@ -163,7 +163,7 @@ export class Window {
                 sub = this.app.model.subscriptions.get(this.id);
             }
             
-            let text = renderSubscription(sub, this.topRowNumber, this.lines, this.columns, this.view.app);
+            const text = renderSubscription(sub, this.topRowNumber, this.lines, this.columns, this.view.app);
 
             this.window.webContents.send("update", {
                 subscription: sub,
@@ -194,7 +194,7 @@ export class View {
     } 
 
     getColor(name: string) {
-        let color = THEME[name];
+        const color = THEME[name];
         if (color === undefined) {
             return THEME["general"];
         }

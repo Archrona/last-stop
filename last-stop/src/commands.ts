@@ -14,15 +14,15 @@ import * as glob from "glob";
 const COMMANDS_FILENAME = "commands.json";
 
 interface CommandType {
-    spoken: Array<string>,
-    run?: string,
-    insert?: string,
-    arguments?: Array<string>
+    spoken: Array<string>;
+    run?: string;
+    insert?: string;
+    arguments?: Array<string>;
 }
  
 interface CommandGroupType {
-    group: string,
-    commands: Array<CommandType>
+    group: string;
+    commands: Array<CommandType>;
 }
 
 type CommandsFile = Array<CommandGroupType>;
@@ -61,7 +61,7 @@ export class CommandList {
             }
         }
 
-        let keys = Array.from(this.commandIndex.keys());
+        const keys = Array.from(this.commandIndex.keys());
         for (const k of keys) {
             this.commandIndex.set(k, this.commandIndex.get(k).sort((a, b) => {
                 return b.tokens.length - a.tokens.length;
@@ -79,7 +79,7 @@ export class CommandList {
 
             let command: Command;
             if (c.run !== undefined) {
-                let ex = EXECUTORS[c.run];
+                const ex = EXECUTORS[c.run];
                 if (ex === undefined) {
                     throw new Error("Could not find run command " + c.run);
                 }
@@ -92,12 +92,12 @@ export class CommandList {
                 command = new Command(words, ex, args);
             }
             else {
-                let ins = c.insert;
+                const ins = c.insert;
                 if (ins === undefined) {
                     throw new Error("Could not find insert for " + spoken);
                 }
 
-                let args = [ins];
+                const args = [ins];
                 for (const w of words) {
                     if (w[0] === "$") {
                         args.push("$" + (args.length));
@@ -128,7 +128,7 @@ export class Commands {
 
         this.commandsFile = [];
 
-        for (let fn of glob.sync("./commands/*.json")) {
+        for (const fn of glob.sync("./commands/*.json")) {
             this.commandsFile.push(JSON.parse(fs.readFileSync(fn).toString()));
         }
 

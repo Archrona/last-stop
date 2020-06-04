@@ -15,7 +15,7 @@ export class Controller {
     }
 
     onConsoleSpeech(text: string) {
-        let t0 = process.hrtime.bigint();
+        const t0 = process.hrtime.bigint();
 
         let description = "Speech: " + this.app.model.store.getUndoCount();
         if (this.lastSpeech !== null) {
@@ -31,11 +31,11 @@ export class Controller {
 
         this.app.view.updateAllWindows();
         
-        let t3 = process.hrtime.bigint();
+        const t3 = process.hrtime.bigint();
 
         description += " -> " + this.app.model.store.getUndoCount();
 
-        let totalElapsed = Number(t3 - t0) / 1000000;
+        const totalElapsed = Number(t3 - t0) / 1000000;
         description += `   (${totalElapsed.toPrecision(3)} ms)`;
         description += `  (${Math.round(process.memoryUsage().rss / 1000000)} MB)`;
 
@@ -43,7 +43,7 @@ export class Controller {
     }
 
     onConsoleCopyAndErase() {
-        let doc = this.app.model.getActiveDocument();
+        const doc = this.app.model.getActiveDocument();
 
         if (doc === null) {
             return;

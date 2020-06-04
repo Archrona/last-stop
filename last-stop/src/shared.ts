@@ -80,7 +80,7 @@ export function binarySearchSparse(
     right: number,
     target: number,
     getIndex: (number) => number,
-    biasEqualAfter: boolean = true
+    biasEqualAfter = true
 ): number {
     const length = right;
 
@@ -134,9 +134,9 @@ export class Position {
     }
 
     normalize(doc: DocumentNavigator): Position {
-        let nav = doc.clone().goKey("lines");
-        let len = nav.getLength();
-        let result = this.clone();
+        const nav = doc.clone().goKey("lines");
+        const len = nav.getLength();
+        const result = this.clone();
 
         if (result.row < 0) { 
             result.row = 0; 
@@ -146,7 +146,7 @@ export class Position {
             result.row = len - 1; 
             result.column = nav.goIndex(result.row).getString().length;
         } else {
-            let cols = nav.goIndex(result.row).getString().length;
+            const cols = nav.goIndex(result.row).getString().length;
             if (result.column < 0) result.column = 0;
             if (result.column > cols) result.column = cols;
         }
@@ -171,8 +171,8 @@ export class Position {
     }
 
     static orderNormalize(p1: Position, p2: Position, doc: DocumentNavigator) {
-        let result1 = p1.normalize(doc);
-        let result2 = p2.normalize(doc);
+        const result1 = p1.normalize(doc);
+        const result2 = p2.normalize(doc);
 
         return this.order(result1, result2);
     }
@@ -216,9 +216,9 @@ export class IndentationPolicy {
     }
 
     static splitMarginContent(line: string): [string, string] {
-        let match = line.match(/^(\s*)(.*)$/);
-        let leadingWhite = match[1];
-        let trailingContent = match[2];
+        const match = line.match(/^(\s*)(.*)$/);
+        const leadingWhite = match[1];
+        const trailingContent = match[2];
         return [leadingWhite, trailingContent];
     } 
 
@@ -234,25 +234,25 @@ export class IndentationPolicy {
     normalizeWhite(s: string): string {
         if (this.useSpaces) {
             let result = s.replace(/\t/g, " ".repeat(this.spacesPerTab));
-            let remainder = result.length % this.spacesPerTab;
+            const remainder = result.length % this.spacesPerTab;
             if (remainder !== 0) {
                 result += " ".repeat(this.spacesPerTab - remainder);
             }
             return result;
         }
         else {
-            let result = s.replace(this.spacesRe, "\t");
+            const result = s.replace(this.spacesRe, "\t");
             return result.replace(/ +/g, "\t");
         }
     }  
 
     normalize(s: string): string {
-        let [leadingWhite, trailingContent] = IndentationPolicy.splitMarginContent(s);
+        const [leadingWhite, trailingContent] = IndentationPolicy.splitMarginContent(s);
 
         return this.normalizeWhite(leadingWhite) + trailingContent;
     }
 
-    indent(s: string, times: number = 1): string {
+    indent(s: string, times = 1): string {
         let [leading, trailing] = IndentationPolicy.splitMarginContent(s);
         leading = this.normalizeWhite(leading);
         
@@ -266,7 +266,7 @@ export class IndentationPolicy {
         return leading + trailing;
     }
 
-    unindent(s: string, times: number = 1): string {
+    unindent(s: string, times = 1): string {
         let [leading, trailing] = IndentationPolicy.splitMarginContent(s);
         leading = this.normalizeWhite(leading);
         

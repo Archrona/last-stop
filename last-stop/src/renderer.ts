@@ -135,7 +135,7 @@ class Application {
     }  
 
     onKeyboardEvent(type: string, key: string, shift: boolean, control: boolean, alt: boolean, meta: boolean) {
-        let modifiers = [];
+        const modifiers = [];
         if (shift) {
             modifiers.push("shift");
         }
@@ -163,7 +163,7 @@ class Application {
     } 
 
     getGraphics() {
-        let graphics = this.canvas.getContext("2d");
+        const graphics = this.canvas.getContext("2d");
         graphics.font = (this.fontSize * window.devicePixelRatio) + "px " + this.fontFace;
         return graphics;
     }

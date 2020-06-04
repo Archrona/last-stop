@@ -105,7 +105,7 @@ class Alphabet {
     alphabet: Map<string, AlphabetEntry>;
     
     constructor() {
-        let data = JSON.parse(
+        const data = JSON.parse(
             fs.readFileSync("./specials/alphabet.json").toString()
         ) as AlphabetFile;
 
@@ -142,15 +142,15 @@ export const ALPHABET = new Alphabet();
 
 
 interface RemapFileEntry {
-    spoken: string,
-    internal: string
+    spoken: string;
+    internal: string;
 }
 
 class Remap {
     replacements: Map<string, string>;
     
     constructor() {
-        let data = JSON.parse(
+        const data = JSON.parse(
             fs.readFileSync("./specials/remap.json").toString()
         ) as Array<RemapFileEntry>;
         
@@ -162,7 +162,7 @@ class Remap {
     }
     
     remap(word: string): string {
-        let perhaps = this.replacements.get(word);
+        const perhaps = this.replacements.get(word);
         if (perhaps !== undefined) {
             return perhaps;
         }
@@ -194,7 +194,7 @@ export const EXECUTORS = {
 
     go: (model: Model, args: Array<any>) => {
         if (args.length > 0) {
-            let location = args[0];
+            const location = args[0];
 
             if (location instanceof SpokenSelection) {
                 location.document.setMark(location.anchorIndex, location.mark);
@@ -230,15 +230,15 @@ export const EXECUTORS = {
     },
 
     onScroll: (model: Model, args: Array<any>) => {
-        let sub = args[2];
+        const sub = args[2];
 
         if (sub instanceof DocumentSubscription) {
-            let x = parseInt(args[3]);
-            let y = parseInt(args[4]);
-            let docName = sub.document;
+            const x = parseInt(args[3]);
+            const y = parseInt(args[4]);
+            const docName = sub.document;
             if (model.documents.hasKey(docName)) {
-                let doc = model.documents.get(docName);
-                let view = doc.getView(sub.anchorIndex);
+                const doc = model.documents.get(docName);
+                const view = doc.getView(sub.anchorIndex);
                 //view.column = Math.max(0, view.column + x);
                 view.row = Math.max(-20, Math.min(doc.getLineCount() + 40, view.row + y));
                 doc.setView(sub.anchorIndex, view);
@@ -247,16 +247,16 @@ export const EXECUTORS = {
     },
 
     onMouse: (model: Model, args: Array<any>) => {
-        let sub = args[1];
+        const sub = args[1];
 
         if (sub instanceof DocumentSubscription) {
-            let windowRow = args[3];
-            let windowCol = args[4];
-            let docName = sub.document;
+            const windowRow = args[3];
+            const windowCol = args[4];
+            const docName = sub.document;
             if (model.documents.hasKey(docName)) {
-                let doc = model.documents.get(docName);
-                let view = doc.getView(sub.anchorIndex);
-                let pos = new Position(
+                const doc = model.documents.get(docName);
+                const view = doc.getView(sub.anchorIndex);
+                const pos = new Position(
                     windowRow + view.row,
                     windowCol - LEFT_MARGIN_COLUMNS + view.column
                 ).normalize(doc);
@@ -269,16 +269,16 @@ export const EXECUTORS = {
     },
 
     onKey: (model: Model, args: Array<any>) => {
-        let sub = args[1];
+        const sub = args[1];
 
         if (sub instanceof DocumentSubscription) {
-            let docName = sub.document;
+            const docName = sub.document;
             if (model.documents.hasKey(docName)) {
-                let doc = model.documents.get(docName);
+                const doc = model.documents.get(docName);
                 let str = "";
 
                 for (let i = 2; i < args.length; i++) {
-                    let key = args[i];
+                    const key = args[i];
 
                     if (typeof key === "string") {
                         if (key.length === 1) {
@@ -294,7 +294,7 @@ export const EXECUTORS = {
                                     break;
                                 
                                 case "C-v":
-                                    let text = clipboard.readText();
+                                    const text = clipboard.readText();
                                     str += text;
                                     break;
 
@@ -419,7 +419,7 @@ export class Speech {
     }
 
     static execute(app: Main, speech: string): Speech {
-        let result = new Speech(app, speech);
+        const result = new Speech(app, speech);
         
         return result;
     }
@@ -437,9 +437,9 @@ export class Speech {
     }
 
     private getDefaultCasing(context: string): Casing {
-        let name = this.app.languages.contexts.get(context).defaultCasing;
+        const name = this.app.languages.contexts.get(context).defaultCasing;
         
-        let casing = CASING.get(name);
+        const casing = CASING.get(name);
         if (casing === undefined) {
             throw new Error("getDefaultCasing: Unrecognized casing name \"" + name + "\"");
         }
@@ -466,7 +466,7 @@ export class Speech {
 
 
     private tokenize(): void {
-        let result = this.app.languages.tokenize(
+        const result = this.app.languages.tokenize(
             this.speech, ["spoken_text"], new Position(0, 0), true);
 
         this.tokens = result.tokens;
@@ -475,7 +475,7 @@ export class Speech {
     private runExecutor(i: number, length: number, executor: Executor,
         args: Array<any>, context: string): Executed
     {
-        let undoIndex = this.getUndoIndex();
+        const undoIndex = this.getUndoIndex();
         executor(this.app.model, args);
         return new Executed(i, length, executor, args, undoIndex, context);
     }
@@ -623,7 +623,7 @@ export class Speech {
 
     private parseNumericReference(index: number): NumericReference {
         const text = this.tokens[index].text;
-        let match = Speech.NUMERIC_REFERENCE_PATTERN.exec(text);
+        const match = Speech.NUMERIC_REFERENCE_PATTERN.exec(text);
         
         if (match !== null) {
             // Reminder: Unmatched groups in successful RE return [undefined].
@@ -637,7 +637,7 @@ export class Speech {
     }
 
     
-    private parseLocation(index: number, recursingFrom: boolean = false): [SpokenLocation, number] {
+    private parseLocation(index: number, recursingFrom = false): [SpokenLocation, number] {
         index = this.consumeWhite(index);
         if (index >= this.tokens.length) {
             return [null, 0];
@@ -670,7 +670,7 @@ export class Speech {
             return [null, 0];
         }
 
-        let location = this.convertNumericIntoLocation(numeric)
+        const location = this.convertNumericIntoLocation(numeric)
         if (location === null) {
             return [null, 0];
         }
@@ -715,18 +715,18 @@ export class Speech {
                         return [null, 0];
                     }
 
-                    let [location2, index2] = this.parseLocation(index, true);
+                    const [location2, index2] = this.parseLocation(index, true);
                     
                     if (location2 instanceof SpokenSelection 
                         && location2.document.node === location.document.node
                         && location2.anchorIndex === location.anchorIndex)
                     {
-                        let left = Position.min(
+                        const left = Position.min(
                             Position.min(location.mark, location.cursor),
                             Position.min(location2.mark, location2.cursor)
                         );
 
-                        let right = Position.max(
+                        const right = Position.max(
                             Position.max(location.mark, location.cursor),
                             Position.max(location2.mark, location2.cursor)
                         ); 
@@ -765,7 +765,7 @@ export class Speech {
             // point at a non-white token in the spoken input.
             switch (token) {
                 case "$location":
-                    let [loc, nextIndex] = this.parseLocation(j);
+                    const [loc, nextIndex] = this.parseLocation(j);
                     // console.log(loc);
                     // console.log(nextIndex);
 
@@ -802,7 +802,7 @@ export class Speech {
         if (ti >= cmd.tokens.length) {
 
             // Remap command matches to arguments
-            let args = cmd.args.map((x: any) => {
+            const args = cmd.args.map((x: any) => {
                 if (typeof x === "string" && /^\$\d$/.test(x)) {
                     return matched[parseInt(x[1]) - 1];
                 } else {
@@ -820,7 +820,7 @@ export class Speech {
         i: number, context: string, possibleCommands: Array<Command>): Executed
     {
         for (const cmd of possibleCommands) {
-            let maybe = this.runMaybeCommand(i, context, cmd);
+            const maybe = this.runMaybeCommand(i, context, cmd);
             if (maybe !== null) {
                 return maybe;
             }
@@ -863,6 +863,7 @@ export class Speech {
             const remapped = REMAP.remap(lower);
 
             if (this.tokens[j].type === "punctuation") break;
+            if (this.tokens[j].type === "event") break;
 
             if (this.tokens[j].type === "white") {
                 j++;
@@ -898,7 +899,7 @@ export class Speech {
 
             // Check for alphabet
             if (ALPHABET.alphabet.has(lower)) {
-                let info = ALPHABET.alphabet.get(lower);
+                const info = ALPHABET.alphabet.get(lower);
 
                 if (info.casing.firstCaps == Capitalization.Raw) {
                     // use local casing instead
@@ -950,7 +951,7 @@ export class Speech {
                         const word = this.tokens[j].text;
                         let result = "";
                         for (const c of digits) {
-                            let d = parseInt(c) - 1;
+                            const d = parseInt(c) - 1;
                             if (d < word.length) {
                                 result += word[d];
                             }
@@ -975,16 +976,16 @@ export class Speech {
     }
 
     private runEvent(i: number, context: string): Executed[] | null {
-        let event = this.tokens[i].text;
-        let parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
+        const event = this.tokens[i].text;
+        const parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
         if (parts.length < 2) {
             return null;
         }
 
-        let type = parts[0][0];
-        let windowStr = parts[0].substring(1);
-        let window = parseInt(windowStr);
-        let sub = this.app.model.subscriptions.getDetails(window);
+        const type = parts[0][0];
+        const windowStr = parts[0].substring(1);
+        const window = parseInt(windowStr);
+        const sub = this.app.model.subscriptions.getDetails(window);
         if (!sub) {
             return null;
         }
@@ -995,12 +996,12 @@ export class Speech {
                     ([windowStr, sub] as any[]).concat(parts.slice(1)), context)];
             
             case ESCAPE_MOUSE:
-                let result = [];
+                const result = [];
 
                 for (let index = 1; index + 2 < parts.length; index += 3) {
-                    let button = parseInt(parts[index]);
-                    let row = parseInt(parts[index + 1]);
-                    let column = parseInt(parts[index + 2]);
+                    const button = parseInt(parts[index]);
+                    const row = parseInt(parts[index + 1]);
+                    const column = parseInt(parts[index + 2]);
                     
                     result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
                         [windowStr, sub, button, row, column], context));
@@ -1030,19 +1031,19 @@ export class Speech {
         const word = this.tokens[i].text;
 
         if (this.tokens[i].type === "event") {
-            let maybe = this.runEvent(i, context);
+            const maybe = this.runEvent(i, context);
             if (maybe !== null) return maybe;
         }
 
         const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
         if (possibleCommands !== undefined) {
-            let maybe = this.runMaybeCommandList(i, context, possibleCommands);
+            const maybe = this.runMaybeCommandList(i, context, possibleCommands);
             if (maybe !== null) return [maybe];
         }
 
-        let exec = [];
+        const exec = [];
 
-        for (let d of deferred) {
+        for (const d of deferred) {
             exec.push(this.runExecutor(d.first, 1, EXECUTORS.insertExact, [d.text], context));
         }
 
@@ -1064,14 +1065,14 @@ export class Speech {
                 throw new Error("run: no command list for context \"" + context + "\"");
             }
 
-            let exec = this.runOne(i, context, cmdList, deferred);
+            const exec = this.runOne(i, context, cmdList, deferred);
             if (exec === null || (exec instanceof Executed && exec.length <= 0)) {
                 throw new Error("run: execution must consume at least 1 token");
             }
             
             //console.log(exec);
             
-            for (let e of exec) {
+            for (const e of exec) {
                 if (e instanceof Executed) {
                     if (e.executor !== EXECUTORS.nop)
                         this.executed.push(e);

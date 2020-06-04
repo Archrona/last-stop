@@ -25,7 +25,7 @@ export class Main {
         return Main.app;
     }
 
-    constructor(headless: boolean = false) {
+    constructor(headless = false) {
         if (!headless) {
             if (Main.app !== null) {
                 throw new Error("Cannot create more than one non-headless Main");
@@ -48,7 +48,7 @@ export class Main {
             this.view = new View(this);
             this.controller = new Controller(this);
 
-            let doc = this.model.documents.add("test.ts", "typescript");
+            const doc = this.model.documents.add("test.ts", "typescript");
 
             this.model.subscriptions.set(11, "doc@test.ts@0");
             this.model.setActiveWindow(11);

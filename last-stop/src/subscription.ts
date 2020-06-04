@@ -9,7 +9,7 @@ import { TokenizeResult } from "./language";
 export const LEFT_MARGIN_COLUMNS = 6;
 
 function parseSubscription(sub: string) {
-    let words = [];
+    const words = [];
     let accumulator = "";
     
     for (let i = 0; i < sub.length; i++) {
@@ -36,11 +36,11 @@ function parseSubscription(sub: string) {
     };
 }
 
-function renderError(text: string, app: Main) : Array<DrawableText> {
+function renderError(text: string, app: Main): Array<DrawableText> {
     const lines = splitIntoLines(text);
-    let row = 0;
+    const row = 0;
 
-    let result = [];
+    const result = [];
     for (const line of lines) {
         result.push(new DrawableText(line, "", row, LEFT_MARGIN_COLUMNS, app.view.getColor("error"), null));
     }
@@ -48,8 +48,8 @@ function renderError(text: string, app: Main) : Array<DrawableText> {
     return result;
 }
 
-function renderMargin(topRow: number, rows: number, app: Main) : Array<DrawableText> {
-    let result = [];
+function renderMargin(topRow: number, rows: number, app: Main): Array<DrawableText> {
+    const result = [];
     for (let i = 0; i < rows; i++) {
         const line = topRow + i;
         const lineString = line.toString();
@@ -86,7 +86,7 @@ function renderDocumentSelection(
             + LEFT_MARGIN_COLUMNS - view.column;
         
         if (right > 0 && left < columns && left < right) {
-            let selectionColor = app.view.getColor("selection");
+            const selectionColor = app.view.getColor("selection");
 
             content.push(new DrawableText(
                 "", "selection@" + left + "@" + right, viewRow, 0, selectionColor, null
@@ -96,8 +96,8 @@ function renderDocumentSelection(
 }
 
 function renderDocumentAnchor(
-    anchor: Position, name: String, content: Array<DrawableText>,
-    lineIndex: number, view: Position, app: Main, drawRow: number) : void
+    anchor: Position, name: string, content: Array<DrawableText>,
+    lineIndex: number, view: Position, app: Main, drawRow: number): void
 {
     if (anchor.row === lineIndex && anchor.column >= view.column) {
         const anchorColumn = anchor.column - view.column + LEFT_MARGIN_COLUMNS;
@@ -120,9 +120,9 @@ function renderDocumentToken(
     
     let special = "";
     if (tokenIndex > 0 && tokenIndex % 5 === 0) {
-        let mark = Math.floor(tokenIndex / 5);
-        let markColor = app.view.getColor(mark % 2 === 0 ? "token_0" : "token_5");
-        let count = Math.floor((mark - 1) / 2) % 3 + 1;
+        const mark = Math.floor(tokenIndex / 5);
+        const markColor = app.view.getColor(mark % 2 === 0 ? "token_0" : "token_5");
+        const count = Math.floor((mark - 1) / 2) % 3 + 1;
         special = "token@" + count + "@" + markColor;
     }
 
@@ -162,8 +162,7 @@ function renderDocumentToken(
     return longLineIndicator;
 }
 
-function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number)
-    : Array<DrawableText>
+function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number): Array<DrawableText>
 {
     try {
         const name = terms[0];
@@ -177,17 +176,17 @@ function renderDocument(terms: Array<string>, app: Main, rows: number, columns: 
         const mark = doc.getMark(anchorIndex);
         const view = doc.getView(anchorIndex);
 
-        let content = [];
+        const content = [];
         let longLineIndicator = false;
-        let [selectionLeft, selectionRight] = Position.orderNormalize(cursor, mark, doc);
-        let lines = doc.getLineCount();
+        const [selectionLeft, selectionRight] = Position.orderNormalize(cursor, mark, doc);
+        const lines = doc.getLineCount();
 
         for (let viewRow = 0; viewRow < rows; viewRow++) {
             const lineIndex = view.row + viewRow;
 
             // Indicate EOF by subtle marker
             if (lineIndex < 0 || lineIndex >= lines) {
-                let eofColor = app.view.getColor("EOF");
+                const eofColor = app.view.getColor("EOF");
                 content.push(new DrawableText(
                     "░", "", viewRow, LEFT_MARGIN_COLUMNS, eofColor, null
                 ));
@@ -228,8 +227,7 @@ const RENDERERS: Map<string, Renderer> = new Map([
 
 ]);
 
-export function renderSubscription(sub: string, topRow: number, rows: number, columns: number, app: Main)
-    : Array<DrawableText>
+export function renderSubscription(sub: string, topRow: number, rows: number, columns: number, app: Main): Array<DrawableText>
 {
     const margin = renderMargin(topRow, rows, app);
 

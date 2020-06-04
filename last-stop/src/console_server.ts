@@ -2,8 +2,8 @@
 //   Maintains and talks to the speech console, an external C# process.
 //   Listens for JSON over HTTP on port 5000 (us) and port 5001 (the console).
 
-import { Express } from 'express';
-import express from 'express';
+import express, { Express } from 'express';
+
 import { Main } from './main';
 import { execFile, ChildProcess } from "child_process";
 import { createServer, Server } from 'http';

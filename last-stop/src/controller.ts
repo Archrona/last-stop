@@ -15,31 +15,27 @@ export class Controller {
     }
 
     onConsoleSpeech(text: string) {
-        const t0 = process.hrtime.bigint();
+        const initialUndo = this.app.model.store.getUndoCount();
+        let minUndo = initialUndo;
+        let elapsed = 0.0;
 
-        let description = "Speech: " + this.app.model.store.getUndoCount();
-        if (this.lastSpeech !== null) {
-            this.lastSpeech.undo();
+        if (this.lastSpeech === null) {
+            const timeStart = process.hrtime.bigint();
+            this.lastSpeech = Speech.execute(this.app, text);
+            const timeEnd = process.hrtime.bigint();
+            elapsed = Number(timeEnd - timeStart) / 1000000;
+        } else {
+            const result = this.lastSpeech.reviseSpeech(text);
+            minUndo = result.undidUntil;
+            elapsed = result.elapsed;
         }
-
-        // let t1 = process.hrtime.bigint();
-
-        description += " -> " + this.app.model.store.getUndoCount();
-        this.lastSpeech = Speech.execute(this.app, text);
-
-        // let t2 = process.hrtime.bigint();
 
         this.app.view.updateAllWindows();
         
-        const t3 = process.hrtime.bigint();
-
-        description += " -> " + this.app.model.store.getUndoCount();
-
-        const totalElapsed = Number(t3 - t0) / 1000000;
-        description += `   (${totalElapsed.toPrecision(3)} ms)`;
-        description += `  (${Math.round(process.memoryUsage().rss / 1000000)} MB)`;
-
-        console.log(description);
+        const finalUndo = this.app.model.store.getUndoCount();
+        const time = elapsed.toPrecision(3);
+        const mem = Math.round(process.memoryUsage().rss / 1000000)
+        console.log(`  Speech: ${initialUndo} -> ${minUndo} -> ${finalUndo}  (${time} ms)  (${mem} MB)`);
     }
 
     onConsoleCopyAndErase() {

@@ -116,6 +116,13 @@ export class Token {
     constructor(public text: string, public position: Position, public type: string, public context: string) {
 
     }
+
+    equals(other: Token): boolean {
+        return this.text === other.text 
+            && this.position.compareTo(other.position) === 0
+            && this.type === other.type
+            && this.context === other.context;
+    }
 }
 
 export class Languages {

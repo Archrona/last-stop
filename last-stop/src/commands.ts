@@ -11,8 +11,6 @@ import * as fs from "fs";
 import { Executor, EXECUTORS } from "./speech";
 import * as glob from "glob";
 
-const COMMANDS_FILENAME = "commands.json";
-
 interface CommandType {
     spoken: Array<string>;
     run?: string;

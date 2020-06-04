@@ -325,6 +325,9 @@ class DeferredWhite {
     constructor(public first: number, public text: string) { }
 }
 
+class ResumePoint {
+    constructor(public token: number, public executed: number, public undoCount: number) { }
+}
 
 
 
@@ -392,9 +395,12 @@ class NumericReference {
     hasToken(): boolean { return this._token !== null; } 
 }
 
+export class ReviseResult {
+    constructor(public undidUntil: number, public elapsed: number) { }
+}
+
 export class Speech {
     speech: string;
-    undone: boolean;
 
     baseUndoIndex: number;
     finalUndoIndex: number;
@@ -403,19 +409,72 @@ export class Speech {
     tokens: Array<Token>;
 
     executed: Array<Executed>;
+    resumePoints: Array<ResumePoint>;
 
     private constructor(app: Main, speech: string) {
         this.app = app;
         this.speech = speech;
-        this.undone = false;
         this.baseUndoIndex = this.getUndoIndex();
         this.finalUndoIndex = this.baseUndoIndex;   // overwritten after execution
         this.executed = [];
+        this.resumePoints = [];
 
-        this.tokenize();
+        this.tokens = this.tokenize(this.speech).tokens;
         this.run();
+    }
 
-        this.finalUndoIndex = app.model.store.getUndoCount();
+    reviseSpeech(speech: string): ReviseResult {
+        const timeStart = process.hrtime.bigint();
+        const tokens = this.tokenize(speech).tokens;
+        
+        // How many tokens are identical between the original speech and the revised speech?
+        // Since execution of commands is deterministic (as a function of context and state),
+        // we can assume that these tokens do not need to be reprocessed.
+        let sameTokens = 0;
+        while (sameTokens < tokens.length && sameTokens < this.tokens.length) {
+            const old = this.tokens[sameTokens];
+            const revised = tokens[sameTokens];
+            if (!old.equals(revised)) {
+                break;
+            } 
+            sameTokens++;
+        }
+    
+        let rp = this.resumePoints.length - 1;
+        while (rp >= 0 && this.resumePoints[rp].token > sameTokens) {
+            rp--;
+        }
+
+        // TODO this is an ugly hack and I am ashamed
+        // Go back 3 more resume points than we NEED to
+        // to prevent the "is" -> "is equal to" style of retroactive
+        // token meaning change.
+        // There has to be a better way (ruling out future-ambiguous RP's)
+        rp -= 3;
+
+        let runFromToken = 0;
+
+        if (rp < 0) {
+            this.undo();
+        } else {
+            runFromToken = this.resumePoints[rp].token;
+            this.app.model.store.undo(this.finalUndoIndex - this.resumePoints[rp].undoCount);
+            this.finalUndoIndex = this.resumePoints[rp].undoCount;
+            this.executed = this.executed.slice(0, this.resumePoints[rp].executed);
+            this.tokens = this.tokens.slice(0, this.resumePoints[rp].token);
+            this.resumePoints = this.resumePoints.slice(0, rp);
+        }
+
+        const undidUntil = this.getUndoIndex();
+        this.tokens = tokens;
+        this.speech = speech;
+
+        this.run(runFromToken);
+
+        const timeEnd = process.hrtime.bigint();
+        const totalElapsed = Number(timeEnd - timeStart) / 1000000;
+     
+        return new ReviseResult(undidUntil, totalElapsed);
     }
 
     static execute(app: Main, speech: string): Speech {
@@ -456,20 +515,20 @@ export class Speech {
             throw new Error("Undo requested but final undo count does not match");
         }
 
-        if (this.undone) {
-            throw new Error("Can't undo twice");
-        }
-
         this.app.model.store.undo(this.finalUndoIndex - this.baseUndoIndex);
-        this.undone = true;
+        this.finalUndoIndex = this.baseUndoIndex;
+        this.executed = [];
+        this.resumePoints = [];
+        this.speech = "";
+        this.tokens = [];
     }
 
 
-    private tokenize(): void {
+    private tokenize(speech: string): TokenizeResult {
         const result = this.app.languages.tokenize(
-            this.speech, ["spoken_text"], new Position(0, 0), true);
+            speech, ["spoken_text"], new Position(0, 0), true);
 
-        this.tokens = result.tokens;
+        return result;
     }
 
     private runExecutor(i: number, length: number, executor: Executor,
@@ -1051,8 +1110,7 @@ export class Speech {
         return exec;
     }
 
-    private run(): void {
-        let i = 0;
+    private run(i: number = 0): void {
         let deferred: DeferredWhite[] = [];
 
         while (i < this.tokens.length) {
@@ -1065,12 +1123,14 @@ export class Speech {
                 throw new Error("run: no command list for context \"" + context + "\"");
             }
 
+            let resumePoint = null;
+            if (deferred.length === 0)
+                resumePoint = new ResumePoint(i, this.executed.length, this.getUndoIndex());
+
             const exec = this.runOne(i, context, cmdList, deferred);
-            if (exec === null || (exec instanceof Executed && exec.length <= 0)) {
+            if (exec === null) {
                 throw new Error("run: execution must consume at least 1 token");
             }
-            
-            //console.log(exec);
             
             for (const e of exec) {
                 if (e instanceof Executed) {
@@ -1083,7 +1143,18 @@ export class Speech {
                     i = e.first + 1;
                 }
             }
+
+            // TODO somehow rule out resume points before things like
+            //     "is"
+            // where appending an "equal to" later on might change the interpretation
+            // of the previous command. For now, we just go back a few more RP's
+            // than we need to
+            if (resumePoint !== null) {
+                this.resumePoints.push(resumePoint);
+            }
         }
+
+        this.finalUndoIndex = this.app.model.store.getUndoCount();
     }
 
 }

@@ -58,6 +58,10 @@ export class ConsoleServer {
                 this.app.controller.onConsoleCommitChanges();
                 break;
 
+            case "reloadData":
+                this.app.controller.onReloadData();
+                break;
+
             default:
                 response.send("error: unrecognized command");
                 return;

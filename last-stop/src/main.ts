@@ -9,6 +9,7 @@ import { listsContainSameElements, Position } from "./shared";
 import { ConsoleServer } from "./console_server";
 import { Commands } from "./commands";
 import { Controller } from "./controller";
+import { Speech, ALPHABET, reloadSpeechData } from "./speech";
 
 export class Main {
     headless: boolean;
@@ -72,5 +73,19 @@ export class Main {
         }
         
         return false;
+    }
+
+    reloadData() {
+        console.log("Reloading all data files...");
+
+        this.languages = null;
+        this.commands = null;
+
+        this.languages = new Languages();
+        this.commands = new Commands(this);
+        reloadSpeechData();
+        this.controller.onConsoleReprocessSpeech();
+
+        console.log("  -- Done!");
     }
 }

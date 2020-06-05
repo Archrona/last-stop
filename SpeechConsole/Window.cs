@@ -78,6 +78,10 @@ namespace SpeechConsole
             if (e.KeyCode == Keys.S && e.Control) {
                 Program.onCommitChanges();
             }
+           
+            if (e.KeyCode == Keys.D0 && e.Control) {
+                Program.onReloadData();
+            }
         }
 
         private void textChangeMonitor_Tick(object sender, EventArgs e) {

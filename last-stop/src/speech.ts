@@ -137,7 +137,7 @@ class Alphabet {
     }
 }
 
-export const ALPHABET = new Alphabet();
+export let ALPHABET = new Alphabet();
 
 
 
@@ -170,8 +170,13 @@ class Remap {
     }
 }
 
-export const REMAP = new Remap();
+export let REMAP = new Remap();
 
+
+export function reloadSpeechData() {
+    ALPHABET = new Alphabet();
+    REMAP = new Remap();
+}
 
 
 export const EXECUTORS = {

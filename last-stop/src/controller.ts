@@ -38,6 +38,16 @@ export class Controller {
         console.log(`  Speech: ${initialUndo} -> ${minUndo} -> ${finalUndo}  (${time} ms)  (${mem} MB)`);
     }
 
+    onConsoleReprocessSpeech() {
+        if (this.lastSpeech !== null) {
+            const text = this.lastSpeech.speech;
+            this.lastSpeech.undo();
+            this.lastSpeech = Speech.execute(this.app, text);
+        }
+
+        this.app.view.updateAllWindows();
+    }
+
     onConsoleCopyAndErase() {
         const doc = this.app.model.getActiveDocument();
 
@@ -49,6 +59,10 @@ export class Controller {
         text = replaceAll(text, INSERTION_POINT, "");
 
         clipboard.writeText(text);
+    }
+
+    onReloadData() {
+        this.app.reloadData();
     }
 
     onConsoleCommitChanges() {

@@ -129,10 +129,10 @@ export class Languages {
     contexts: Map<string, LanguageContext>;
     
     constructor() {
-        this.contexts = Languages.loadContexts("contexts.json");
+        this.contexts = Languages.loadContexts();
     }
     
-    static loadContexts(filename: string) {
+    static loadContexts() {
         const data = [] as Array<LanguageContext>;
 
         for (const fn of glob.sync("./contexts/*.json", {})) {

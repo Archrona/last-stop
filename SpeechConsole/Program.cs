@@ -89,6 +89,12 @@ namespace SpeechConsole
             });
         }
 
+        public static void onReloadData() {
+            sendMessage(new Command("reloadData"), (Task t) => {
+                Console.WriteLine("reloadData: faulted = " + t.IsFaulted);
+            });
+        }
+
         [STAThread]
         static void Main() {
             client.Timeout = new TimeSpan(0, 0, 0, 0, 250); // 250 ms

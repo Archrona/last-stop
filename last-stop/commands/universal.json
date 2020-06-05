@@ -21,7 +21,7 @@
             "run": "step",
             "arguments": ["3"]
         },
-    
+
         {
             "spoken": ["go $location"],
             "run": "go",

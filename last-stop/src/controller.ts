@@ -2,6 +2,7 @@ import { Speech } from "./speech";
 import { Main } from "./main";
 import { replaceAll, INSERTION_POINT } from "./shared";
 import { clipboard } from "electron";
+import { SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY } from "./console_server";
 
 
 export class Controller {
@@ -59,6 +60,14 @@ export class Controller {
         text = replaceAll(text, INSERTION_POINT, "");
 
         clipboard.writeText(text);
+    }
+
+    onConsoleExit() {
+        this.onConsoleCommitChanges();
+
+        setTimeout(() => {
+            this.app.consoleServer.spawnConsoleProcess();
+        }, SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY);
     }
 
     onReloadData() {

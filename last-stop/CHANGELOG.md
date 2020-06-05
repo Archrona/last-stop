@@ -3,53 +3,56 @@
 ## 6/10/2020
 
 - (DONE)  keyboard/mouse commands and <<>> collapsing in speech console
-- (DONE)  implement control-V
+- (DONE)  implement paste
+- (DONE)  reload all json files at runtime with ctrl-0
+- (DONE)  implement and document remaining external clipboard commands
+- (DONE)  implement bkspc, del, arrows, enter
+- (DONE)  closing speech console commits changes (or restores original text?)
+- (DONE)  operators parse/space as whole tokens rather than individual characters
 
 
-- work out proper grammar for locations, implement
-- implement line N
-- implement go L through L without "from"
-- implement go invalid line doesn't dump bullshit, just silently fails
-- implement $identifier
-- implement context override signals
+- indent correctly on enter / paste / drop
+- on drop don't carry the whitespace AFTER the original cursor
+- Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
 
 - drag command selects region
-- successive raw keyboard commands collapse without prime
 - drag continuous update
-- clipboard paste/copy/cut are commit-causing events (involving external state...)
-- implement and document remaining external clipboard commands
-- implement clipboard internal (ring)
-
-- add whitespace control commands
-- operators parse/space as whole tokens rather than individual characters
-- T<> needs glued spacing inside
-- on drop don't carry the whitespace AFTER the original cursor
-- contextual capitalization on forms like "new", "extends", "class"
-- make regexp literals into a real context, deal with multiline, etc. fuck me
-- implement markdown inside doc comments, lol god hates you
-- ensure that including a command multiple times OVERRIDES, not makes a second copy
-- implement regular expression spoken forms
-- contextChanges "token" key uses regexp rather than raw string
-
-- large-scale undo (by big blocks) - kb shortcut?
 
 - display line numbers in display on RHS
 - wordwrap rather than cut off long lines
-- get a better token index display than the stupid dots
 
-- closing speech console commits changes (or restores original text?)
-- focusing one window focuses all windows
-- Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
+- work out proper grammar for locations, implement
+- implement line N
+- implement go invalid line doesn't dump bullshit, just silently fails
 
+- add whitespace control commands
+
+- T<> needs glued spacing inside
+
+- ensure that including a command multiple times OVERRIDES, not makes a second copy
+- contextChanges "token" key uses regexp rather than raw string
 
 - COMMENTS/DOCS
-
 - AND ALL THE PROJECT STUFF
-- reload all json files at runtime
+
 - generalized config overrides by file, project, language
 - override: default casing by file, project (and spoken commands)
 - override: tab/space (and spoken commands)
 
+
+
+- (??) implement clipboard internal (ring)
+- (??) successive raw keyboard commands collapse without prime
+- (??) contextual capitalization on forms like "new", "extends", "class"
+- (??) implement regular expression spoken forms
+- (??) make regexp literals into a real context, deal with multiline, etc. fuck me
+- (??) implement markdown inside doc comments, lol god hates you
+- (??) focusing one window focuses all windows
+- (??) large-scale undo (by big blocks) - kb shortcut?
+- (??) implement go L through L without "from"
+- (??) implement $identifier
+- (??) implement context override signals
+- (??) get a better token index display than the stupid dots
 
 ## Version 0.1.0
 ## 6/1/2020

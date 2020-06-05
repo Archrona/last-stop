@@ -11,7 +11,7 @@ import axios, { AxiosResponse } from 'axios';
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
-const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 200;
+export const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 200;
 const SERVER_RESTART_DELAY = 200;
 const CONSOLE_URI = `http://localhost:${CONSOLE_PORT}/`
 
@@ -81,10 +81,7 @@ export class ConsoleServer {
         this.consoleProcess.on("exit", (code, signal) => {
             console.log("Console process exited...");
             this.consoleProcess = null;
-
-            setTimeout(() => {
-                this.spawnConsoleProcess();
-            }, SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY);
+            this.app.controller.onConsoleExit();
         })
     }
 

@@ -764,6 +764,70 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    spongeAfterSelection(anchorIndex: number): DocumentNavigator {
+        const end = this.getSelectionEnd(anchorIndex);
+        const line = this.getLine(end.row);
+
+        let right = end.column;
+        while (right < line.length && (line[right] === ' ' || line[right] === '\t')) {
+            right++;
+        }
+
+        this.removeAt(end, new Position(end.row, right));
+        return this;
+    }
+
+    spongeBeforeSelection(anchorIndex: number): DocumentNavigator {
+        const begin = this.getSelectionStart(anchorIndex);
+        const line = this.getLine(begin.row);
+
+        let left = begin.column;
+        while (left > 0 && (line[left - 1] === ' ' || line[left - 1] === '\t')) {
+            left--;
+        }
+
+        this.removeAt(new Position(begin.row, left), begin);
+        return this;
+    }
+
+    spongeSides(anchorIndex: number): DocumentNavigator {
+        this.spongeAfterSelection(anchorIndex);
+        return this.spongeBeforeSelection(anchorIndex);
+    }
+
+    spongeAboveSelection(anchorIndex: number): DocumentNavigator {
+        const begin = this.getSelectionStart(anchorIndex);
+        let top = begin.row;
+        
+        while (top > 0 && /^\s*$/.test(this.getLine(top - 1))) {
+            top--;
+
+        }
+        if (top < begin.row) {
+            const start = new Position(top, 0);
+            const end = new Position(begin.row, 0);
+            this.removeAt(start, end);
+        }
+        
+        return this;
+    }
+
+    spongeBelowSelection(anchorIndex: number): DocumentNavigator {
+        const end = this.getSelectionEnd(anchorIndex);
+        let bottom = end.row;
+        
+        while (bottom < this.getLineCount() - 1 && /^\s*$/.test(this.getLine(bottom + 1))) {
+            bottom++;
+        }
+        if (bottom > end.row) {
+            const start = new Position(end.row + 1, 0);
+            const finish = new Position(bottom + 1, 0);
+            this.removeAt(start, finish);
+        }
+        
+        return this;
+    }
+
     step(anchorIndex: number): DocumentNavigator {
         this.removeAdjacentInsertionPoints(anchorIndex);
         this.spongeIfEmptyLine(anchorIndex);

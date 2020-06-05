@@ -39,7 +39,7 @@
             "insert": "for ($_ in $_) {$u$_$d}$n$_"
         },
         {
-            "spoken": ["four of", "for of"],
+            "spoken": ["four of", "for of", "for all of", "four all of"],
             "insert": "for ($_ of $_) {$u$_$d}$n$_"
         },
         {

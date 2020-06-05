@@ -349,6 +349,31 @@ export const EXECUTORS = {
             doc.osCut(ai);
         });
     },
+
+    sponge: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            let targets = "lr";
+            if (arg[0] !== undefined && typeof arg[0] === "string") {
+                targets = arg[0];
+            }
+
+            if (targets.indexOf("l") !== -1) {
+                doc.spongeBeforeSelection(ai);
+            }
+
+            if (targets.indexOf("r") !== -1) {
+                doc.spongeAfterSelection(ai);
+            }
+
+            if (targets.indexOf("u") !== -1) {
+                doc.spongeAboveSelection(ai);
+            }   
+            
+            if (targets.indexOf("d") !== -1) {
+                doc.spongeBelowSelection(ai);
+            }  
+        });
+    }
 }
 
 class Executed {

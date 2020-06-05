@@ -60,6 +60,32 @@
         },      
 
         {
+            "spoken": ["sponge"],
+            "run": "sponge",
+            "arguments": ["lr"]
+        },
+        {
+            "spoken": ["sponge left"],
+            "run": "sponge",
+            "arguments": ["l"]
+        },
+        {
+            "spoken": ["sponge right"],
+            "run": "sponge",
+            "arguments": ["r"]
+        },
+        {
+            "spoken": ["sponge above"],
+            "run": "sponge",
+            "arguments": ["u"]
+        },
+        {
+            "spoken": ["sponge below"],
+            "run": "sponge",
+            "arguments": ["d"]
+        },
+
+        {
             "spoken": ["dropout", "drop out", "drop forward"],
             "insert": "$u"
         },

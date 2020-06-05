@@ -288,26 +288,61 @@ export const EXECUTORS = {
                                 doc.insert(sub.anchorIndex, str);
                                 str = "";
                             }
+
                             switch (key) {
                                 case "Enter":
                                     str += "\n";
                                     break;
-                                
-                                case "C-v":
-                                    const text = clipboard.readText();
-                                    str += text;
-                                    break;
 
                                 default:
-                                    console.log("Unhandled key: \"" + key + "\"");
+                                    doc.osKey(sub.anchorIndex, key);
                             }
                         }
                     }
                 }
                 
-                doc.insert(sub.anchorIndex, str);
+                if (str.length > 0)
+                    doc.insert(sub.anchorIndex, str);
             }
         }
+    },
+
+    cut: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.osCut(ai);
+        });
+    },
+
+    copy: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.osCopy(ai);
+        });
+    },
+
+    paste: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.osPaste(ai);
+        });
+    },
+
+    selectAll: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.selectAll(ai);
+        });
+    },
+
+    selectAllAndCopy: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.selectAll(ai);
+            doc.osCopy(ai);
+        });
+    },
+
+    selectAllAndCut: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            doc.selectAll(ai);
+            doc.osCut(ai);
+        });
     },
 }
 

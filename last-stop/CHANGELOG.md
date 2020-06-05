@@ -39,6 +39,8 @@
 
 - closing speech console commits changes (or restores original text?)
 - focusing one window focuses all windows
+- Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
+
 
 - COMMENTS/DOCS
 

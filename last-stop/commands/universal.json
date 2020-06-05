@@ -3,7 +3,7 @@
     
     "commands": [
         {
-            "spoken": ["stop", "nop"],
+            "spoken": ["stop", "nop", "please"],
             "run": "nop"
         },
         {
@@ -27,8 +27,38 @@
             "run": "go",
             "arguments": ["$1"]
         },
-
         
+        {
+            "spoken": ["yank", "yanks", "yanked"],
+            "run": "cut",
+            "arguments": []
+        },
+        {
+            "spoken": ["grab", "grabs", "grabbed", "grabbing"],
+            "run": "copy",
+            "arguments": []
+        },
+        {
+            "spoken": ["spit", "spits", "spitz", "spitted"],
+            "run": "paste", 
+            "arguments": []
+        },
+        {
+            "spoken": ["choose all"],
+            "run": "selectAll", 
+            "arguments": []
+        },
+        {
+            "spoken": ["grab all"],
+            "run": "selectAllAndCopy", 
+            "arguments": []
+        },
+        {
+            "spoken": ["yank all"],
+            "run": "selectAllAndCut", 
+            "arguments": []
+        },      
+
         {
             "spoken": ["dropout", "drop out", "drop forward"],
             "insert": "$u"

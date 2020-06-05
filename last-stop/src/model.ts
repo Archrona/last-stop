@@ -4,6 +4,7 @@ import { Languages, TokenizeResult } from "./language";
 import { Main } from "./main";
 import { Speech } from "./speech";
 import { inspect } from "util";
+import { clipboard } from "electron";
 
 export interface InsertOptions {
     lockMark?: boolean;
@@ -217,6 +218,28 @@ export class DocumentNavigator extends Navigator {
     getView(anchorIndex: number): Position {
         return this.getAnchor("view_" + anchorIndex).position;
     }  
+
+    getSelectionStart(anchorIndex: number): Position {
+        const cursor = this.getCursor(anchorIndex);
+        const mark = this.getMark(anchorIndex);
+        if (cursor.compareTo(mark) < 0) {
+            return cursor;
+        }
+        else {
+            return mark;
+        }
+    } 
+    
+    getSelectionEnd(anchorIndex: number): Position {
+        const cursor = this.getCursor(anchorIndex);
+        const mark = this.getMark(anchorIndex);
+        if (cursor.compareTo(mark) > 0) {
+            return cursor;
+        }
+        else {
+            return mark;
+        }
+    }
 
     getLineContext(index: number): Array<string> {
         const contexts = this.clone().goKey("contexts");
@@ -753,6 +776,139 @@ export class DocumentNavigator extends Navigator {
         if (found !== null) {
             const nextChar = new Position(found.row, found.column + 1);
             this.setSelection(anchorIndex, found, nextChar);
+        }
+
+        return this;
+    }
+
+    osPaste(anchorIndex: number): DocumentNavigator {
+        const text = clipboard.readText();
+        if (typeof text === "string" && text.length > 0) {
+            this.insert(anchorIndex, text, {
+                enforceSpacing: true
+            });
+        }
+        return this;
+    }
+
+    osCopy(anchorIndex: number): DocumentNavigator {
+        const text = this.getSelection(anchorIndex);
+        clipboard.writeText(text);
+        return this;
+    } 
+    
+    osCut(anchorIndex: number): DocumentNavigator {
+        const text = this.getSelection(anchorIndex);
+        this.remove(anchorIndex);
+        clipboard.writeText(text);
+        return this;
+    }
+
+    selectAll(anchorIndex: number): DocumentNavigator {
+        this.setMark(anchorIndex, new Position(0, 0));
+        let cursor = new Position(this.getLineCount(), 0).normalize(this);
+        this.setCursor(anchorIndex, cursor);
+        return this;
+    }
+
+    osCursorUp(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getSelectionStart(anchorIndex);
+        if (cursor.row > 0) {
+            cursor.row--;
+            this.setCursorAndMark(anchorIndex, cursor);
+        }
+        return this;
+    }
+
+    osCursorDown(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getSelectionEnd(anchorIndex);
+        if (cursor.row + 1 < this.getLineCount()) {
+            cursor.row++;
+            this.setCursorAndMark(anchorIndex, cursor);
+        }
+        return this;
+    } 
+    
+    osCursorLeft(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getSelectionStart(anchorIndex);
+        if (cursor.column > 0) {
+            cursor.column--;
+        } else {
+            cursor = new Position(cursor.row - 1, Number.MAX_SAFE_INTEGER);
+        }
+
+        this.setCursorAndMark(anchorIndex, cursor);
+        return this;
+    }
+
+    osCursorRight(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getSelectionStart(anchorIndex);
+        if (cursor.column < this.getLine(cursor.row).length) {
+            cursor.column++;
+        } else {
+            cursor = new Position(cursor.row + 1, 0);
+        }
+
+        this.setCursorAndMark(anchorIndex, cursor);
+        return this;
+    }
+
+    osBackspace(anchorIndex: number): DocumentNavigator {
+        if (this.getCursor(anchorIndex).compareTo(this.getMark(anchorIndex)) === 0) {
+            const original = this.getCursor(anchorIndex);
+            this.osCursorLeft(anchorIndex);
+            this.removeAt(this.getCursor(anchorIndex), original);
+        }
+        else {
+            this.remove(anchorIndex);
+        }
+        return this;
+    }
+
+    osDelete(anchorIndex: number): DocumentNavigator {
+        if (this.getCursor(anchorIndex).compareTo(this.getMark(anchorIndex)) === 0) {
+            const original = this.getCursor(anchorIndex);
+            this.osCursorRight(anchorIndex);
+            this.removeAt(this.getCursor(anchorIndex), original);
+        }
+        else {
+            this.remove(anchorIndex);
+        }
+        return this;
+    }
+
+    osKey(anchorIndex: number, key: string): DocumentNavigator {
+        switch (key) {
+            case "C-v":
+                this.osPaste(anchorIndex);
+                break;
+            case "C-c":
+                this.osCopy(anchorIndex);
+                break;
+            case "C-x":
+                this.osCut(anchorIndex);
+                break;
+            case "C-a":
+                this.selectAll(anchorIndex);
+                break;
+            case "ArrowUp":
+                this.osCursorUp(anchorIndex);
+                break;
+            case "ArrowDown":
+                this.osCursorDown(anchorIndex);
+                break;
+            case "ArrowLeft":
+                this.osCursorLeft(anchorIndex);
+                break;
+            case "ArrowRight":
+                this.osCursorRight(anchorIndex);
+                break;
+            case "Backspace":
+                this.osBackspace(anchorIndex);
+                break;
+            case "Delete":
+                this.osDelete(anchorIndex);
+                break;
         }
 
         return this;

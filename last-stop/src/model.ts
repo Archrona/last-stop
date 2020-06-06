@@ -828,6 +828,42 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    haloBeforeSelection(anchorIndex: number): DocumentNavigator {
+        this.spongeBeforeSelection(anchorIndex);
+        let target = this.getSelectionStart(anchorIndex);
+        this.insertAt(" ", target, {  });
+        return this;
+    } 
+    
+    haloAfterSelection(anchorIndex: number): DocumentNavigator {
+        this.spongeAfterSelection(anchorIndex);
+        let target = this.getSelectionEnd(anchorIndex);
+        this.insertAt(" ", target, {  });
+        return this;
+    } 
+    
+    haloAboveSelection(anchorIndex: number): DocumentNavigator {
+        this.spongeAboveSelection(anchorIndex); 
+        
+        let target = this.getSelectionStart(anchorIndex);
+        target.column = 0; 
+        
+        this.insertAt("$n", target, { escapes: true });
+        return this;
+    } 
+    
+    haloBelowSelection(anchorIndex: number): DocumentNavigator {
+        this.spongeBelowSelection(anchorIndex); 
+        
+        let target = this.getSelectionEnd(anchorIndex);
+        target.row++;
+        target.column = 0;
+        
+        this.insertAt("$n", target, { escapes: true });
+        return this;
+    } 
+    
+
     step(anchorIndex: number): DocumentNavigator {
         this.removeAdjacentInsertionPoints(anchorIndex);
         this.spongeIfEmptyLine(anchorIndex);

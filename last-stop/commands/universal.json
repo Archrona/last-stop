@@ -88,33 +88,33 @@
         {
             "spoken": ["halo"],
             "run": "halo",
-            "arguments": "ud"
+            "arguments": ["ud"]
         },
         {
             "spoken": ["halo sides"],
             "run": "halo",
-            "arguments": "lr"
+            "arguments": ["lr"]
         },
         
         {
             "spoken": ["halo above", "halo up"],
             "run": "halo",
-            "arguments": "u"
+            "arguments": ["u"]
         },
         {
             "spoken": ["halo below", "halo down"],
             "run": "halo",
-            "arguments": "d"
+            "arguments": ["d"]
         },
         {
             "spoken": ["halo left", "halo before"],
             "run": "halo",
-            "arguments": "l"
+            "arguments": ["l"]
         },
         {
             "spoken": ["halo right", "halo after"],
             "run": "halo",
-            "arguments": "r"
+            "arguments": ["r"]
         },
         
 

@@ -48,7 +48,7 @@
         },
         {
             "spoken": ["function"],
-            "insert": "function $_($_)$_ {$u$_$d}$n$_"
+            "insert": "function $_ {$u$_$d}$n$_"
         },
         {
             "spoken": ["lambda function"],

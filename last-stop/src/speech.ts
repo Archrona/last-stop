@@ -376,7 +376,25 @@ export const EXECUTORS = {
     },
 
     halo: (model: Model, arg: Array<any>) => {
-
+        model.doActiveDocument((doc, ai) => {
+            let targets = "ud";
+            if (arg[0] !== undefined && typeof arg[0] === "string") {
+                targets = arg[0];
+            }
+            
+            if (targets.indexOf("l") !== -1) {
+                doc.haloBeforeSelection(ai);
+            }
+            if (targets.indexOf("r") !== -1) {
+                doc.haloAfterSelection(ai);
+            } 
+            if (targets.indexOf("u") !== -1) {
+                doc.haloAboveSelection(ai);
+            } 
+            if (targets.indexOf("d") !== -1) {
+                doc.haloBelowSelection(ai);
+            }
+        });
     }
 }
 

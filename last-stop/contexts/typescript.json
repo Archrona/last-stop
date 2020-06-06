@@ -124,7 +124,7 @@
             "rule": false
         },
         {
-            "what": "close > of generic, left, up to 5 nested <...>",
+            "what": "close > of generic, left",
             "before": "(?:[A-Z][A-Za-z0-9_$]*)|any|number|string|object|boolean|\\[|enum|void|never|undefined",
             "after": ">",
             "rule": false
@@ -147,7 +147,7 @@
         },
         {
             "what": "negative numbers",
-            "before": "(?:^|[~!@#$%^&*([{:'\"<,.\\/?+\\-|])\\s*-",
+            "before": "(?:^|[~!@#$%^&*([{:'\"<,.\\/?+\\-|=])\\s*-",
             "after": "[0-9a-zA-Z_]",
             "rule": false
         },

@@ -47,7 +47,7 @@
             "insert": "finally {$u$_$d}$n$_"
         },
         {
-            "spoken": ["for"],
+            "spoken": ["for", "for loop", "four loop", "fore loop"],
             "insert": "for ($_; $_; $_) {$u$_$d}$n$_"
         },
         {

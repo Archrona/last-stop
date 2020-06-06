@@ -373,6 +373,10 @@ export const EXECUTORS = {
                 doc.spongeBelowSelection(ai);
             }  
         });
+    },
+
+    halo: (model: Model, arg: Array<any>) => {
+
     }
 }
 

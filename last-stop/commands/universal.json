@@ -86,6 +86,39 @@
         },
 
         {
+            "spoken": ["halo"],
+            "run": "halo",
+            "arguments": "ud"
+        },
+        {
+            "spoken": ["halo sides"],
+            "run": "halo",
+            "arguments": "lr"
+        },
+        
+        {
+            "spoken": ["halo above", "halo up"],
+            "run": "halo",
+            "arguments": "u"
+        },
+        {
+            "spoken": ["halo below", "halo down"],
+            "run": "halo",
+            "arguments": "d"
+        },
+        {
+            "spoken": ["halo left", "halo before"],
+            "run": "halo",
+            "arguments": "l"
+        },
+        {
+            "spoken": ["halo right", "halo after"],
+            "run": "halo",
+            "arguments": "r"
+        },
+        
+
+        {
             "spoken": ["dropout", "drop out", "drop forward"],
             "insert": "$u"
         },

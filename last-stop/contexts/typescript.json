@@ -112,6 +112,24 @@
             "rule": false
         },
         {
+            "what": "open < of generic, left",
+            "before": "[A-Z][A-Za-z0-9_$]*",
+            "after": "<",
+            "rule": false
+        },
+        {
+            "what": "open < of generic, right",
+            "before": "<",
+            "after": "(?:[A-Z][A-Za-z0-9_$]*)|any|number|string|object|boolean|\\[|enum|void|never|undefined",
+            "rule": false
+        },
+        {
+            "what": "close > of generic, left, up to 5 nested <...>",
+            "before": "(?:[A-Z][A-Za-z0-9_$]*)|any|number|string|object|boolean|\\[|enum|void|never|undefined",
+            "after": ">",
+            "rule": false
+        },
+        {
             "what": "before closing punctuation",
             "after": "[)\\]};:},]|\\+\\+|--",
             "rule": false

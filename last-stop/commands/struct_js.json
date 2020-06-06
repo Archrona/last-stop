@@ -112,7 +112,7 @@
         },
         {
             "spoken": ["of type", "with type", "with"],
-            "insert": "$g<$_> $_"
+            "insert": "$g<$_>$_$g"
         },
         {
             "spoken": ["as"],

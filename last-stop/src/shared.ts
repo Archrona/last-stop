@@ -279,5 +279,21 @@ export class IndentationPolicy {
         
         return leading + trailing;
     }  
+    
+    getMarginColumns(margin: string): number {
+        let count = 0;
+        
+        for (const c of margin) {
+            if (c === ' ') {
+                count++;
+            } else if (c === '\t') {
+                count += this.spacesPerTab;
+            } else {
+                break;
+            }
+        }
+
+        return count;
+    }
 }
  

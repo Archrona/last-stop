@@ -5,6 +5,8 @@ import { Position, splitIntoLines } from "./shared";
 import * as fs from "fs";
 import { inspect } from "util";
 import * as glob from "glob";
+import { ShortcutDetails } from "electron";
+import { text } from "express";
 
 interface TokenContext {
     type: string;
@@ -89,6 +91,15 @@ interface SpacingRule {
     isDefault: boolean;
 }
 
+interface IndentationRule {
+    what: string;
+    pattern: string;
+    rule: string;
+
+    // Computed properties
+    patternRe: RegExp | null;
+}
+
 /**
  * A [LanguageContext] is a description of a single context.
  * 
@@ -104,6 +115,7 @@ interface LanguageContext {
     rawInput: boolean;
     defaultCasing: string;
     spacing: Array<SpacingRule>;
+    indentation: Array<IndentationRule>;
 }
 
 export class TokenizeResult {
@@ -160,8 +172,12 @@ export class Languages {
                 } else {
                     rule.isDefault = true;
                 }
-
             }
+
+            for (const rule of languageData.indentation) {
+                rule.patternRe = new RegExp("(?:" + rule.pattern + ")$", "mu");
+            }
+
             result.set(languageData.name, languageData);
         }
 
@@ -297,6 +313,28 @@ export class Languages {
         }
 
         return "THROWS by fallthrough";
+    }
+
+    // Returns -1 if unindent, 0 if same, 1 if indent
+    shouldIndent(context: string, line: string): number {
+        const rules = this.contexts.get(context).indentation;
+
+        console.log("sI: " + text);
+        for (const rule of rules) {
+            console.log(rule);
+            if (rule.patternRe.test(line)) {
+                console.log("MATCHED!");
+                if (rule.rule === "indent") {
+                    return 1;
+                } else if (rule.rule === "dedent" || rule.rule === "unindent") {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        }
+
+        return 0;
     }
 }
 

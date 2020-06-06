@@ -27,6 +27,7 @@
     "contextChanges": [],
     "rawInput": true,
     "defaultCasing": "raw",
+    "indentation": [],
     "spacing": [
         {
             "what": "adjacent whitespace",

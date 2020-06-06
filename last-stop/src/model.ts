@@ -4,7 +4,7 @@ import { Languages, TokenizeResult } from "./language";
 import { Main } from "./main";
 import { Speech } from "./speech";
 import { inspect } from "util";
-import { clipboard } from "electron";
+import { clipboard, contextBridge } from "electron";
 
 export interface InsertOptions {
     lockMark?: boolean;
@@ -520,6 +520,7 @@ export class DocumentNavigator extends Navigator {
         
         let leading = IndentationPolicy.splitMarginContent(targetLine)[0];
         const policy = this.getIndentationPolicy();
+        let spongeWhite = false;
         let result = "";
         let i = 0;
         
@@ -588,7 +589,7 @@ export class DocumentNavigator extends Navigator {
         const pos = position.normalize(this);
         const targetLine = this.getLine(pos.row);
         const before = targetLine.substring(0, pos.column);
-        const after = targetLine.substring(pos.column);
+        let after = targetLine.substring(pos.column);
 
         if (options.enforceSpacing === true) {
             const context = this.getPositionContext(position);
@@ -614,6 +615,14 @@ export class DocumentNavigator extends Navigator {
 
         const escaped = this._insertProcessEscapes(text, options, targetLine);
         const linesToInsert = splitIntoLines(escaped);
+
+        // Fix janky spacing on last line of multiline insert
+        if (options.escapes === true
+            && linesToInsert.length > 1 
+            && /^\s*$/.test(linesToInsert[linesToInsert.length - 1]))
+        {
+            after = after.trimLeft();
+        }
 
         if (linesToInsert.length === 1) {
             this.setLine(pos.row, before + escaped + after);
@@ -883,12 +892,82 @@ export class DocumentNavigator extends Navigator {
 
     osPaste(anchorIndex: number): DocumentNavigator {
         const text = clipboard.readText();
-        if (typeof text === "string" && text.length > 0) {
-            this.insert(anchorIndex, text, {
+
+        // paste before first non-white character?
+        // perform indentation adjustment to match doc
+        const left = this.getSelectionStart(anchorIndex);
+        const leftLine = this.getLine(left.row);
+        const indent = this.getIndentationPolicy();
+        const lines = splitIntoLines(text);
+        const parts = lines.map(x => IndentationPolicy.splitMarginContent(x));
+        
+        // One line paste after left margin -- just a plain insert
+        if (lines.length === 1 && left.column > parts[0].length) {
+            return this.insert(anchorIndex, text, {
                 enforceSpacing: true
             });
         }
-        return this;
+
+        // One line paste at left margin -- FOR NOW, just a plain insert
+        // TODO: auto-indent based on previous line?
+        if (lines.length === 1) {
+            return this.insert(anchorIndex, text, {
+                enforceSpacing: true
+            });
+        }
+
+        // Multi-line paste
+        // Get min indent across all lines excepting first
+        let min = Number.MAX_SAFE_INTEGER;
+        const sizes = parts.map(x => indent.getMarginColumns(x[0]));
+        for (let i = 1; i < sizes.length; i++) {
+            if (sizes[i] < min && parts[i][1].length > 0) {
+                min = sizes[i];
+            }
+        }
+
+        if (min === Number.MAX_SAFE_INTEGER) {
+            min = 0;
+        }
+
+        let newMargin = indent.normalizeWhite(IndentationPolicy.splitMarginContent(leftLine)[0]);
+        let toInsert = "";
+
+        // If we're at BOL of 1st line, replace indent
+        if (left.column > parts[0].length) {
+            this.spongeBeforeSelection(anchorIndex);
+            this.spongeAfterSelection(anchorIndex);
+            toInsert += newMargin;
+        }
+        toInsert += parts[0][1];
+
+        let mod = this.app.languages.shouldIndent(this.getPositionContext(left), parts[0][1]);
+        if (mod > 0) {
+            newMargin = indent.indent(newMargin, 1);
+        } else if (mod < 0) {
+            newMargin = indent.unindent(newMargin, 1);
+        }
+
+        console.log(min);
+        console.log(mod);
+        console.log(parts);
+        console.log(sizes);
+
+        let lastSize = sizes[0];
+
+        for (let i = 1; i < parts.length; i++) {
+            if (parts[i][1].length === 0) {
+                toInsert += "\n" + indent.normalizeWhite(newMargin + " ".repeat(lastSize - min));;
+            } else {
+                const lineMargin = indent.normalizeWhite(newMargin + " ".repeat(sizes[i] - min));
+                lastSize = sizes[i];
+                toInsert += "\n" + lineMargin + parts[i][1];
+            }
+        }
+
+        return this.insert(anchorIndex, toInsert, {
+            enforceSpacing: true;
+        });
     }
 
     osCopy(anchorIndex: number): DocumentNavigator {

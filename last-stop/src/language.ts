@@ -5,6 +5,8 @@ import { Position, splitIntoLines } from "./shared";
 import * as fs from "fs";
 import { inspect } from "util";
 import * as glob from "glob";
+import { ShortcutDetails } from "electron";
+import { text } from "express";
 
 interface TokenContext {
     type: string;
@@ -89,6 +91,17 @@ interface SpacingRule {
     isDefault: boolean;
 }
 
+interface IndentationRule {
+    what: string;
+    previous?: string;
+    current?: string;
+    rule: string;
+
+    // Computed properties
+    previousRe: RegExp | null;
+    currentRe: RegExp | null;
+}
+
 /**
  * A [LanguageContext] is a description of a single context.
  * 
@@ -104,6 +117,8 @@ interface LanguageContext {
     rawInput: boolean;
     defaultCasing: string;
     spacing: Array<SpacingRule>;
+    indentation: Array<IndentationRule>;
+    triggerAutomaticIndentation?: Array<string>;
 }
 
 export class TokenizeResult {
@@ -160,8 +175,17 @@ export class Languages {
                 } else {
                     rule.isDefault = true;
                 }
-
             }
+
+            for (const rule of languageData.indentation) {
+                if (rule.previous !== undefined) {
+                    rule.previousRe = new RegExp(rule.previous, "mu");
+                }
+                if (rule.current !== undefined) {
+                    rule.currentRe = new RegExp(rule.current, "mu");
+                }
+            }
+
             result.set(languageData.name, languageData);
         }
 
@@ -249,6 +273,9 @@ export class Languages {
     shouldSpace(context: string, before: string, after: string): boolean {
         const rules = this.contexts.get(context).spacing;
 
+        //console.log(`ss ${inspect(before)} ${inspect(after)}`);
+        //console.log(this.shouldSpaceExplain(context, before, after));
+
         for (const rule of rules) {
             if (rule.isDefault) {
                 return rule.rule;
@@ -297,6 +324,32 @@ export class Languages {
         }
 
         return "THROWS by fallthrough";
+    }
+
+    // Returns -1 if unindent, 0 if same, 1 if indent
+    shouldIndent(context: string, previous: string, current: string): number {
+        //console.log(`si: ${inspect(previous)} ${inspect(current)}`);
+        const rules = this.contexts.get(context).indentation;
+
+        for (const rule of rules) {
+            if ((rule.previousRe === undefined || rule.previousRe.test(previous))
+                && (rule.currentRe === undefined || rule.currentRe.test(current)))
+            {
+                if (rule.rule === "indent") {
+                    //console.log(`ret 1 by ${rule.what}`);
+                    return 1;
+                } else if (rule.rule === "dedent" || rule.rule === "unindent") {
+                    //console.log(`ret -1 by ${rule.what}`);
+                    return -1;
+                } else {
+                    //console.log(`ret 0 by ${rule.what}`);
+                    return 0;
+                }
+            }
+        }
+
+        //console.log(`ret 0 by fallthrough`);
+        return 0;
     }
 }
 

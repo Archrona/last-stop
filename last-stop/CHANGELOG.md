@@ -1,45 +1,21 @@
 
-## Version 0.2.0
-## 6/10/2020
-
-- (DONE)  keyboard/mouse commands and <<>> collapsing in speech console
-- (DONE)  implement paste
-- (DONE)  reload all json files at runtime with ctrl-0
-- (DONE)  implement and document remaining external clipboard commands
-- (DONE)  implement bkspc, del, arrows, enter
-- (DONE)  closing speech console commits changes (or restores original text?)
-- (DONE)  operators parse/space as whole tokens rather than individual characters
-
-
-- indent correctly on enter / paste / drop
-- on drop don't carry the whitespace AFTER the original cursor
-- Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
-
-- drag command selects region
-- drag continuous update
-
-- display line numbers in display on RHS
-- wordwrap rather than cut off long lines
+# Version 0.3.0
+## 6/27/2020
 
 - work out proper grammar for locations, implement
 - implement line N
 - implement go invalid line doesn't dump bullshit, just silently fails
 
-- add whitespace control commands
-
-- T<> needs glued spacing inside
-
 - ensure that including a command multiple times OVERRIDES, not makes a second copy
 - contextChanges "token" key uses regexp rather than raw string
-
-- COMMENTS/DOCS
-- AND ALL THE PROJECT STUFF
 
 - generalized config overrides by file, project, language
 - override: default casing by file, project (and spoken commands)
 - override: tab/space (and spoken commands)
+- pick N word does the first N letters if N is in the range 1-9
+- make sure grab all doesnt grab the squares for insertion points
 
-
+- AND ALL THE PROJECT STUFF
 
 - (??) implement clipboard internal (ring)
 - (??) successive raw keyboard commands collapse without prime
@@ -53,8 +29,57 @@
 - (??) implement $identifier
 - (??) implement context override signals
 - (??) get a better token index display than the stupid dots
+- (??) ctrl-z from raw
 
-## Version 0.1.0
+
+# Version 0.2.1
+## 6/15/2020
+
+- html/css support
+- COMMENTS/DOCS
+- Bugfixes
+
+
+
+# Version 0.2.0
+## 6/8/2020
+
+- (DONE)  keyboard/mouse commands and <<>> collapsing in speech console
+- (DONE)  implement paste
+- (DONE)  reload all json files at runtime with ctrl-0
+- (DONE)  implement and document remaining external clipboard commands
+- (DONE)  implement bkspc, del, arrows, enter
+- (DONE)  closing speech console commits changes (or restores original text?)
+- (DONE)  operators parse/space as whole tokens rather than individual characters
+- (DONE)  T<> needs glued spacing inside
+- (DONE)  HELLO WORLD fixed
+- (DONE)  indent correctly on enter / paste / drop
+- (DONE)  on drop don't carry the whitespace AFTER the original cursor
+- (DONE)  Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
+- (DONE)  add whitespace control commands
+- (DONE)  end, home
+
+- clipboard $location commands
+- transitives (move, copy X to Y / above Y / below Y)
+
+- drag command selects region
+- drag continuous update
+
+- no respond on unfocused click, just focus
+- display line numbers in display on RHS
+- wordwrap rather than cut off long lines
+
+- shift-cursor
+- right click xfer to speech
+- disable ctrl-shift-c
+- process ctrl-s from raw input
+- process ctrl-0 from raw input
+
+
+
+
+
+# Version 0.1.0
 ## 6/1/2020
 
 - (DONE)  step correctly removes empty lines

@@ -196,6 +196,7 @@ export class DrawableText {
 }
 
 export class IndentationPolicy {
+    
     useSpaces: boolean;
     spacesPerTab: number;
     spacesRe: RegExp;
@@ -278,5 +279,29 @@ export class IndentationPolicy {
         
         return leading + trailing;
     }  
+    
+    getMarginColumns(margin: string): number {
+        let count = 0;
+        
+        for (const c of margin) {
+            if (c === ' ') {
+                count++;
+            } else if (c === '\t') {
+                count += this.spacesPerTab;
+            } else {
+                break;
+            }
+        }
+
+        return count;
+    }
+
+    getTab(): string {
+        if (this.useSpaces) {
+            return " ".repeat(this.spacesPerTab);
+        } else {
+            return "\t";
+        }
+    }
 }
  

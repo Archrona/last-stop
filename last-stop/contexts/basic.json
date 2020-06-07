@@ -52,6 +52,7 @@
     ],
     "rawInput": false,
     "defaultCasing": "camel",
+    "indentation": [],
     "spacing": [
         {
             "what": "adjacent whitespace, period, or glue",

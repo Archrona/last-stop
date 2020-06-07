@@ -37,6 +37,7 @@
     ],
     "rawInput": true,
     "defaultCasing": "raw",
+    "indentation": [],
     "spacing": [
         {
             "what": "never automatically insert space",

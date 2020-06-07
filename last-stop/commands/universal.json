@@ -44,17 +44,17 @@
             "arguments": []
         },
         {
-            "spoken": ["choose all"],
+            "spoken": ["choose all", "choose everything"],
             "run": "selectAll", 
             "arguments": []
         },
         {
-            "spoken": ["grab all"],
+            "spoken": ["grab all", "gravel", "grabbed all", "grabs all", "gravol", "grab everything"],
             "run": "selectAllAndCopy", 
             "arguments": []
         },
         {
-            "spoken": ["yank all"],
+            "spoken": ["yank all", "yank everything"],
             "run": "selectAllAndCut", 
             "arguments": []
         },      

@@ -2,13 +2,13 @@
 
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
-import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG } from "./shared";
+import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG, replaceAll } from "./shared";
 import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription, Subscription } from "./model";
 import { CommandList, Command } from "./commands";
 import { inspect } from "util";
 import * as fs from "fs";
 import { LEFT_MARGIN_COLUMNS } from "./subscription";
-import { clipboard } from "electron";
+import { clipboard, contextBridge } from "electron";
 
 export type Executor = (model: Model, args: Array<any>) => void
 
@@ -231,6 +231,7 @@ export const EXECUTORS = {
         model.doActiveDocument((doc, ai) => {
             doc.setSelectionEOL(ai, true);
             EXECUTORS.insert(model, args);
+            doc.automaticallyIndentSelection(ai);
         });
     },
 
@@ -281,11 +282,15 @@ export const EXECUTORS = {
             if (model.documents.hasKey(docName)) {
                 const doc = model.documents.get(docName);
                 let str = "";
-
+                
                 for (let i = 2; i < args.length; i++) {
                     const key = args[i];
 
                     if (typeof key === "string") {
+                        let context = doc.getCursorContext(sub.anchorIndex, model.app.languages);
+                        let autoIndent = 
+                            model.app.languages.contexts.get(context).triggerAutomaticIndentation;
+
                         if (key.length === 1) {
                             str += key;
                         } else {
@@ -294,14 +299,15 @@ export const EXECUTORS = {
                                 str = "";
                             }
 
-                            switch (key) {
-                                case "Enter":
-                                    str += "\n";
-                                    break;
+                            doc.osKey(sub.anchorIndex, key);
+                        }
 
-                                default:
-                                    doc.osKey(sub.anchorIndex, key);
+                        if (autoIndent !== undefined && autoIndent.includes(key)) {
+                            if (str.length > 0) {
+                                doc.insert(sub.anchorIndex, str);
+                                str = "";
                             }
+                            doc.automaticallyIndentSelection(sub.anchorIndex);
                         }
                     }
                 }
@@ -338,15 +344,17 @@ export const EXECUTORS = {
 
     selectAllAndCopy: (model: Model, arg: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
-            doc.selectAll(ai);
-            doc.osCopy(ai);
+            let t = doc.getText();
+            clipboard.writeText(replaceAll(t, INSERTION_POINT, ""));
         });
     },
 
     selectAllAndCut: (model: Model, arg: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
+            let t = doc.getText();
+            clipboard.writeText(replaceAll(t, INSERTION_POINT, ""));
             doc.selectAll(ai);
-            doc.osCut(ai);
+            doc.remove(ai);
         });
     },
 

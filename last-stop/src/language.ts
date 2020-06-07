@@ -93,11 +93,13 @@ interface SpacingRule {
 
 interface IndentationRule {
     what: string;
-    pattern: string;
+    previous?: string;
+    current?: string;
     rule: string;
 
     // Computed properties
-    patternRe: RegExp | null;
+    previousRe: RegExp | null;
+    currentRe: RegExp | null;
 }
 
 /**
@@ -116,6 +118,7 @@ interface LanguageContext {
     defaultCasing: string;
     spacing: Array<SpacingRule>;
     indentation: Array<IndentationRule>;
+    triggerAutomaticIndentation?: Array<string>;
 }
 
 export class TokenizeResult {
@@ -175,7 +178,12 @@ export class Languages {
             }
 
             for (const rule of languageData.indentation) {
-                rule.patternRe = new RegExp("(?:" + rule.pattern + ")$", "mu");
+                if (rule.previous !== undefined) {
+                    rule.previousRe = new RegExp(rule.previous, "mu");
+                }
+                if (rule.current !== undefined) {
+                    rule.currentRe = new RegExp(rule.current, "mu");
+                }
             }
 
             result.set(languageData.name, languageData);
@@ -265,6 +273,9 @@ export class Languages {
     shouldSpace(context: string, before: string, after: string): boolean {
         const rules = this.contexts.get(context).spacing;
 
+        //console.log(`ss ${inspect(before)} ${inspect(after)}`);
+        //console.log(this.shouldSpaceExplain(context, before, after));
+
         for (const rule of rules) {
             if (rule.isDefault) {
                 return rule.rule;
@@ -316,24 +327,28 @@ export class Languages {
     }
 
     // Returns -1 if unindent, 0 if same, 1 if indent
-    shouldIndent(context: string, line: string): number {
+    shouldIndent(context: string, previous: string, current: string): number {
+        //console.log(`si: ${inspect(previous)} ${inspect(current)}`);
         const rules = this.contexts.get(context).indentation;
 
-        console.log("sI: " + text);
         for (const rule of rules) {
-            console.log(rule);
-            if (rule.patternRe.test(line)) {
-                console.log("MATCHED!");
+            if ((rule.previousRe === undefined || rule.previousRe.test(previous))
+                && (rule.currentRe === undefined || rule.currentRe.test(current)))
+            {
                 if (rule.rule === "indent") {
+                    //console.log(`ret 1 by ${rule.what}`);
                     return 1;
                 } else if (rule.rule === "dedent" || rule.rule === "unindent") {
+                    //console.log(`ret -1 by ${rule.what}`);
                     return -1;
                 } else {
+                    //console.log(`ret 0 by ${rule.what}`);
                     return 0;
                 }
             }
         }
 
+        //console.log(`ret 0 by fallthrough`);
         return 0;
     }
 }

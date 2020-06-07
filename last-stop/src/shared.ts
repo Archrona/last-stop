@@ -197,6 +197,7 @@ export class DrawableText {
 }
 
 export class IndentationPolicy {
+    
     useSpaces: boolean;
     spacesPerTab: number;
     spacesRe: RegExp;
@@ -294,6 +295,14 @@ export class IndentationPolicy {
         }
 
         return count;
+    }
+
+    getTab(): string {
+        if (this.useSpaces) {
+            return " ".repeat(this.spacesPerTab);
+        } else {
+            return "\t";
+        }
     }
 }
  

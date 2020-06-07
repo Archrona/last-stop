@@ -97,20 +97,21 @@
     "defaultCasing": "camel",
     "indentation": [
         {
-            "what": "indent when statement clearly not terminated",
-            "pattern": "[(\\[{~!@#$%^&*-+=|\\\\:<./?]",
-            "rule": "indent"
+            "what": "dedent on close group",
+            "current": "^\\s*[}\\])]",
+            "rule": "unindent"
         },
         {
-            "what": "dedent on clear close block",
-            "pattern": "[}\\]]",
-            "rule": "unindent"
+            "what": "indent when statement clearly not terminated",
+            "previous": "[(\\[{~!@#$%^&*-+=|\\\\:<./?]$",
+            "rule": "indent"
         }
     ],
+    "triggerAutomaticIndentation": [ "}" ],
     "spacing": [
         {
             "what": "adjacent whitespace, period, or glue",
-            "either": "\\.| |\\t|\\$g",
+            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d",
             "rule": false
         },
         {

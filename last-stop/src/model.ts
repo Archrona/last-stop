@@ -476,7 +476,8 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
-    protected _insertUpdateAnchors(pos: Position, lines: Array<string>) {
+    protected _insertUpdateAnchors(pos: Position, lines: Array<string>, cutFromAfter: number) {
+        //console.log("_iUA: " + cutFromAfter);
         const names = this.getAnchorNames();
         for (const name of names) {
             const anchor = this.getAnchor(name);
@@ -488,7 +489,9 @@ export class DocumentNavigator extends Navigator {
                 if (lines.length === 1) {
                     anchor.position.column += lines[0].length;
                 } else {
-                    anchor.position.column += lines[lines.length - 1].length - pos.column;
+                    let pastOriginal = anchor.position.column - pos.column;
+                    pastOriginal = Math.max(0, pastOriginal - cutFromAfter);
+                    anchor.position.column = lines[lines.length - 1].length + pastOriginal;
                 }
             }
 
@@ -586,6 +589,7 @@ export class DocumentNavigator extends Navigator {
     }
 
     insertAt(text: string, position: Position, options: InsertOptions = {}): DocumentNavigator {
+        //console.log("ia " + inspect(text) + " " + inspect(position));
         const pos = position.normalize(this);
         const targetLine = this.getLine(pos.row);
         const before = targetLine.substring(0, pos.column);
@@ -615,13 +619,16 @@ export class DocumentNavigator extends Navigator {
 
         const escaped = this._insertProcessEscapes(text, options, targetLine);
         const linesToInsert = splitIntoLines(escaped);
+        let cutFromAfter = 0;
 
         // Fix janky spacing on last line of multiline insert
         if (options.escapes === true
             && linesToInsert.length > 1 
             && /^\s*$/.test(linesToInsert[linesToInsert.length - 1]))
         {
+            let beforeLen = after.length;
             after = after.trimLeft();
+            cutFromAfter = beforeLen - after.length;
         }
 
         if (linesToInsert.length === 1) {
@@ -633,7 +640,7 @@ export class DocumentNavigator extends Navigator {
             this.clone().goKey("lines").insertItems(pos.row + 1, toInsert);
         }
 
-        this._insertUpdateAnchors(pos, linesToInsert);
+        this._insertUpdateAnchors(pos, linesToInsert, cutFromAfter);
         this._insertUpdateContexts(pos, linesToInsert);
 
         return this;
@@ -853,11 +860,12 @@ export class DocumentNavigator extends Navigator {
     
     haloAboveSelection(anchorIndex: number): DocumentNavigator {
         this.spongeAboveSelection(anchorIndex); 
-        
+        //console.log(this.getCursor(anchorIndex));
         let target = this.getSelectionStart(anchorIndex);
         target.column = 0; 
-        
+        //console.log(this.getCursor(anchorIndex));
         this.insertAt("$n", target, { escapes: true });
+        //console.log(this.getCursor(anchorIndex));
         return this;
     } 
     
@@ -890,26 +898,64 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    automaticallyIndentLines(from: number, to: number): DocumentNavigator {
+        const lines = this.getLineCount();
+
+        if (from < 0 || to < 0 || from >= lines || to >= lines || from > to) {
+            throw new Error("automaticallyIndentLines: invalid range");
+        }
+
+        const indent = this.getIndentationPolicy();
+        let prev = (from > 0 ? this.getLine(from - 1) : "");
+        let prevMargin = (from > 0 ? IndentationPolicy.splitMarginContent(prev)[0] : "");
+
+        for (let i = from; i <= to; i++) {
+
+            let line = this.getLine(i);
+            let updatedLine = "";
+
+            let context = this.getLineContext(i);
+            let mod = this.app.languages.shouldIndent(context[context.length - 1], prev, line);
+            let margin = (mod < 0 ? indent.unindent(prevMargin) 
+                : (mod > 0 ? indent.indent(prevMargin) : prevMargin));
+            let [originalMargin, content] = IndentationPolicy.splitMarginContent(line);
+            updatedLine = margin + content;
+
+            prev = updatedLine;
+            prevMargin = margin;
+
+            this.removeAt(new Position(i, 0), new Position(i, originalMargin.length));
+            this.insertAt(margin, new Position(i, 0), { });
+        }
+
+        return this;
+    }
+
+    automaticallyIndentSelection(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        let mark = this.getMark(anchorIndex);
+        let topRow = Math.min(cursor.row, mark.row);
+        let bottomRow = Math.max(cursor.row, mark.row);
+
+        return this.automaticallyIndentLines(topRow, bottomRow);
+    }
+
     osPaste(anchorIndex: number): DocumentNavigator {
         const text = clipboard.readText();
 
         // paste before first non-white character?
         // perform indentation adjustment to match doc
         const left = this.getSelectionStart(anchorIndex);
-        const leftLine = this.getLine(left.row);
         const indent = this.getIndentationPolicy();
         const lines = splitIntoLines(text);
         const parts = lines.map(x => IndentationPolicy.splitMarginContent(x));
         
-        // One line paste after left margin -- just a plain insert
-        if (lines.length === 1 && left.column > parts[0].length) {
-            return this.insert(anchorIndex, text, {
-                enforceSpacing: true
-            });
+        
+        if (left.column <= parts[0].length) {
+            this.automaticallyIndentLines(left.row, left.row);
         }
 
-        // One line paste at left margin -- FOR NOW, just a plain insert
-        // TODO: auto-indent based on previous line?
+        // One line paste -- just a plain insert
         if (lines.length === 1) {
             return this.insert(anchorIndex, text, {
                 enforceSpacing: true
@@ -917,56 +963,34 @@ export class DocumentNavigator extends Navigator {
         }
 
         // Multi-line paste
-        // Get min indent across all lines excepting first
-        let min = Number.MAX_SAFE_INTEGER;
-        const sizes = parts.map(x => indent.getMarginColumns(x[0]));
-        for (let i = 1; i < sizes.length; i++) {
-            if (sizes[i] < min && parts[i][1].length > 0) {
-                min = sizes[i];
-            }
-        }
+        this.insert(anchorIndex, parts[0][1] + "\n" + parts[1][1], { enforceSpacing: true });
+        this.automaticallyIndentLines(left.row, left.row + 1);
 
-        if (min === Number.MAX_SAFE_INTEGER) {
-            min = 0;
-        }
+        let newMargin = indent.getMarginColumns(
+            IndentationPolicy.splitMarginContent(
+                this.getLine(left.row + 1)
+            )[0]
+        );
 
-        let newMargin = indent.normalizeWhite(IndentationPolicy.splitMarginContent(leftLine)[0]);
+        let oldMargin = indent.getMarginColumns(parts[1][0]);
+        let delta = newMargin - oldMargin;
+        let lastGoodMargin = newMargin;
+        
         let toInsert = "";
+        for (let i = 2; i < parts.length; i++) {
+            toInsert += "\n";
 
-        // If we're at BOL of 1st line, replace indent
-        if (left.column > parts[0].length) {
-            this.spongeBeforeSelection(anchorIndex);
-            this.spongeAfterSelection(anchorIndex);
-            toInsert += newMargin;
-        }
-        toInsert += parts[0][1];
-
-        let mod = this.app.languages.shouldIndent(this.getPositionContext(left), parts[0][1]);
-        if (mod > 0) {
-            newMargin = indent.indent(newMargin, 1);
-        } else if (mod < 0) {
-            newMargin = indent.unindent(newMargin, 1);
-        }
-
-        console.log(min);
-        console.log(mod);
-        console.log(parts);
-        console.log(sizes);
-
-        let lastSize = sizes[0];
-
-        for (let i = 1; i < parts.length; i++) {
             if (parts[i][1].length === 0) {
-                toInsert += "\n" + indent.normalizeWhite(newMargin + " ".repeat(lastSize - min));;
+                toInsert += indent.normalizeWhite(" ".repeat(lastGoodMargin));
             } else {
-                const lineMargin = indent.normalizeWhite(newMargin + " ".repeat(sizes[i] - min));
-                lastSize = sizes[i];
-                toInsert += "\n" + lineMargin + parts[i][1];
+                toInsert += indent.normalizeWhite(" ".repeat(
+                    Math.max(0, indent.getMarginColumns(parts[i][0]) + delta)
+                )) + parts[i][1];
             }
         }
 
         return this.insert(anchorIndex, toInsert, {
-            enforceSpacing: true;
+            enforceSpacing: true
         });
     }
 
@@ -1010,8 +1034,17 @@ export class DocumentNavigator extends Navigator {
     
     osCursorLeft(anchorIndex: number): DocumentNavigator {
         let cursor = this.getSelectionStart(anchorIndex);
-        if (cursor.column > 0) {
+        let [margin, content] = IndentationPolicy.splitMarginContent(this.getLine(cursor.row));
+
+        if (cursor.column > margin.length) {
             cursor.column--;
+        } else if (cursor.column > 0) {
+            let indent = this.getIndentationPolicy();
+            if (indent.useSpaces) {
+                cursor.column = Math.max(0, cursor.column - indent.spacesPerTab);
+            } else {
+                cursor.column -= 1;
+            }
         } else {
             cursor = new Position(cursor.row - 1, Number.MAX_SAFE_INTEGER);
         }
@@ -1022,7 +1055,16 @@ export class DocumentNavigator extends Navigator {
 
     osCursorRight(anchorIndex: number): DocumentNavigator {
         let cursor = this.getSelectionStart(anchorIndex);
-        if (cursor.column < this.getLine(cursor.row).length) {
+        let [margin, content] = IndentationPolicy.splitMarginContent(this.getLine(cursor.row));
+
+        if (cursor.column < margin.length) {
+            let indent = this.getIndentationPolicy();
+            if (indent.useSpaces) {
+                cursor.column = Math.min(margin.length, cursor.column + indent.spacesPerTab);
+            } else {
+                cursor.column++;
+            }
+        } else if (cursor.column < this.getLine(cursor.row).length) {
             cursor.column++;
         } else {
             cursor = new Position(cursor.row + 1, 0);
@@ -1056,6 +1098,48 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    osEnter(anchorIndex: number): DocumentNavigator {
+        this.insert(anchorIndex, "$n", { escapes: true });
+        return this.automaticallyIndentSelection(anchorIndex);
+    }
+
+    osTab(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        let mark = this.getMark(anchorIndex);
+
+        if (cursor.compareTo(mark) === 0) {
+            this.automaticallyIndentLines(cursor.row, cursor.row);
+            let cursorAfter = this.getCursor(anchorIndex);
+            if (cursor.column === cursorAfter.column) {
+                this.insertAt(
+                    this.getIndentationPolicy().getTab(),
+                    new Position(cursor.row, 0),
+                    { }
+                );
+            }
+            return this;
+        } 
+        else {
+            return this.automaticallyIndentSelection(anchorIndex);
+        }
+        
+    }
+
+    osHome(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        let margin = IndentationPolicy.splitMarginContent(this.getLine(cursor.row))[0].length;
+        cursor.column = (cursor.column <= margin ? 0 : margin);
+
+        return this.setCursorAndMark(anchorIndex, cursor);
+    }
+
+    osEnd(anchorIndex: number): DocumentNavigator {
+        let cursor = this.getCursor(anchorIndex);
+        cursor.column = this.getLine(cursor.row).length;
+
+        return this.setCursorAndMark(anchorIndex, cursor);
+    }
+
     osKey(anchorIndex: number, key: string): DocumentNavigator {
         switch (key) {
             case "C-v":
@@ -1087,6 +1171,18 @@ export class DocumentNavigator extends Navigator {
                 break;
             case "Delete":
                 this.osDelete(anchorIndex);
+                break;
+            case "Enter":
+                this.osEnter(anchorIndex);
+                break;
+            case "Tab":
+                this.osTab(anchorIndex);
+                break;
+            case "Home":
+                this.osHome(anchorIndex);
+                break;
+            case "End":
+                this.osEnd(anchorIndex);
                 break;
         }
 

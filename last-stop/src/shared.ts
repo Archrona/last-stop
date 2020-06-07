@@ -109,7 +109,6 @@ export function binarySearchSparse(
     throw new Error("getLineContext: binary search failed");
 }
 
-
 export class Position {
     row: number;
     column: number;

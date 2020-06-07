@@ -6,6 +6,7 @@ import { Speech } from "./speech";
 import { inspect } from "util";
 import { clipboard } from "electron";
 
+
 export interface InsertOptions {
     lockMark?: boolean;
     enforceSpacing?: boolean;

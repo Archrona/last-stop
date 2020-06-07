@@ -23,24 +23,26 @@
             "insert": "..."
         },
         {
-            "spoken": ["below", "is below", "less than", "is less than"],
+            "spoken": ["below", "is below", "less than", "is less than", "smaller than", "is smaller than"],
             "insert": "<"
         },
         {
-            "spoken": ["above", "is above", "greater than", "is greater than"],
+            "spoken": ["above", "is above", "greater than", "is greater than", "is bigger than", "bigger than"],
             "insert": ">"
         },
         {
             "spoken": [
                 "at most", "is at most",
-                "less than or equal to", "is less than or equal to"
+                "less than or equal to", "is less than or equal to",
+                "smaller than or equal to", "is smaller than or equal to"
             ],
             "insert": "<="
         },
         {
             "spoken": [
                 "at least", "is at least",
-                "greater than or equal to", "is greater than or equal to"
+                "greater than or equal to", "is greater than or equal to",
+                "bigger than or equal to", "is bigger than or equal to"
             ],
             "insert": ">="
         },

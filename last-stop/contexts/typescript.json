@@ -103,7 +103,7 @@
         },
         {
             "what": "indent when statement clearly not terminated",
-            "previous": "[(\\[{~!@#$%^&*-+=|\\\\:<./?]$",
+            "previous": "[(\\[{~!@#$%^&*-+=|\\\\:<./?]\\s*$",
             "rule": "indent"
         }
     ],

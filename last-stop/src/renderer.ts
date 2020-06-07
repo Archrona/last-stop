@@ -65,8 +65,6 @@ class Application {
         }
     }
 
-    
-
     registerPostloadHandlers() {
         window.addEventListener("resize", (event) => {
             this.onResize();

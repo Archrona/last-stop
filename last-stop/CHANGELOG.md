@@ -69,7 +69,7 @@
 - display line numbers in display on RHS
 - wordwrap rather than cut off long lines
 
-- shift-cursor
+- shift-cursor, ctrl-cursor
 - right click xfer to speech
 - disable ctrl-shift-c
 - process ctrl-s from raw input

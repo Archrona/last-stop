@@ -53,9 +53,9 @@ export class Main {
             this.model.subscriptions.set(11, "doc@test.ts@0");
             this.model.setActiveWindow(11);
 
-            let id = this.view.createWindow();
-            this.model.subscriptions.set(id, "doc@test.ts@1");
-            this.view.updateAllWindows();
+            // let id = this.view.createWindow();
+            // this.model.subscriptions.set(id, "doc@test.ts@1");
+            // this.view.updateAllWindows();
 
             this.consoleServer = new ConsoleServer(this);
         }

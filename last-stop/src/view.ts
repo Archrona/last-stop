@@ -11,7 +11,7 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 const THEME = {
     window_active_accent: getRGB(170, 160, 250),
     window_inactive_accent: getRGB(64, 64, 96),
-    window_line_number: getRGB(120, 120, 120),
+    window_line_number: getRGB(120, 110, 130),
     error: getRGB(255, 0, 0),
     overflow_indicator: getRGB(255, 255, 0),
 
@@ -38,6 +38,7 @@ const THEME = {
 
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),
+    line_number: getRGB(80, 90, 110),
     EOF: getRGB(60, 60, 60)
 };
 
@@ -177,16 +178,16 @@ export class Window {
 
     doUpdate() {
         if (this.isReady) {
-            let sub = "unknown_window";
-
-            if (this.app.model.subscriptions.has(this.id)) {
-                sub = this.app.model.subscriptions.get(this.id);
-            }
+            // This will work even if no subscription found
+            const subName = this.app.model.subscriptions.has(this.id) ?
+                this.app.model.subscriptions.get(this.id) : "no subscription";
+            const sub = this.app.model.subscriptions.getDetails(this.id);
             
-            const text = renderSubscription(sub, this.topRowNumber, this.lines, this.columns, this.view.app);
+            const text = renderSubscription(
+                sub, this.topRowNumber, this.lines, this.columns, this.view.app);
 
             this.window.webContents.send("update", {
-                subscription: sub,
+                subscription: subName,
                 text: text,
                 lines: this.lines,
                 columns: this.columns,

@@ -38,6 +38,10 @@
 - (DONE)  Resize events don't rapid fire - 100 ms delay to cache events
 - (DONE)  multiple editor windows
 - (DONE)  force commit, do commit, commit special
+- (DONE)  disable ctrl-shift-c
+- (DONE)  resize window -> line reassignment -> retroactive meaning change
+- (DONE)  display line numbers in display on RHS
+
 
 - subscription setting commands
 - project sub
@@ -46,7 +50,6 @@
 - html/css support
 - COMMENTS/DOCS
 
-- resize window -> line reassignment -> retroactive meaning change
 - clipboard commands -> retroactive meaning change
 
 - clipboard $location commands
@@ -57,12 +60,11 @@
 - drag continuous update
 
 - no respond on unfocused click, just focus
-- display line numbers in display on RHS
 - wordwrap rather than cut off long lines
 
 - shift-cursor, ctrl-cursor
 - right click xfer to speech
-- disable ctrl-shift-c
+
 - process ctrl-s from raw input
 - process ctrl-0 from raw input
 

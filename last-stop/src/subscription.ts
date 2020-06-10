@@ -3,7 +3,7 @@
 
 import { Main } from "./main";
 import { Position, DrawableText, splitIntoLines } from "./shared";
-import { Anchor } from "./model";
+import { Anchor, Subscription, DocumentNavigator, DocumentSubscription, NotFoundSubscription } from "./model";
 import { TokenizeResult } from "./language";
 
 export const LEFT_MARGIN_COLUMNS = 6;
@@ -66,10 +66,6 @@ function renderMargin(topRow: number, rows: number, app: Main): Array<DrawableTe
     }
     
     return result;
-}
-
-function renderUnknownWindow(terms: Array<string>, app: Main, rows: number, columns: number) {
-    return renderError("this window has no subscription", app);
 }
 
 
@@ -162,85 +158,84 @@ function renderDocumentToken(
     return longLineIndicator;
 }
 
-function renderDocument(terms: Array<string>, app: Main, rows: number, columns: number): Array<DrawableText>
-{
-    try {
-        const name = terms[0];
-        const anchorIndex = parseInt(terms[1]);
-        if (name.length === 0 || typeof anchorIndex !== "number") {
-            throw new Error("invalid format of subscription string");
-        }
-
-        const doc = app.model.documents.get(name);
-        const cursor = doc.getCursor(anchorIndex);
-        const mark = doc.getMark(anchorIndex);
-        const view = doc.getView(anchorIndex);
-
-        const content = [];
-        let longLineIndicator = false;
-        const [selectionLeft, selectionRight] = Position.orderNormalize(cursor, mark, doc);
-        const lines = doc.getLineCount();
-
-        for (let viewRow = 0; viewRow < rows; viewRow++) {
-            const lineIndex = view.row + viewRow;
-
-            // Indicate EOF by subtle marker
-            if (lineIndex < 0 || lineIndex >= lines) {
-                const eofColor = app.view.getColor("EOF");
-                content.push(new DrawableText(
-                    "░", "", viewRow, LEFT_MARGIN_COLUMNS, eofColor, null
-                ));
-                continue;
-            }
-
-            renderDocumentSelection(
-                selectionLeft, selectionRight, lineIndex, content,
-                view, columns, app, viewRow);
-
-            renderDocumentAnchor(cursor, "cursor", content, lineIndex, view, app, viewRow);
-            renderDocumentAnchor(mark, "mark", content, lineIndex, view, app, viewRow);
-    
-            const lineText = doc.getLine(lineIndex);
-            const context = doc.getLineContext(lineIndex);
-            const tokenization = app.languages.tokenize(
-                lineText, context, new Position(lineIndex, 0), false);
-    
-            for (let tokenIndex = 0; tokenIndex < tokenization.tokens.length; tokenIndex++) {
-                longLineIndicator = renderDocumentToken(tokenization, tokenIndex, view,
-                    app, columns, viewRow, content, longLineIndicator);
-            }
-        }
-    
-        return content;
-
-    } catch (e) {
-        console.log(e);
-        return renderError("error rendering document: " + e.message, app);
-    }
+function calculateRightMargin(row: number): number {
+    row += 100;
+    return Math.floor(Math.log(row) / Math.log(10) + 1);
 }
 
-type Renderer = (terms: string[], app: Main, rows: number, columns: number) => DrawableText[];
-
-const RENDERERS: Map<string, Renderer> = new Map([
-    ["doc", renderDocument],
-    ["unknown_window", renderUnknownWindow],
-
-]);
-
-export function renderSubscription(sub: string, topRow: number, rows: number, columns: number, app: Main): Array<DrawableText>
+function renderDocument(sub: DocumentSubscription, app: Main, rows: number, columns: number): Array<DrawableText>
 {
-    const margin = renderMargin(topRow, rows, app);
+    const doc = app.model.documents.get(sub.document);
+    const anchorIndex = sub.anchorIndex;
+    const view = doc.getView(anchorIndex);
+    const rightMargin = calculateRightMargin(view.row);
 
-    const parsed = parseSubscription(sub);
-    const renderer = RENDERERS.get(parsed.command);
-    let content = [];
-    
-    if (renderer === undefined) {
-        content = renderError("That subscription (" + parsed.command + ") is not recognized.", app);
+    const result = [];
+    const lines = doc.getLineCount();
+    const selectionLeft = doc.getSelectionStart(anchorIndex);
+    const selectionRight = doc.getSelectionEnd(anchorIndex);
+
+    let longLineIndicator = false;
+
+    for (let r = 0; r < rows; r++) {
+        const lineIndex = view.row + r;
+
+        // Indicate EOF by subtle marker
+        if (lineIndex < 0 || lineIndex >= lines) {
+            const eofColor = app.view.getColor("EOF");
+            result.push(new DrawableText(
+                "░", "", r, LEFT_MARGIN_COLUMNS, eofColor, null
+            ));
+            continue;
+        } else {
+            result.push(new DrawableText(
+                lineIndex.toString(), "", r, columns - rightMargin,
+                app.view.getColor("line_number"), null
+            ));
+        }
+        
+        renderDocumentSelection(
+            selectionLeft, selectionRight,
+            lineIndex, result, view, columns, app, r);
+
+        renderDocumentAnchor(doc.getCursor(anchorIndex), "cursor", 
+            result, lineIndex, view, app, r);
+
+        renderDocumentAnchor(doc.getMark(anchorIndex), "mark", 
+            result, lineIndex, view, app, r);
+
+        const lineText = doc.getLine(lineIndex);
+        const context = doc.getLineContext(lineIndex);
+        const tokenization = app.languages.tokenize(
+            lineText, context, new Position(lineIndex, 0), false);
+
+        for (let tokenIndex = 0; tokenIndex < tokenization.tokens.length; tokenIndex++) {
+            longLineIndicator = renderDocumentToken(tokenization, tokenIndex, view,
+                app, columns - rightMargin, r, result, longLineIndicator);
+        }
     }
-    else {
-        content = renderer(parsed.arguments, app, rows, columns);
+
+    return result;
+}
+
+export function renderSubscription(sub: Subscription, topRow: number, rows: number, columns: number, app: Main): Array<DrawableText>
+{
+    let drawable = renderMargin(topRow, rows, app);
+
+    console.log(sub);
+
+    try {
+        if (sub instanceof DocumentSubscription) {
+            drawable = drawable.concat(renderDocument(sub, app, rows, columns));
+        } else if (sub instanceof NotFoundSubscription) {
+            drawable = drawable.concat(renderError("Subscription not found for this window", app));
+        } else {
+            drawable = drawable.concat(renderError("Subscription type not recognized", app));
+        }
+    } catch (e) {
+        drawable.concat(renderError("Render error: " + e.message, app));
+        console.log(e);
     }
-     
-    return margin.concat(content);
+
+    return drawable;
 }

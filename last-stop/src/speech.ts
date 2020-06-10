@@ -936,17 +936,19 @@ export class Speech {
                     ([windowStr, sub] as any[]).concat(parts.slice(1)), context)];
             
             case ESCAPE_MOUSE:
-                const result = [];
+                {
+                    const result = [];
 
-                for (let index = 1; index + 2 < parts.length; index += 3) {
-                    const button = parseInt(parts[index]);
-                    const row = parseInt(parts[index + 1]);
-                    const column = parseInt(parts[index + 2]);
-                    
-                    result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
-                        [windowStr, sub, button, row, column], context));
+                    for (let index = 1; index + 2 < parts.length; index += 3) {
+                        const button = parseInt(parts[index]);
+                        const row = parseInt(parts[index + 1]);
+                        const column = parseInt(parts[index + 2]);
+                        
+                        result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
+                            [windowStr, sub, button, row, column], context));
+                    }
+                    return result;
                 }
-                return result;
                
 
             case ESCAPE_SCROLL:
@@ -954,9 +956,23 @@ export class Speech {
                     ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
 
             case ESCAPE_DRAG:
-                return [this.runExecutor(i, 1, EXECUTORS.onDrag, 
-                    ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+                console.log("ASDSAD");
+                {
+                    const result = [];
 
+                    for (let index = 1; index + 4 < parts.length; index += 5) {
+                        const button = parseInt(parts[index]);
+                        const fromRow = parseInt(parts[index + 1]);
+                        const fromColumn = parseInt(parts[index + 2]);
+                        const toRow = parseInt(parts[index + 3]);
+                        const toColumn = parseInt(parts[index + 4]);
+                        
+                        result.push(this.runExecutor(i, 1, EXECUTORS.onDrag, 
+                            [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn],
+                            context));
+                    }
+                    return result;
+                }
 
             case ESCAPE_ACTIVATE:
                 return [this.runExecutor(i, 1, EXECUTORS.onActivate, 
@@ -965,10 +981,6 @@ export class Speech {
             case ESCAPE_COMMIT:
                 return [this.runExecutor(i, 1, EXECUTORS.onCommit, 
                     [], context)];
-
-            case ESCAPE_DRAG:
-                // TODO
-                break;
         }
 
         return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];

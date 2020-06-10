@@ -122,9 +122,8 @@ export const EXECUTORS = {
 
             const windowRow = args[3];
             const windowCol = args[4];
-            const docName = sub.document;
-            if (model.documents.hasKey(docName)) {
-                const doc = model.documents.get(docName);
+            if (model.documents.hasKey(sub.document)) {
+                const doc = model.documents.get(sub.document);
                 const view = doc.getView(sub.anchorIndex);
                 const pos = new Position(
                     windowRow + view.row,
@@ -140,18 +139,30 @@ export const EXECUTORS = {
         return new ExecutorResult();
     },
 
+    // [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn]
     onDrag: (model: Model, args: Array<any>) => {
         const sub = args[1];
         const windowId = parseInt(args[0]);
+        const button = parseInt(args[2]);
 
-        if (sub instanceof DocumentSubscription) {
+        if (sub instanceof DocumentSubscription && button === 0) {
             model.setActiveWindow(windowId);
-
             const r1 = args[3], c1 = args[4], r2 = args[5], c2 = args[6];
+            const doc = model.documents.get(sub.document);
+            const view = doc.getView(sub.anchorIndex);
 
-            console.log(args);
+            const p1 = new Position(
+                r1 + view.row,
+                c1 - LEFT_MARGIN_COLUMNS + view.column
+            ).normalize(doc);
 
+            const p2 = new Position(
+                r2 + view.row,
+                c2 - LEFT_MARGIN_COLUMNS + view.column
+            ).normalize(doc);
 
+            doc.setMark(sub.anchorIndex, p1);
+            doc.setCursor(sub.anchorIndex, p2);
         }
 
         return new ExecutorResult();

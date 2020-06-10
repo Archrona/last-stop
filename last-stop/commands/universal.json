@@ -23,46 +23,54 @@
         },
 
         {
+            "spoken": ["step all", "step everything"],
+            "run": "stepAll",
+            "arguments": []
+        },
+
+        {
             "spoken": ["go $location"],
             "run": "go",
             "arguments": ["$1"]
         },
-        
         {
-            "spoken": ["yank", "yanks", "yanked"],
+            "spoken": ["go everything", "go everywhere"],
+            "run": "selectAll", 
+            "arguments": []
+        },
+
+
+        {
+            "spoken": ["yank that", "yanks that", "yanked that"],
             "run": "cut",
             "arguments": []
         },
         {
-            "spoken": ["grab", "grabs", "grabbed", "grabbing"],
+            "spoken": ["grab that", "grabs that", "grabbed that", "grabbing that"],
             "run": "copy",
             "arguments": []
         },
         {
-            "spoken": ["spit", "spits", "spitz", "spitted"],
+            "spoken": ["spit that", "spits that", "spitz that", "spitted that"],
             "run": "paste", 
             "arguments": []
         },
+
         {
-            "spoken": ["choose all", "choose everything"],
-            "run": "selectAll", 
-            "arguments": []
-        },
-        {
-            "spoken": ["grab all", "gravel", "grabbed all", "grabs all", "gravol", "grab everything"],
+            "spoken": ["grab everything"],
             "run": "selectAllAndCopy", 
             "arguments": []
         },
         {
-            "spoken": ["yank all", "yank everything"],
+            "spoken": ["yank everything"],
             "run": "selectAllAndCut", 
             "arguments": []
-        },      
+        },
 
         {
             "spoken": ["sponge"],
             "run": "sponge",
-            "arguments": ["lr"]
+            "arguments": ["ud"]
         },
         {
             "spoken": ["sponge left"],
@@ -91,11 +99,11 @@
             "arguments": ["ud"]
         },
         {
-            "spoken": ["halo sides"],
+            "spoken": ["halo sides", "halo horizontal", "halo horizontally"],
             "run": "halo",
             "arguments": ["lr"]
         },
-        
+
         {
             "spoken": ["halo above", "halo up"],
             "run": "halo",
@@ -116,7 +124,17 @@
             "run": "halo",
             "arguments": ["r"]
         },
-        
+
+        {
+            "spoken": ["chop above $location"],
+            "run": "insertBetweenLines",
+            "arguments": ["above", "$1"]
+        },
+        {
+            "spoken": ["chop $location", "chop below $location"],
+            "run": "insertBetweenLines",
+            "arguments": ["below", "$1"]
+        },
 
         {
             "spoken": ["dropout", "drop out", "drop forward"],
@@ -130,6 +148,7 @@
             "spoken": ["drop", "drop down"],
             "insert": "$n"
         },
+
         {
             "spoken": ["ok", "okay"],
             "run": "insertAtEOL",

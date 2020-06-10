@@ -8,7 +8,7 @@
 
 import { Main } from "./main";
 import * as fs from "fs";
-import { Executor, EXECUTORS } from "./speech";
+import { Executor, EXECUTORS } from "./executors";
 import * as glob from "glob";
 
 interface CommandType {

@@ -65,7 +65,7 @@ export class Window {
  
         this.window = new BrowserWindow({
             height: 1000,
-            width: 700,
+            width: 900,
             webPreferences: {
                 nodeIntegration: true
             }

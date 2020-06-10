@@ -366,17 +366,46 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
-    replaceInRange(from: string, to: string, p1: Position, p2: Position): DocumentNavigator {
-        const text = this.getRange(p1, p2);
-        const replaced = replaceAll(text, from, to);
+    replaceInRange(from: string, to: string, left: Position, right: Position): DocumentNavigator {
+        [left, right] = Position.orderNormalize(left, right, this);
+        
+        for (let r = left.row; r <= right.row; r++) {
+            const line = this.getLine(r);
+            let searchFrom = 0;
+            let found = line.indexOf(from, searchFrom);
+            let columnOffset = 0;
+            
+            while (found !== -1) {
+                if (!((r === left.row && found < left.column) 
+                    || (r === right.row && found > right.column)))
+                {
+                    this.removeAt(
+                        new Position(r, found + columnOffset),
+                        new Position(r, found + from.length + columnOffset)
+                    );
+                    
+                    this.insertAt(
+                        to,
+                        new Position(r, found + columnOffset)
+                    );
 
-        if (text !== replaced) {
-            const [left, right] = Position.orderNormalize(p1, p2, this);
-            this.removeAt(left, right);
-            this.insertAt(replaced, left);
+                    columnOffset += to.length - from.length;
+                }
+                
+                searchFrom = found + 1;
+                found = line.indexOf(from, searchFrom);
+            }
         }
-
+        
         return this;
+    }
+
+    replaceAll(from: string, to: string) {
+        return this.replaceInRange(
+            from, to,
+            new Position(0, 0),
+            new Position(this.getLineCount() + 1, 0)
+        );
     }
 
     setLine(index: number, text: string): void {
@@ -1294,6 +1323,19 @@ export class Model {
             return "basic";
         } else {
             return this.getWindowContext(window);
+        }
+    }
+
+    activateDocumentWindow(documentName: string, anchorIndex: number): void {
+        const subs = this.subscriptions.getAll();
+        for (const [id, sub] of subs) {
+            if (sub instanceof DocumentSubscription
+                && sub.document === documentName
+                && sub.anchorIndex === anchorIndex)
+            {
+                this.setActiveWindow(id);
+                break;
+            }
         }
     }
 }

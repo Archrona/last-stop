@@ -189,11 +189,11 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
             continue;
         } else {
             result.push(new DrawableText(
-                lineIndex.toString(), "", r, columns - rightMargin,
+                (lineIndex + 1).toString(), "", r, columns - rightMargin,
                 app.view.getColor("line_number"), null
             ));
         }
-        
+
         renderDocumentSelection(
             selectionLeft, selectionRight,
             lineIndex, result, view, columns, app, r);
@@ -221,8 +221,6 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
 export function renderSubscription(sub: Subscription, topRow: number, rows: number, columns: number, app: Main): Array<DrawableText>
 {
     let drawable = renderMargin(topRow, rows, app);
-
-    console.log(sub);
 
     try {
         if (sub instanceof DocumentSubscription) {

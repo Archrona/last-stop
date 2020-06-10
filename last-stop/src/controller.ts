@@ -75,8 +75,6 @@ export class Controller {
 
     onConsoleExit() {
         this.lastSpeech = null; // no need to synchronize; the console is gone
-        
-        // this.onConsoleCommitChanges();
 
         setTimeout(() => {
             this.app.consoleServer.spawnConsoleProcess();
@@ -86,11 +84,6 @@ export class Controller {
     onReloadData() {
         this.app.reloadData();
     }
-
-    // onConsoleCommitChanges() {
-    //     this.app.consoleServer.requestCommit();
-    //     //this.lastSpeech = null;
-    // }
 
     consoleCommitRequest() {
         this.app.consoleServer.requestCommit();
@@ -146,7 +139,7 @@ export class Controller {
     onRendererFocus(info: any) {
         const window = this.app.view.getWindow(info.id);
         const focused = info.focused as boolean;
-        //console.log(info);
+
         if (window !== null && focused) {
             if (this.app.model.getActiveWindow() !== window.id) {
                 window.onSetActive();
@@ -156,9 +149,6 @@ export class Controller {
 
     onWindowClosed(windowId: number) {
         this.app.view.windows = this.app.view.windows.filter(w => w.id !== windowId);
-    
-        // BAD BAD EVIL BAD BUG
-        // this.app.model.subscriptions.remove(windowId);
 
         this.app.view.recomputeTopRowNumbers();
 
@@ -167,8 +157,6 @@ export class Controller {
             if (this.app.model.getActiveWindow() !== nextId) {
                 this.app.view.getWindow(nextId).onSetActive();
             }
-        }
-
-        //console.log("Remaining window IDs: " + this.windows.map(x => x.id));       
+        }   
     }
 }

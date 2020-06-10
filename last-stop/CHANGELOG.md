@@ -41,7 +41,7 @@
 - (DONE)  disable ctrl-shift-c
 - (DONE)  resize window -> line reassignment -> retroactive meaning change
 - (DONE)  display line numbers in display on RHS
-
+- (DONE)  insert at L "chop"
 
 - subscription setting commands
 - project sub
@@ -54,7 +54,7 @@
 
 - clipboard $location commands
 - transitives (move, copy X to Y / above Y / below Y)
-- insert at L
+
 
 - drag command selects region
 - drag continuous update

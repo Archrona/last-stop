@@ -23,7 +23,6 @@ namespace SpeechConsole
             onSpeech(Server.mainWindow.getText());
         }
 
-
         public static string ESCAPE_START = "▸";
         public static string ESCAPE_END = "◂";
         public static string ESCAPE_SPLIT = "‖";
@@ -32,8 +31,10 @@ namespace SpeechConsole
         public static string ESCAPE_MOUSE = "μ";
         public static string ESCAPE_SCROLL = "σ";
         public static string ESCAPE_DRAG = "δ";
+        public static string ESCAPE_ACTIVATE = "α";
+        public static string ESCAPE_COMMIT = "χ";
 
-        private class Command
+        public class Command
         {
             public string command;
 
@@ -42,7 +43,7 @@ namespace SpeechConsole
             }
         }
 
-        private class SpeechMessage: Command 
+        public class SpeechMessage: Command 
         {
             public string text;
 
@@ -70,17 +71,6 @@ namespace SpeechConsole
         public static void onCopyAndErase() {
             sendMessage(new Command("copyAndErase"), (Task t) => {
                 Console.WriteLine("copyAndErase: faulted = " + t.IsFaulted);
-                if (!t.IsFaulted) {
-                    Server.mainWindow.Invoke((Action)delegate () {
-                        Server.mainWindow.clearText();
-                    });
-                }
-            });
-        }
-
-        public static void onCommitChanges() {
-            sendMessage(new Command("commitChanges"), (Task t) => {
-                Console.WriteLine("commitChanges: faulted = " + t.IsFaulted);
                 if (!t.IsFaulted) {
                     Server.mainWindow.Invoke((Action)delegate () {
                         Server.mainWindow.clearText();

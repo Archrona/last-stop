@@ -21,6 +21,10 @@ class Application {
     margin: number;
     text: Array<DrawableText>;
     isLoaded: boolean;
+
+    resizeTimeout: number;
+
+    // hasFocus: boolean;
     
     constructor() {
         this.canvas = null;
@@ -35,7 +39,10 @@ class Application {
         this.lineHeight = 0;
         this.lineSpacing = 1.35;
         this.margin = 20;
+        this.resizeTimeout = 0;
+
         this.isLoaded = false;
+        // this.hasFocus = false;
         
         this.registerPreloadHandlers();
     }
@@ -95,6 +102,14 @@ class Application {
             this.onWheelEvent(event.deltaX, event.deltaY, event.deltaMode);
             event.preventDefault();
         });
+
+        // window.addEventListener('focusin', (event) => {
+        //     this.onFocusEvent(true);
+        // });
+          
+        // window.addEventListener('focusout', (event) => {
+        //     this.onFocusEvent(false);
+        // });
         
         ipcRenderer.on("update", (event, data) => {
             const subscription = data.subscription;
@@ -102,7 +117,9 @@ class Application {
             const expectedLines = data.lines;
             const expectedColumns = data.columns;
             const accentColor = data.modeAccent as string;
- 
+            
+            console.log(data);
+
             if (expectedLines !== this.lineCount || expectedColumns !== this.columnCount) {
                 this.sendResizeMessage();
             }
@@ -128,6 +145,8 @@ class Application {
         
         const row = Math.floor((pixelY - this.margin) / this.lineHeight);
         const column = Math.floor((pixelX - this.margin) / this.charWidth);
+
+        // console.log("MOUSE. Focused: " + this.hasFocus);
         
         this.sendMouseMessage(type, button, row, column);
     }  
@@ -159,6 +178,12 @@ class Application {
         
         this.sendScrollMessage(x, y);
     } 
+
+    // onFocusEvent(focused: boolean): void {
+    //     this.hasFocus = focused;
+
+    //     this.sendFocusMessage(focused);
+    // }
 
     getGraphics() {
         const graphics = this.canvas.getContext("2d");
@@ -221,19 +246,26 @@ class Application {
     }
 
     onResize() {
-        this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
-        this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
-        
-        const graphics = this.getGraphics();
-        
-        this.charWidth = graphics.measureText("w").width;
-        this.charHeight = this.fontSize * window.devicePixelRatio;
-        this.lineHeight = this.charHeight * this.lineSpacing;
+        if (this.resizeTimeout > 0) {
+            clearTimeout(this.resizeTimeout);
+        }
+        this.resizeTimeout = setTimeout(() => {
+            this.canvas.width = this.canvas.offsetWidth * window.devicePixelRatio;
+            this.canvas.height = this.canvas.offsetHeight * window.devicePixelRatio;
+            
+            const graphics = this.getGraphics();
+            
+            this.charWidth = graphics.measureText("w").width;
+            this.charHeight = this.fontSize * window.devicePixelRatio;
+            this.lineHeight = this.charHeight * this.lineSpacing;
+    
+            this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.lineHeight);
+            this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth) - 1;
+    
+            this.sendResizeMessage();
+        }, 100) as unknown as number;
 
-        this.lineCount = Math.floor((this.canvas.height - this.margin * 2) / this.lineHeight);
-        this.columnCount = Math.floor((this.canvas.width - this.margin * 2) / this.charWidth) - 1;
-
-        this.sendResizeMessage();
+        
     }
 
     sendResizeMessage() {
@@ -284,6 +316,17 @@ class Application {
             y: y
         });
     }
+
+    // sendFocusMessage(focused: boolean): void {
+    //     if (this.id === -1) {
+    //         return;
+    //     }
+        
+    //     ipcRenderer.send("focus", {
+    //         id: this.id,
+    //         focused: focused
+    //     });
+    // }
 } 
 
 window["app"] = new Application();

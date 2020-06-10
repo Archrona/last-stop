@@ -93,7 +93,8 @@
     "@types/express": "^4.17.6",
     "axios": "^0.19.2",
     "electron-squirrel-startup": "^1.0.0",
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "node-watch": "^0.6.4"
   },
   "ava": {
     "extensions": [

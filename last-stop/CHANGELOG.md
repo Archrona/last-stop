@@ -1,5 +1,5 @@
 
-# Version 0.3.0
+# Version 0.4.0
 ## 6/27/2020
 
 - work out proper grammar for locations, implement
@@ -32,12 +32,41 @@
 - (??) ctrl-z from raw
 
 
-# Version 0.2.1
+# Version 0.3.0
 ## 6/15/2020
+
+- (DONE)  Resize events don't rapid fire - 100 ms delay to cache events
+- (DONE)  multiple editor windows
+- (DONE)  force commit, do commit, commit special
+
+- subscription setting commands
+- project sub
+- handle events aimed at non-document subs
 
 - html/css support
 - COMMENTS/DOCS
-- Bugfixes
+
+- resize window -> line reassignment -> retroactive meaning change
+- clipboard commands -> retroactive meaning change
+
+- clipboard $location commands
+- transitives (move, copy X to Y / above Y / below Y)
+- insert at L
+
+- drag command selects region
+- drag continuous update
+
+- no respond on unfocused click, just focus
+- display line numbers in display on RHS
+- wordwrap rather than cut off long lines
+
+- shift-cursor, ctrl-cursor
+- right click xfer to speech
+- disable ctrl-shift-c
+- process ctrl-s from raw input
+- process ctrl-0 from raw input
+
+
 
 
 
@@ -58,25 +87,6 @@
 - (DONE)  Bug:  Spitz go 32 go all 32 Yank go after 33 (last line) okay
 - (DONE)  add whitespace control commands
 - (DONE)  end, home
-
-- clipboard $location commands
-- transitives (move, copy X to Y / above Y / below Y)
-
-- drag command selects region
-- drag continuous update
-
-- no respond on unfocused click, just focus
-- display line numbers in display on RHS
-- wordwrap rather than cut off long lines
-
-- shift-cursor, ctrl-cursor
-- right click xfer to speech
-- disable ctrl-shift-c
-- process ctrl-s from raw input
-- process ctrl-0 from raw input
-
-
-
 
 
 # Version 0.1.0

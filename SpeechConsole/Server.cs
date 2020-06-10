@@ -136,6 +136,32 @@ namespace SpeechConsole
             }
         }
 
+        public static object onActivate(string json) {
+            try {
+                var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
+                Console.WriteLine("Activate ()");
+
+                mainWindow.Invoke((Action)delegate () {
+                    mainWindow.appendActivate(e.window);
+                });
+
+                return new Result(true);
+            }
+            catch (Exception e) {
+                return new ErrorResult("could not parse body of activate event");
+            }
+        }
+
+        public static object onRequestCommit(string json) {
+            Console.WriteLine("RequestCommit ()");
+
+            mainWindow.Invoke((Action)delegate () {
+                mainWindow.commitRequested();
+            });
+
+            return new Result(true);
+        }
+
         public static bool serveOneRequest() {
             HttpListenerContext context = listener.GetContext();
             HttpListenerRequest request = context.Request;
@@ -165,23 +191,18 @@ namespace SpeechConsole
                     resp = onScroll(body);
                     break;
 
+                case "/activate":
+                    resp = onActivate(body);
+                    break;
+
+                case "/requestCommit":
+                    resp = onRequestCommit(body);
+                    break;
+
                 default:
                     resp = new ErrorResult("unknown route");
                     break;
             }
-
-/*
-            List<string[]> query = new List<string[]>();
-            if (request.Url.Query.Length > 1) {
-                query = request.Url.Query
-                    .Substring(1)
-                    .Split('&')
-                    .Select(x => x.Split('='))
-                    .ToList<string[]>();
-            }
-
-            string path = request.Url.AbsolutePath.Substring(1);
-*/
             
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(
                 JsonConvert.SerializeObject(resp)

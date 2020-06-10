@@ -1,4 +1,6 @@
 
+import { inspect } from "util";
+
 export enum DataType {
     Number,
     String, 
@@ -11,7 +13,15 @@ export enum DataType {
 export type PathComponent = string | number;
 export type Path = Array<PathComponent>;
 
-export type Transform = (store: Store) => any;
+export class Transform {
+    func: (store: Store) => any;
+    description: string;
+
+    constructor(func: (store: Store) => any, desc: string) {
+        this.func = func;
+        this.description = desc;
+    }
+}
 
 export abstract class StoreNode {
     parent: StoreNode;
@@ -340,7 +350,7 @@ export class Store {
     undo(times = 1) {
         while (this.undoStack.length > 0 && times > 0) {
             const last = this.undoStack.pop();
-            last(this);
+            last.func(this);
             times--;
         }
     }
@@ -348,7 +358,7 @@ export class Store {
     undoUntilCheckpoint(): void {
         while (this.undoStack.length > this.checkpoint) {
             const last = this.undoStack.pop();
-            last(this);
+            last.func(this);
         }
     }
 
@@ -576,9 +586,10 @@ export class Navigator {
 
             target.value = n;
 
-            this.store.undoStack.push(
-                (s) => { s.getNavigator(undoPath)._setNumberUntracked(undoValue); }
-            );
+            this.store.undoStack.push(new Transform(
+                (s) => { s.getNavigator(undoPath)._setNumberUntracked(undoValue); },
+                `setNumber(${n})`
+            ));
         } else {
             throw new TypeError("setNumber: not a number node");
         }
@@ -595,9 +606,10 @@ export class Navigator {
 
             target.value = s;
 
-            this.store.undoStack.push(
-                (s) => { s.getNavigator(undoPath)._setStringUntracked(undoValue); }
-            );
+            this.store.undoStack.push(new Transform(
+                (s) => { s.getNavigator(undoPath)._setStringUntracked(undoValue); },
+                `setString(${s.length > 30 ? s.substring(0, 30) + "..." : s})`
+            ));
         } else {
             throw new TypeError("setString: not a string node");
         }
@@ -614,9 +626,10 @@ export class Navigator {
 
             target.value = b;
 
-            this.store.undoStack.push(
-                (s) => { s.getNavigator(undoPath)._setBooleanUntracked(undoValue); }
-            );
+            this.store.undoStack.push(new Transform(
+                (s) => { s.getNavigator(undoPath)._setBooleanUntracked(undoValue); },
+                `setBoolean(${b})`
+            ));
         } else {
             throw new TypeError("setBoolean: not a boolean node");
         }
@@ -649,9 +662,10 @@ export class Navigator {
         const undoPath = this.getPath();
 
         node.list[index] = StoreNode.fromJson(json, node);
-        this.store.undoStack.push(
-            (s) => { s.getNavigator(undoPath)._setIndexUntracked(index, undoJson); }
-        );
+        this.store.undoStack.push(new Transform(
+            (s) => { s.getNavigator(undoPath)._setIndexUntracked(index, undoJson); },
+            `setIndex(${index}, ${inspect(json)})`
+        ));
         this.store.wasModified();
 
         return this;
@@ -686,9 +700,10 @@ export class Navigator {
         this._insert(index, json);
 
         const undoPath = this.getPath();      
-        this.store.undoStack.push((s) => {
-            s.getNavigator(undoPath)._remove(index, index + json.length);
-        });
+        this.store.undoStack.push(new Transform(
+            (s) => {s.getNavigator(undoPath)._remove(index, index + json.length);}, 
+            `insertItems(${index}, ${inspect(json)})`    
+        ));
 
         return this;
     }
@@ -707,9 +722,10 @@ export class Navigator {
 
         node.list.splice(from, upTo - from);
               
-        this.store.undoStack.push((s) => {
-            s.getNavigator(undoPath)._insert(from, undoJson);
-        })
+        this.store.undoStack.push(new Transform(
+            (s) => {s.getNavigator(undoPath)._insert(from, undoJson);}, 
+            `removeItems(${from}, ${upTo})`
+        ));
         this.store.wasModified();
 
         return this;
@@ -748,9 +764,10 @@ export class Navigator {
         const undoPath = this.getPath();
 
         node.list.push(StoreNode.fromJson(json, node));
-        this.store.undoStack.push(
-            (s) => { s.getNavigator(undoPath)._popUntracked(); }
-        );
+        this.store.undoStack.push(new Transform(
+            (s) => { s.getNavigator(undoPath)._popUntracked(); },
+            `push(${json})`
+        ));
 
         return this;
     } 
@@ -768,9 +785,10 @@ export class Navigator {
         const undoPath = this.getPath();
         const undoJson = node.list[node.list.length - 1].detach();
         node.list.pop();
-        this.store.undoStack.push(
-            (s) => { s.getNavigator(undoPath)._pushUntracked(undoJson); }
-        )
+        this.store.undoStack.push(new Transform(
+            (s) => { s.getNavigator(undoPath)._pushUntracked(undoJson); },
+            `pop()`
+        ));
         this.store.wasModified();
         return this;
     } 
@@ -808,14 +826,16 @@ export class Navigator {
             if (node.map.has(key)) {
                 const undoJson = node.map.get(key).detach();
                 node.map.set(key, StoreNode.fromJson(valueJson, node));
-                this.store.undoStack.push(
-                    (s) => { s.getNavigator(undoPath)._setKeyUntracked(key, undoJson); }
-                );
+                this.store.undoStack.push(new Transform(
+                    (s) => { s.getNavigator(undoPath)._setKeyUntracked(key, undoJson); },
+                    `setKey(${key}, ${valueJson}) <exists>`
+                ));
             } else {
                 node.map.set(key, StoreNode.fromJson(valueJson, node));
-                this.store.undoStack.push(
-                    (s) => { s.getNavigator(undoPath)._clearKeyUntracked(key); }
-                )
+                this.store.undoStack.push(new Transform(
+                    (s) => { s.getNavigator(undoPath)._clearKeyUntracked(key); },
+                    `setKey(${key}, ${valueJson}) <new>`
+                ));
             }
 
             this.store.wasModified();
@@ -835,9 +855,10 @@ export class Navigator {
                 const undoJson = node.map.get(key).detach();
                 node.map.delete(key);
 
-                this.store.undoStack.push(
-                    (s) => { s.getNavigator(undoPath)._setKeyUntracked(key, undoJson); }
-                );
+                this.store.undoStack.push(new Transform(
+                    (s) => { s.getNavigator(undoPath)._setKeyUntracked(key, undoJson); },
+                    `clearKey(${key})`
+                ));
                 this.store.wasModified();
             } else {
                 throw new TypeError("clearKey: tried to remove a nonexistent key");

@@ -24,22 +24,25 @@ namespace SpeechConsole
         private bool textChanged;
         private int ticksSinceChanged;
         private bool sendImmediateUpdate;
+        private bool disableInputUpdates;
 
         public string getText() {
             return input.Text;
         }
 
-        public void clearText() {
+        public void clearText(bool focusSelf = true) {
             input.Text = "";
 
-            Process currentProcess = Process.GetCurrentProcess();
-            IntPtr hWnd = currentProcess.MainWindowHandle;
-            if (hWnd != IntPtr.Zero) {
-                SetForegroundWindow(hWnd);
-                //ShowWindow(hWnd, User32.SW_MAXIMIZE);
-            }
+            if (focusSelf) {
+                Process currentProcess = Process.GetCurrentProcess();
+                IntPtr hWnd = currentProcess.MainWindowHandle;
+                if (hWnd != IntPtr.Zero) {
+                    SetForegroundWindow(hWnd);
+                    //ShowWindow(hWnd, User32.SW_MAXIMIZE);
+                }
 
-            input.Focus();
+                input.Focus();
+            }
         }
 
         public void setLanguageInfo(string info) {
@@ -52,9 +55,15 @@ namespace SpeechConsole
             textChanged = false;
             ticksSinceChanged = 0;
             sendImmediateUpdate = false;
+            disableInputUpdates = false;
         }
 
         private void input_TextChanged(object sender, EventArgs e) {
+            if (disableInputUpdates) {
+                Console.WriteLine("Output suppressed...");
+                return;
+            }
+
             if (sendImmediateUpdate) {
                 Program.onSpeech(input.Text);
                 sendImmediateUpdate = false;
@@ -71,12 +80,13 @@ namespace SpeechConsole
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.C && e.Control && e.Shift) {
-                Program.onCopyAndErase();
-            }
+            // if (e.KeyCode == Keys.C && e.Control && e.Shift) {
+            //     Program.onCopyAndErase();
+            // }
 
             if (e.KeyCode == Keys.S && e.Control) {
-                Program.onCommitChanges();
+                //Program.onCommitChanges();
+                commitRequested();
             }
            
             if (e.KeyCode == Keys.D0 && e.Control) {
@@ -123,6 +133,12 @@ namespace SpeechConsole
                     if (body[0] != type[0])
                         break;
 
+                    int prime = body.IndexOf(Program.ESCAPE_SUBSPLIT[0], 0);
+                    string win = body.Substring(1, prime - 1);
+                    int winInt = int.Parse(win);
+                    if (winInt != window)
+                        break;
+
                     if (type == Program.ESCAPE_SCROLL) {
                         string[] parts = body.Split(Program.ESCAPE_SUBSPLIT[0]);
                         string[] next = special.Split(Program.ESCAPE_SUBSPLIT[0]);
@@ -135,29 +151,30 @@ namespace SpeechConsole
                             y + Program.ESCAPE_END;
                     }
                     else {
-                        int prime = body.IndexOf(Program.ESCAPE_SUBSPLIT[0], 0);
-                        string win = body.Substring(1, prime - 1);
-                        int winInt = int.Parse(win);
-                        if (winInt != window)
-                            break;
-
                         input.Text = text.Substring(0, last)
                             + Program.ESCAPE_SUBSPLIT + special + Program.ESCAPE_END;
                     }
-                    
 
+                    input.SelectionStart = input.Text.Length;
+                    input.SelectionLength = 0;
                     return;
                 } else {
                     break;
                 }
             }
 
+            appendNewSpecial(type, window, special);
+        }
+
+        public void appendNewSpecial(string type, int window, string special = "") {
             if (input.Text.Length > 0 && input.Text[input.Text.Length - 1] != ' ') {
                 input.Text += " ";
             }
 
-            input.Text += Program.ESCAPE_START + type + window + 
-                Program.ESCAPE_SUBSPLIT + special + Program.ESCAPE_END;
+            input.Text += Program.ESCAPE_START + type + window +
+                (special.Length == 0 ? "" : Program.ESCAPE_SUBSPLIT + special) + 
+                Program.ESCAPE_END;
+
             input.SelectionStart = input.Text.Length;
             input.SelectionLength = 0;
         }
@@ -195,6 +212,23 @@ namespace SpeechConsole
                 + Program.ESCAPE_SUBSPLIT + row2
                 + Program.ESCAPE_SUBSPLIT + column2
             );
+        }
+
+        public void appendActivate(int window) {
+            appendNewSpecial(Program.ESCAPE_ACTIVATE, window);
+        }
+
+        public void commitRequested() {
+            string text = input.Text;
+            text += " " + Program.ESCAPE_START + Program.ESCAPE_COMMIT + "0" + Program.ESCAPE_END;
+
+            disableInputUpdates = true;
+            Program.sendMessage(new Program.SpeechMessage(text), (Task t) => {
+                Console.WriteLine("onSpeech: faulted = " + t.IsFaulted);
+                disableInputUpdates = false;
+            });
+
+            input.Text = "";
         }
     }
 }

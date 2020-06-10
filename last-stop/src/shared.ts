@@ -13,6 +13,8 @@ export const ESCAPE_KEY = "κ";
 export const ESCAPE_MOUSE = "μ";
 export const ESCAPE_SCROLL = "σ";
 export const ESCAPE_DRAG = "δ";
+export const ESCAPE_ACTIVATE = "α";
+export const ESCAPE_COMMIT = "χ";
 
 export function getRGB(red: number, green: number, blue: number) {
     return "rgb(" + red + "," + green + "," + blue + ")";

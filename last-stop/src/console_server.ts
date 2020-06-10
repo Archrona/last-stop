@@ -8,6 +8,7 @@ import { Main } from './main';
 import { execFile, ChildProcess } from "child_process";
 import { createServer, Server } from 'http';
 import axios, { AxiosResponse } from 'axios';
+import { inspect } from "util";
 
 const PORT = 5000;
 const CONSOLE_PORT = 5001;
@@ -54,9 +55,9 @@ export class ConsoleServer {
                 this.app.controller.onConsoleCopyAndErase();
                 break;
 
-            case "commitChanges":
-                this.app.controller.onConsoleCommitChanges();
-                break;
+            // case "commitChanges":
+            //     this.app.controller.onConsoleCommitChanges();
+            //     break;
 
             case "reloadData":
                 this.app.controller.onReloadData();
@@ -104,7 +105,16 @@ export class ConsoleServer {
         })
     }
 
-    postRequest(endpoint: string, json: any): Promise<AxiosResponse<any>> {
-        return axios.post(CONSOLE_URI + endpoint, json);
+    postRequest(
+        endpoint: string,
+        json: any,
+        success: (x: any) => any = (x) => {},
+        failure: (x: any) => any = (x) => { console.log("postRequest: POST " + inspect(json) + " failed"); }
+    ): Promise<AxiosResponse<any>> {
+        return axios.post(CONSOLE_URI + endpoint, json).then(success, failure);
+    }
+
+    requestCommit(success?: (x: any) => any) {
+        this.postRequest("requestCommit", {}, success);
     }
 }

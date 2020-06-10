@@ -45,6 +45,11 @@ export class LineSubscription extends Subscription {
     }
 }
 
+export class NotFoundSubscription extends Subscription {
+    constructor() {
+        super("notFound");
+    }
+}
 
 export class SubscriptionsNavigator extends Navigator {
     constructor(base: Navigator) {
@@ -61,6 +66,10 @@ export class SubscriptionsNavigator extends Navigator {
     }
     
     getDetails(windowId: number): Subscription {
+        if (!this.hasKey(windowId.toString())) {
+            return new NotFoundSubscription();
+        }
+
         const str = this.get(windowId);
 
         const parts = str.trim().split("@");
@@ -96,6 +105,10 @@ export class SubscriptionsNavigator extends Navigator {
     has(windowId: number): boolean {
         return this.hasKey(windowId.toString());
     }
+
+    getAll(): Array<[number, Subscription]> {
+        return this.getKeys().map(id => [parseInt(id), this.getDetails(parseInt(id))]);
+    }
 }
  
 
@@ -124,6 +137,9 @@ export class DocumentsNavigator extends Navigator {
                 "cursor_0": { row: 0, column: 0, fixed: false },
                 "mark_0": { row: 0, column: 0, fixed: false },
                 "view_0": { row: 0, column: 0, fixed: true },
+                "cursor_1": { row: 0, column: 0, fixed: false },
+                "mark_1": { row: 0, column: 0, fixed: false },
+                "view_1": { row: 0, column: 0, fixed: true },
             },
             filename: filename
         });
@@ -194,6 +210,10 @@ export class DocumentNavigator extends Navigator {
 
     getBaseContext(): Array<string> {
         return this.clone().goKey("contexts").goIndex(0).getJson() as Array<string>;
+    }
+
+    getName(): string {
+        return this.clone().goKey("name").getString();
     }
 
     getAnchor(name: string): Anchor {
@@ -1220,6 +1240,7 @@ export class Model {
     }
 
     setActiveWindow(index: number): void {
+
         this.store.getNavigator().goKey("activeWindow").setNumber(index);
     }
 
@@ -1244,6 +1265,10 @@ export class Model {
     }
 
     getWindowContext(window: number): string {
+        if (!this.subscriptions.has(window)) {
+            return "basic";            
+        }
+        
         const sub = this.subscriptions.get(window);
         const parts = sub.split("@");
 

@@ -9,8 +9,8 @@ import { renderSubscription } from "./subscription";
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 const THEME = {
-    window_speech_mode_accent: getRGB(0, 191, 255),
-    window_direct_mode_accent: getRGB(255, 102, 153),
+    window_active_accent: getRGB(170, 160, 250),
+    window_inactive_accent: getRGB(64, 64, 96),
     window_line_number: getRGB(120, 120, 120),
     error: getRGB(255, 0, 0),
     overflow_indicator: getRGB(255, 255, 0),
@@ -74,6 +74,20 @@ export class Window {
             console.log("Window id " + this.id + " closed!");
             view.windowClosed(this.id);
         });
+
+        this.window.on("focus", (event) => {
+            this.app.controller.onRendererFocus({
+                id: this.id,
+                focused: true
+            });
+        })
+
+        this.window.on("blur", (event) => {
+            this.app.controller.onRendererFocus({
+                id: this.id,
+                focused: false
+            });
+        })
 
         this.window.loadURL(MAIN_WINDOW_WEBPACK_ENTRY).then((success) => {
             console.log("Window id " + this.id + " loaded!");
@@ -150,10 +164,16 @@ export class Window {
         this.doUpdate();
     }
 
+    onSetActive(): void {
+        this.app.consoleServer.postRequest("activate", {
+            "window": this.id
+        });
+    }
+
     needsUpdate() {
         // TODO: don't immediately update, queue it
         this.doUpdate();
-    }  
+    }
 
     doUpdate() {
         if (this.isReady) {
@@ -170,10 +190,18 @@ export class Window {
                 text: text,
                 lines: this.lines,
                 columns: this.columns,
-                modeAccent: this.view.getModeAccent()  
+                modeAccent: this.getWindowAccent()  
             });
         }
     }
+
+    getWindowAccent() {
+        if (this.app.model.getActiveWindow() === this.id) {
+            return this.view.getColor("window_active_accent");
+        } else {
+            return this.view.getColor("window_inactive_accent");
+        }
+    } 
 }
 
 export class View {
@@ -188,10 +216,6 @@ export class View {
 
         this.createWindow();
     }
-
-    getModeAccent() {
-        this.getColor("window_speech_mode_accent");
-    } 
 
     getColor(name: string) {
         const color = THEME[name];
@@ -210,10 +234,7 @@ export class View {
     }
 
     windowClosed(id: number) {
-        this.windows = this.windows.filter(w => w.id !== id);
-        console.log("Remaining window IDs: " + this.windows.map(x => x.id));
-
-        this.recomputeTopRowNumbers();
+        this.app.controller.onWindowClosed(id);
     }
 
     getWindow(id: number) {

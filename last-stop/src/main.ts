@@ -50,9 +50,12 @@ export class Main {
             this.controller = new Controller(this);
 
             const doc = this.model.documents.add("test.ts", "typescript");
-
             this.model.subscriptions.set(11, "doc@test.ts@0");
             this.model.setActiveWindow(11);
+
+            let id = this.view.createWindow();
+            this.model.subscriptions.set(id, "doc@test.ts@1");
+            this.view.updateAllWindows();
 
             this.consoleServer = new ConsoleServer(this);
         }
@@ -64,6 +67,7 @@ export class Main {
         ipcMain.on("key", (event, info) => this.controller.onRendererKey(info));
         ipcMain.on("ready", (event, info) => this.controller.onRendererReady(info));
         ipcMain.on("scroll", (event, info) => this.controller.onRendererScroll(info));
+        // ipcMain.on("focus", (event, info) => this.controller.onRendererFocus(info));
     }
 
     handleGlobalHotkeys(windowId: number, key: string, modifiers: Array<string>) {

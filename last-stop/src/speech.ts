@@ -2,7 +2,7 @@
 
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
-import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG, replaceAll } from "./shared";
+import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG, replaceAll, ESCAPE_ACTIVATE, ESCAPE_COMMIT } from "./shared";
 import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription, Subscription } from "./model";
 import { CommandList, Command } from "./commands";
 import { inspect } from "util";
@@ -10,7 +10,19 @@ import * as fs from "fs";
 import { LEFT_MARGIN_COLUMNS } from "./subscription";
 import { clipboard, contextBridge } from "electron";
 
-export type Executor = (model: Model, args: Array<any>) => void
+export class ExecutorResult {
+    forceCommit: boolean;
+    doCommit: boolean;
+
+    constructor(forceCommit = false, doCommit = false) { 
+        this.forceCommit = forceCommit;
+        this.doCommit = doCommit;
+    }
+}
+
+export type Executor = (model: Model, args: Array<any>) => ExecutorResult
+
+
 
 enum Capitalization {
     Raw,
@@ -181,7 +193,7 @@ export function reloadSpeechData() {
 
 export const EXECUTORS = {
     nop: (model: Model, args: Array<any>) => {
-        // literally do nothing
+        return new ExecutorResult();
     },
 
     step: (model: Model, args: Array<any>) => {
@@ -194,7 +206,8 @@ export const EXECUTORS = {
             for (; times > 0; times--) {
                 doc.step(ai);
             }
-        })
+        });
+        return new ExecutorResult();
     },
 
     go: (model: Model, args: Array<any>) => {
@@ -204,11 +217,23 @@ export const EXECUTORS = {
             if (location instanceof SpokenSelection) {
                 location.document.setMark(location.anchorIndex, location.mark);
                 location.document.setCursor(location.anchorIndex, location.cursor);
-                // TODO activate window
+                
+                const subs = model.subscriptions.getAll();
+                for (const [id, sub] of subs) {
+                    if (sub instanceof DocumentSubscription
+                        && sub.document === location.document.getName()
+                        && sub.anchorIndex === location.anchorIndex)
+                    {
+                        model.setActiveWindow(id);
+                        break;
+                    }
+                }
             }
 
             // TODO other kinds of go reference - window, line, etc.
         }
+
+        return new ExecutorResult();
     },
 
     insert: (model: Model, args: Array<any>) => {
@@ -219,12 +244,14 @@ export const EXECUTORS = {
                 escapeArguments: ["+$1", "+$2", "+$3"]
             });
         });
+        return new ExecutorResult();
     },
 
     insertExact: (model: Model, args: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
             doc.insert(ai, args[0], { enforceSpacing: true });
         });
+        return new ExecutorResult();
     },
 
     insertAtEOL: (model: Model, args: Array<any>) => {
@@ -233,6 +260,7 @@ export const EXECUTORS = {
             EXECUTORS.insert(model, args);
             doc.automaticallyIndentSelection(ai);
         });
+        return new ExecutorResult();
     },
 
     onScroll: (model: Model, args: Array<any>) => {
@@ -250,12 +278,25 @@ export const EXECUTORS = {
                 doc.setView(sub.anchorIndex, view);
             }
         }
+
+        return new ExecutorResult();
+    },
+
+    onActivate: (model: Model, args: Array<any>) => {
+        const windowId = args[0] as number;
+        //console.log("activate " + windowId);
+        model.setActiveWindow(windowId);
+
+        return new ExecutorResult(true);
     },
 
     onMouse: (model: Model, args: Array<any>) => {
         const sub = args[1];
+        const windowId = parseInt(args[0]);
 
         if (sub instanceof DocumentSubscription) {
+            model.setActiveWindow(windowId);
+
             const windowRow = args[3];
             const windowCol = args[4];
             const docName = sub.document;
@@ -272,6 +313,25 @@ export const EXECUTORS = {
                 }
             }
         }
+
+        return new ExecutorResult();
+    },
+
+    onDrag: (model: Model, args: Array<any>) => {
+        const sub = args[1];
+        const windowId = parseInt(args[0]);
+
+        if (sub instanceof DocumentSubscription) {
+            model.setActiveWindow(windowId);
+
+            const r1 = args[3], c1 = args[4], r2 = args[5], c2 = args[6];
+
+            console.log(args);
+
+
+        }
+
+        return new ExecutorResult();
     },
 
     onKey: (model: Model, args: Array<any>) => {
@@ -316,46 +376,64 @@ export const EXECUTORS = {
                     doc.insert(sub.anchorIndex, str);
             }
         }
+
+        return new ExecutorResult();
     },
 
     cut: (model: Model, arg: Array<any>) => {
+        let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             doc.osCut(ai);
+            //result.forceCommit = true;
         });
+        return result;
     },
 
     copy: (model: Model, arg: Array<any>) => {
+        let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             doc.osCopy(ai);
+            //result.forceCommit = true;
         });
+        return result;
     },
 
     paste: (model: Model, arg: Array<any>) => {
+        let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             doc.osPaste(ai);
+            //result.forceCommit = true;
         });
+        return result;
     },
 
     selectAll: (model: Model, arg: Array<any>) => {
         model.doActiveDocument((doc, ai) => {
             doc.selectAll(ai);
         });
+        return new ExecutorResult();
     },
 
     selectAllAndCopy: (model: Model, arg: Array<any>) => {
+        let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             let t = doc.getText();
             clipboard.writeText(replaceAll(t, INSERTION_POINT, ""));
+            //result.forceCommit = true;
         });
+        return result;
     },
 
     selectAllAndCut: (model: Model, arg: Array<any>) => {
+        let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             let t = doc.getText();
             clipboard.writeText(replaceAll(t, INSERTION_POINT, ""));
             doc.selectAll(ai);
             doc.remove(ai);
+            //result.forceCommit = true;
         });
+        return result;
     },
 
     sponge: (model: Model, arg: Array<any>) => {
@@ -381,6 +459,8 @@ export const EXECUTORS = {
                 doc.spongeBelowSelection(ai);
             }  
         });
+
+        return new ExecutorResult();
     },
 
     halo: (model: Model, arg: Array<any>) => {
@@ -403,6 +483,12 @@ export const EXECUTORS = {
                 doc.haloBelowSelection(ai);
             }
         });
+
+        return new ExecutorResult();
+    },
+
+    onCommit: (model: Model, arg: Array<any>) => {
+        return new ExecutorResult(false, true);
     }
 }
 
@@ -413,7 +499,8 @@ class Executed {
         public executor: Executor,
         public args: Array<any>,
         public undoIndex: number,
-        public context: string) { }
+        public context: string,
+        public result: ExecutorResult) { }
 }
 
 class DeferredWhite {
@@ -506,6 +593,9 @@ export class Speech {
     executed: Array<Executed>;
     resumePoints: Array<ResumePoint>;
 
+    shouldForceCommit: boolean;
+    shouldDoCommit: boolean;
+
     private constructor(app: Main, speech: string) {
         this.app = app;
         this.speech = speech;
@@ -513,6 +603,8 @@ export class Speech {
         this.finalUndoIndex = this.baseUndoIndex;   // overwritten after execution
         this.executed = [];
         this.resumePoints = [];
+        this.shouldForceCommit = false;
+        this.shouldDoCommit = false;
 
         this.tokens = this.tokenize(this.speech).tokens;
         this.run();
@@ -574,7 +666,7 @@ export class Speech {
 
     static execute(app: Main, speech: string): Speech {
         const result = new Speech(app, speech);
-        
+
         return result;
     }
 
@@ -606,8 +698,14 @@ export class Speech {
     }
 
     undo(): void {
-        if (this.app.model.store.getUndoCount() !== this.finalUndoIndex) {
-            throw new Error("Undo requested but final undo count does not match");
+        let undos = this.app.model.store.getUndoCount();
+
+        if (undos !== this.finalUndoIndex) {
+            console.log("OH SHIT");
+            console.log("Current undo stack: " + undos);
+            console.log("Speech undo count: " + this.finalUndoIndex);
+
+            throw new Error("Undo requested but final undo count does not match.");
         }
 
         this.app.model.store.undo(this.finalUndoIndex - this.baseUndoIndex);
@@ -630,8 +728,9 @@ export class Speech {
         args: Array<any>, context: string): Executed
     {
         const undoIndex = this.getUndoIndex();
-        executor(this.app.model, args);
-        return new Executed(i, length, executor, args, undoIndex, context);
+        let result = executor(this.app.model, args);
+
+        return new Executed(i, length, executor, args, undoIndex, context, result);
     }
 
     private consumeWhite(index: number): number {
@@ -1132,17 +1231,15 @@ export class Speech {
     private runEvent(i: number, context: string): Executed[] | null {
         const event = this.tokens[i].text;
         const parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
-        if (parts.length < 2) {
+        if (parts.length === 0) {
             return null;
         }
 
         const type = parts[0][0];
         const windowStr = parts[0].substring(1);
         const window = parseInt(windowStr);
+        
         const sub = this.app.model.subscriptions.getDetails(window);
-        if (!sub) {
-            return null;
-        }
 
         switch (type) {
             case ESCAPE_KEY:
@@ -1166,6 +1263,19 @@ export class Speech {
             case ESCAPE_SCROLL:
                 return [this.runExecutor(i, 1, EXECUTORS.onScroll, 
                     ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+
+            case ESCAPE_DRAG:
+                return [this.runExecutor(i, 1, EXECUTORS.onDrag, 
+                    ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+
+
+            case ESCAPE_ACTIVATE:
+                return [this.runExecutor(i, 1, EXECUTORS.onActivate, 
+                    [window], context)];
+
+            case ESCAPE_COMMIT:
+                return [this.runExecutor(i, 1, EXECUTORS.onCommit, 
+                    [], context)];
 
             case ESCAPE_DRAG:
                 // TODO
@@ -1205,7 +1315,7 @@ export class Speech {
         return exec;
     }
 
-    private run(i: number = 0): void {
+    private run(i: number = 0): boolean {
         let deferred: DeferredWhite[] = [];
 
         while (i < this.tokens.length) {
@@ -1231,8 +1341,13 @@ export class Speech {
                 if (e instanceof Executed) {
                     if (e.executor !== EXECUTORS.nop)
                         this.executed.push(e);
+
                     deferred = [];
                     i = e.first + e.length;
+
+                    this.shouldForceCommit = this.shouldForceCommit || e.result.forceCommit;
+                    this.shouldDoCommit = this.shouldDoCommit || e.result.doCommit;
+
                 } else {
                     deferred.push(e);
                     i = e.first + 1;
@@ -1250,6 +1365,7 @@ export class Speech {
         }
 
         this.finalUndoIndex = this.app.model.store.getUndoCount();
+        return false;
     }
 
 }

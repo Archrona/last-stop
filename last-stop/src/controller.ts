@@ -3,7 +3,7 @@ import { Main } from "./main";
 import { replaceAll, INSERTION_POINT } from "./shared";
 import { clipboard } from "electron";
 import { SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY } from "./console_server";
-
+import { inspect } from "util";
 
 export class Controller {
     
@@ -16,6 +16,7 @@ export class Controller {
     }
 
     onConsoleSpeech(text: string) {
+
         const initialUndo = this.app.model.store.getUndoCount();
         let minUndo = initialUndo;
         let elapsed = 0.0;
@@ -31,12 +32,22 @@ export class Controller {
             elapsed = result.elapsed;
         }
 
-        this.app.view.updateAllWindows();
-        
         const finalUndo = this.app.model.store.getUndoCount();
         const time = elapsed.toPrecision(3);
         const mem = Math.round(process.memoryUsage().rss / 1000000)
         console.log(`  Speech: ${initialUndo} -> ${minUndo} -> ${finalUndo}  (${time} ms)  (${mem} MB)`);
+
+
+        if (this.lastSpeech.shouldDoCommit) {
+            console.log("          ... DID COMMIT");
+            this.lastSpeech = null;
+        }
+        else if (this.lastSpeech.shouldForceCommit) {
+            console.log("          ... forced commit msg sending to SC");
+            this.consoleCommitRequest();
+        }
+
+        this.app.view.updateAllWindows();
     }
 
     onConsoleReprocessSpeech() {
@@ -63,7 +74,9 @@ export class Controller {
     }
 
     onConsoleExit() {
-        this.onConsoleCommitChanges();
+        this.lastSpeech = null; // no need to synchronize; the console is gone
+        
+        // this.onConsoleCommitChanges();
 
         setTimeout(() => {
             this.app.consoleServer.spawnConsoleProcess();
@@ -74,16 +87,21 @@ export class Controller {
         this.app.reloadData();
     }
 
-    onConsoleCommitChanges() {
-        this.lastSpeech = null;
+    // onConsoleCommitChanges() {
+    //     this.app.consoleServer.requestCommit();
+    //     //this.lastSpeech = null;
+    // }
+
+    consoleCommitRequest() {
+        this.app.consoleServer.requestCommit();
     }
-
-
 
     onRendererResize(info: any) {
         const window = this.app.view.getWindow(info.id);
         if (window !== null) {
-            window.onResize(info.lines, info.columns);
+            this.app.consoleServer.requestCommit(() => {
+                window.onResize(info.lines, info.columns);
+            });
         }
     }
 
@@ -123,5 +141,34 @@ export class Controller {
         if (window !== null) {
             window.onScroll(info.x, info.y);
         }
+    }
+
+    onRendererFocus(info: any) {
+        const window = this.app.view.getWindow(info.id);
+        const focused = info.focused as boolean;
+        //console.log(info);
+        if (window !== null && focused) {
+            if (this.app.model.getActiveWindow() !== window.id) {
+                window.onSetActive();
+            }
+        }
+    }
+
+    onWindowClosed(windowId: number) {
+        this.app.view.windows = this.app.view.windows.filter(w => w.id !== windowId);
+    
+        // BAD BAD EVIL BAD BUG
+        // this.app.model.subscriptions.remove(windowId);
+
+        this.app.view.recomputeTopRowNumbers();
+
+        if (this.app.view.windows.length > 0) {
+            let nextId = this.app.view.windows[0].id;
+            if (this.app.model.getActiveWindow() !== nextId) {
+                this.app.view.getWindow(nextId).onSetActive();
+            }
+        }
+
+        //console.log("Remaining window IDs: " + this.windows.map(x => x.id));       
     }
 }

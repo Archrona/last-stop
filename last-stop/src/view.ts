@@ -53,6 +53,9 @@ export class Window {
     isReady: boolean;
     topRowNumber: number;
 
+    focusedAt: bigint;
+    rejectingMouseEvent: boolean;
+
     constructor(view: View, id: number) {
         this.view = view;
         this.app = view.app;
@@ -62,6 +65,9 @@ export class Window {
         this.subscription = "none";
         this.isReady = false;
         this.topRowNumber = 999;
+
+        this.focusedAt = BigInt(0);
+        this.rejectingMouseEvent = false;
  
         this.window = new BrowserWindow({
             height: 1000,
@@ -77,6 +83,7 @@ export class Window {
         });
 
         this.window.on("focus", (event) => {
+            this.focusedAt = process.hrtime.bigint();
             this.app.controller.onRendererFocus({
                 id: this.id,
                 focused: true
@@ -84,6 +91,7 @@ export class Window {
         })
 
         this.window.on("blur", (event) => {
+            this.focusedAt = BigInt(0);
             this.app.controller.onRendererFocus({
                 id: this.id,
                 focused: false
@@ -109,6 +117,12 @@ export class Window {
     }
 
     onMouseDown(row: number, column: number, button: number) {
+        const nsElapsed = process.hrtime.bigint() - this.focusedAt;
+        if (nsElapsed < 50000000) {
+            this.rejectingMouseEvent = true;
+            return;  // reject clicks within 50 ms of focus
+        }
+
         this.app.consoleServer.postRequest("mouse", {
             "window": this.id,
             "down": true,
@@ -119,6 +133,11 @@ export class Window {
     }  
 
     onMouseUp(row: number, column: number, button: number) {
+        if (this.rejectingMouseEvent) {
+            this.rejectingMouseEvent = false;
+            return;
+        }
+
         this.app.consoleServer.postRequest("mouse", {
             "window": this.id,
             "down": false,

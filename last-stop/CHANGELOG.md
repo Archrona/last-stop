@@ -42,6 +42,7 @@
 - (DONE)  resize window -> line reassignment -> retroactive meaning change
 - (DONE)  display line numbers in display on RHS
 - (DONE)  insert at L "chop"
+- (DONE)  no respond on unfocused click, just focus
 
 - subscription setting commands
 - project sub
@@ -59,7 +60,6 @@
 - drag command selects region
 - drag continuous update
 
-- no respond on unfocused click, just focus
 - wordwrap rather than cut off long lines
 
 - shift-cursor, ctrl-cursor

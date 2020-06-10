@@ -100,6 +100,7 @@ export class Controller {
 
     onRendererMouseClick(info: any) {
         const window = this.app.view.getWindow(info.id);
+
         if (window !== null) {
             if (info.type === "down") {
                 window.onMouseDown(info.row, info.column, info.button);

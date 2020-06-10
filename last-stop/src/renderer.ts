@@ -79,12 +79,17 @@ class Application {
 
 
         this.canvas.addEventListener("mousedown", (event) => {
-            this.onMouseEvent("down", event.offsetX, event.offsetY, event.button);
+            this.onMouseEvent("down", event.offsetX, event.offsetY, event.button, event.buttons);
             event.preventDefault();
         });
         
         this.canvas.addEventListener("mouseup", (event) => {
-            this.onMouseEvent("up", event.offsetX, event.offsetY, event.button);
+            this.onMouseEvent("up", event.offsetX, event.offsetY, event.button, event.buttons);
+            event.preventDefault();
+        });
+
+        this.canvas.addEventListener("mousemove", (event) => {
+            this.onMouseEvent("move", event.offsetX, event.offsetY, -1, event.buttons);
             event.preventDefault();
         });
         
@@ -139,16 +144,21 @@ class Application {
         this.render();
     }
 
-    onMouseEvent(type: string, domX: number, domY: number, button: number) {
+    onMouseEvent(type: string, domX: number, domY: number, button: number, buttons: number) {
         const pixelX = domX * window.devicePixelRatio;
         const pixelY = domY * window.devicePixelRatio;
+
+        let buttonList = [];
+        if ((buttons & 0x01) !== 0) buttonList.push(0);
+        if ((buttons & 0x02) !== 0) buttonList.push(2);
+        if ((buttons & 0x04) !== 0) buttonList.push(1);
+        if ((buttons & 0x08) !== 0) buttonList.push(3);
+        if ((buttons & 0x10) !== 0) buttonList.push(4);
         
         const row = Math.floor((pixelY - this.margin) / this.lineHeight);
-        const column = Math.floor((pixelX - this.margin) / this.charWidth);
+        const column = Math.floor((pixelX - this.margin) / this.charWidth + 0.5);
 
-        // console.log("MOUSE. Focused: " + this.hasFocus);
-        
-        this.sendMouseMessage(type, button, row, column);
+        this.sendMouseMessage(type, button, row, column, buttonList);
     }  
 
     onKeyboardEvent(type: string, key: string, shift: boolean, control: boolean, alt: boolean, meta: boolean) {
@@ -178,12 +188,6 @@ class Application {
         
         this.sendScrollMessage(x, y);
     } 
-
-    // onFocusEvent(focused: boolean): void {
-    //     this.hasFocus = focused;
-
-    //     this.sendFocusMessage(focused);
-    // }
 
     getGraphics() {
         const graphics = this.canvas.getContext("2d");
@@ -278,8 +282,10 @@ class Application {
         });
     }
 
-    sendMouseMessage(type: string, button: number, row: number, column: number) {
-        if (this.id === - 1) {
+    sendMouseMessage(type: string, button: number, row: number,
+        column: number, buttons: Array<number>)
+    {
+        if (this.id === -1) {
             return;
         }
         
@@ -288,7 +294,8 @@ class Application {
             type: type,
             button: button,
             row: row,
-            column: column
+            column: column,
+            buttons: buttons
         });
     }
     

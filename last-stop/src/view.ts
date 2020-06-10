@@ -5,6 +5,7 @@ import { BrowserWindow } from 'electron';
 import { getRGB, DrawableText } from "./shared";
 import { Main } from "./main";
 import { renderSubscription } from "./subscription";
+import { inspect } from "util";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
@@ -144,6 +145,20 @@ export class Window {
             "row": row,
             "column": column,
             "button": button
+        });
+    }
+
+    onMouseMove(row: number, column: number, buttons: Array<number>) {
+        if (this.rejectingMouseEvent) {
+            return;
+        }
+        
+        //console.log(`move ${row}, ${column}, buts ${inspect(buttons)}`);
+        this.app.consoleServer.postRequest("mouseMove", {
+            "window": this.id,
+            "row": row,
+            "column": column,
+            "buttons": buttons
         });
     }
 

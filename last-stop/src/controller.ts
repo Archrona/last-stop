@@ -98,7 +98,7 @@ export class Controller {
         }
     }
 
-    onRendererMouseClick(info: any) {
+    onRendererMouse(info: any) {
         const window = this.app.view.getWindow(info.id);
 
         if (window !== null) {
@@ -108,6 +108,9 @@ export class Controller {
             else if (info.type === "up") {
                 window.onMouseUp(info.row, info.column, info.button);
             }
+            else if (info.type === "move") {
+                window.onMouseMove(info.row, info.column, info.buttons);
+            }            
         }
     }
 

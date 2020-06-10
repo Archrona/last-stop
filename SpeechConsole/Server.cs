@@ -15,7 +15,7 @@ namespace SpeechConsole
         public static Window mainWindow;
         public static bool finalText;
 
-        public static MouseEvent lastMouse = null;
+        public static MouseEvent ongoingMouse = null;
 
         public class Result
         {
@@ -52,6 +52,14 @@ namespace SpeechConsole
             public int button;
         }
 
+        public class MouseMoveEvent
+        {
+            public int window;
+            public int row;
+            public int column;
+            public List<int> buttons;
+        }
+
         public class ScrollEvent
         {
             public int window;
@@ -59,11 +67,6 @@ namespace SpeechConsole
             public double y;
         }
 
-/*
-            mainWindow.Invoke((Action)delegate () {
-                mainWindow.clearText();
-            });
-*/
 
         public static object onKey(string json) {
             try {
@@ -89,29 +92,53 @@ namespace SpeechConsole
                     + e.down + ", (" + e.row + ", " + e.column + ")");
 
                 if (e.down) {
-                    lastMouse = e;
-                }
-
-                if (!e.down) {
-                    if (lastMouse != null
-                        && e.button == lastMouse.button
-                        && e.window == lastMouse.window
-                        && (e.row != lastMouse.row || e.column != lastMouse.column)) 
-                    {
-                        mainWindow.Invoke((Action)delegate () {
-                            mainWindow.appendDrag(e.window, e.button, lastMouse.row, lastMouse.column, e.row, e.column);
-                        });
+                    if (ongoingMouse == null) {
+                        ongoingMouse = e;
+                    } else {
+                        // we just pressed two buttons simultaneously.
+                        // ignore this press
                     }
-                    else {
+                }
+                else {
+                    if (ongoingMouse != null
+                        && e.button == ongoingMouse.button
+                        && e.window == ongoingMouse.window
+                        && (e.row != ongoingMouse.row || e.column != ongoingMouse.column)) 
+                    {
+                        // handled in mouse move
+                        //mainWindow.Invoke((Action)delegate () {
+                        //    mainWindow.appendDrag(e.window, e.button, lastMouse.row, lastMouse.column, e.row, e.column);
+                        //});
+                    }
+                    // only process mouse click for earliest button pressed if multiple
+                    // buttons are pressed at the same time
+                    else if (ongoingMouse.button == e.button) {
                         mainWindow.Invoke((Action)delegate () {
                             mainWindow.appendMouse(e.window, e.button, e.down, e.row, e.column);
                         });
                     }
 
-                    lastMouse = null;
+                    ongoingMouse = null;
                 }
 
-                // TODO drag
+                return new Result(true);
+            }
+            catch (Exception e) {
+                return new ErrorResult("could not parse body of mouse event");
+            }
+        }
+
+        public static object onMouseMove(string json) {
+            try {
+                var e = JsonConvert.DeserializeObject<MouseMoveEvent>(json);
+                
+                // Ongoing drag
+                if (e.buttons.Count == 1 && ongoingMouse != null && e.buttons[0] == ongoingMouse.button) {
+                    mainWindow.Invoke((Action)delegate () {
+                        mainWindow.appendDrag(e.window, e.buttons[0],
+                            ongoingMouse.row, ongoingMouse.column, e.row, e.column);
+                    });
+                }
 
                 return new Result(true);
             }
@@ -185,6 +212,10 @@ namespace SpeechConsole
 
                 case "/mouse":
                     resp = onMouse(body);
+                    break;
+
+                case "/mouseMove":
+                    resp = onMouseMove(body);
                     break;
 
                 case "/scroll":

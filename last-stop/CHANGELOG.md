@@ -43,6 +43,7 @@
 - (DONE)  display line numbers in display on RHS
 - (DONE)  insert at L "chop"
 - (DONE)  no respond on unfocused click, just focus
+- (DONE)  drag command selects region
 
 - subscription setting commands
 - project sub
@@ -57,7 +58,6 @@
 - transitives (move, copy X to Y / above Y / below Y)
 
 
-- drag command selects region
 - drag continuous update
 
 - wordwrap rather than cut off long lines

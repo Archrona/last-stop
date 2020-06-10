@@ -80,12 +80,7 @@ namespace SpeechConsole
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
-            // if (e.KeyCode == Keys.C && e.Control && e.Shift) {
-            //     Program.onCopyAndErase();
-            // }
-
             if (e.KeyCode == Keys.S && e.Control) {
-                //Program.onCommitChanges();
                 commitRequested();
             }
            
@@ -149,6 +144,12 @@ namespace SpeechConsole
                             parts[0] + Program.ESCAPE_SUBSPLIT +
                             x + Program.ESCAPE_SUBSPLIT +
                             y + Program.ESCAPE_END;
+                    }
+                    else if (type == Program.ESCAPE_DRAG) {
+                        string[] parts = body.Split(Program.ESCAPE_SUBSPLIT[0]);
+                        input.Text = text.Substring(0, first + 1) +
+                            parts[0] + Program.ESCAPE_SUBSPLIT +
+                            special + Program.ESCAPE_END;
                     }
                     else {
                         input.Text = text.Substring(0, last)

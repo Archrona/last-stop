@@ -68,17 +68,6 @@ namespace SpeechConsole
             });
         }
 
-        public static void onCopyAndErase() {
-            sendMessage(new Command("copyAndErase"), (Task t) => {
-                Console.WriteLine("copyAndErase: faulted = " + t.IsFaulted);
-                if (!t.IsFaulted) {
-                    Server.mainWindow.Invoke((Action)delegate () {
-                        Server.mainWindow.clearText();
-                    });
-                }
-            });
-        }
-
         public static void onReloadData() {
             sendMessage(new Command("reloadData"), (Task t) => {
                 Console.WriteLine("reloadData: faulted = " + t.IsFaulted);

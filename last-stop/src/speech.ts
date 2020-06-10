@@ -956,7 +956,6 @@ export class Speech {
                     ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
 
             case ESCAPE_DRAG:
-                console.log("ASDSAD");
                 {
                     const result = [];
 

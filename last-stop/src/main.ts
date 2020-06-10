@@ -63,11 +63,10 @@ export class Main {
 
     registerCallbacks() {
         ipcMain.on("resize", (event, info) => this.controller.onRendererResize(info));
-        ipcMain.on("mouse", (event, info) => this.controller.onRendererMouseClick(info));
+        ipcMain.on("mouse", (event, info) => this.controller.onRendererMouse(info));
         ipcMain.on("key", (event, info) => this.controller.onRendererKey(info));
         ipcMain.on("ready", (event, info) => this.controller.onRendererReady(info));
         ipcMain.on("scroll", (event, info) => this.controller.onRendererScroll(info));
-        // ipcMain.on("focus", (event, info) => this.controller.onRendererFocus(info));
     }
 
     handleGlobalHotkeys(windowId: number, key: string, modifiers: Array<string>) {

@@ -175,10 +175,20 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
     const selectionLeft = doc.getSelectionStart(anchorIndex);
     const selectionRight = doc.getSelectionEnd(anchorIndex);
 
+    const activeLine = (selectionLeft.compareTo(selectionRight) === 0 ? selectionLeft.row : -1);
+
     let longLineIndicator = false;
 
     for (let r = 0; r < rows; r++) {
         const lineIndex = view.row + r;
+
+        // Mark active line with background color
+        if (activeLine !== -1 && activeLine == lineIndex) {
+            result.push(new DrawableText(
+                "", "selection@" + LEFT_MARGIN_COLUMNS + "@" + columns,
+                r, 0, app.view.getColor("active_line"), null
+            ));
+        }
 
         // Indicate EOF by subtle marker
         if (lineIndex < 0 || lineIndex >= lines) {
@@ -190,9 +200,13 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
         } else {
             result.push(new DrawableText(
                 (lineIndex + 1).toString(), "", r, columns - rightMargin,
-                app.view.getColor("line_number"), null
+                app.view.getColor(
+                    activeLine == lineIndex ? "active_line_number" : "line_number"
+                ), null
             ));
         }
+
+        
 
         renderDocumentSelection(
             selectionLeft, selectionRight,

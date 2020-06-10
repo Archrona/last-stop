@@ -30,6 +30,17 @@ namespace SpeechConsole
             return input.Text;
         }
 
+        public void focusRequested() {
+            Process currentProcess = Process.GetCurrentProcess();
+            IntPtr hWnd = currentProcess.MainWindowHandle;
+            if (hWnd != IntPtr.Zero) {
+                SetForegroundWindow(hWnd);
+                //ShowWindow(hWnd, User32.SW_MAXIMIZE);
+            }
+
+            input.Focus();
+        }
+
         public void clearText(bool focusSelf = true) {
             input.Text = "";
 
@@ -205,16 +216,17 @@ namespace SpeechConsole
             );
         }
 
-        public void appendDrag(int window, int button, int row1, int column1, int row2, int column2) {
+        public void appendDrag(int window, int button, int row1, int column1, int row2, int column2, bool finished) {
             appendSpecial(Program.ESCAPE_DRAG, window,
                 button
                 + Program.ESCAPE_SUBSPLIT + row1
                 + Program.ESCAPE_SUBSPLIT + column1
                 + Program.ESCAPE_SUBSPLIT + row2
                 + Program.ESCAPE_SUBSPLIT + column2
+                + Program.ESCAPE_SUBSPLIT + (finished ? "1" : "0")
             );
         }
-
+        
         public void appendActivate(int window) {
             appendNewSpecial(Program.ESCAPE_ACTIVATE, window);
         }

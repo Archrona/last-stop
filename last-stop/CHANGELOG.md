@@ -30,6 +30,8 @@
 - (??) implement context override signals
 - (??) get a better token index display than the stupid dots
 - (??) ctrl-z from raw
+- (??) wordwrap rather than cut off long lines
+
 
 
 # Version 0.3.0
@@ -44,29 +46,24 @@
 - (DONE)  insert at L "chop"
 - (DONE)  no respond on unfocused click, just focus
 - (DONE)  drag command selects region
+- (DONE)  drag continuous update
+- (DONE)  right click xfer to speech, absorb insertion points
+- (DONE)  right click and DRAG to xfer selection to speech
+- (DONE)  highlights current line in document
 
 - subscription setting commands
 - project sub
+- documents sub
 - handle events aimed at non-document subs
-
 - html/css support
 - COMMENTS/DOCS
-
 - clipboard commands -> retroactive meaning change
-
 - clipboard $location commands
 - transitives (move, copy X to Y / above Y / below Y)
-
-
-- drag continuous update
-
-- wordwrap rather than cut off long lines
-
+- horizontal scroll
 - shift-cursor, ctrl-cursor
-- right click xfer to speech
 
-- process ctrl-s from raw input
-- process ctrl-0 from raw input
+
 
 
 

@@ -286,6 +286,7 @@ export class Speech {
 
     shouldForceCommit: boolean;
     shouldDoCommit: boolean;
+    shouldFocusConsole: boolean;
 
     private constructor(app: Main, speech: string) {
         this.app = app;
@@ -294,8 +295,10 @@ export class Speech {
         this.finalUndoIndex = this.baseUndoIndex;   // overwritten after execution
         this.executed = [];
         this.resumePoints = [];
+
         this.shouldForceCommit = false;
         this.shouldDoCommit = false;
+        this.shouldFocusConsole = false;
 
         this.tokens = this.tokenize(this.speech).tokens;
         this.run();
@@ -959,15 +962,20 @@ export class Speech {
                 {
                     const result = [];
 
-                    for (let index = 1; index + 4 < parts.length; index += 5) {
+                    for (let index = 1; index + 5 < parts.length; index += 6) {
                         const button = parseInt(parts[index]);
                         const fromRow = parseInt(parts[index + 1]);
                         const fromColumn = parseInt(parts[index + 2]);
                         const toRow = parseInt(parts[index + 3]);
                         const toColumn = parseInt(parts[index + 4]);
+                        const ongoing = parseInt(parts[index + 5]);
                         
                         result.push(this.runExecutor(i, 1, EXECUTORS.onDrag, 
-                            [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn],
+                            [
+                                windowStr, sub, button,
+                                fromRow, fromColumn, toRow, toColumn, 
+                                ongoing
+                            ],
                             context));
                     }
                     return result;
@@ -996,7 +1004,8 @@ export class Speech {
 
         if (this.tokens[i].type === "event") {
             const maybe = this.runEvent(i, context);
-            if (maybe !== null) return maybe;
+            if (maybe !== null && maybe.length > 0) return maybe;
+            return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
         }
 
         const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
@@ -1045,8 +1054,9 @@ export class Speech {
                     deferred = [];
                     i = e.first + e.length;
 
-                    this.shouldForceCommit = this.shouldForceCommit || e.result.forceCommit;
+                    this.shouldForceCommit = this.shouldForceCommit || e.result.requestCommit;
                     this.shouldDoCommit = this.shouldDoCommit || e.result.doCommit;
+                    this.shouldFocusConsole = this.shouldFocusConsole || e.result.focusSpeechConsole;
 
                 } else {
                     deferred.push(e);

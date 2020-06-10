@@ -105,10 +105,10 @@ namespace SpeechConsole
                         && e.window == ongoingMouse.window
                         && (e.row != ongoingMouse.row || e.column != ongoingMouse.column)) 
                     {
-                        // handled in mouse move
-                        //mainWindow.Invoke((Action)delegate () {
-                        //    mainWindow.appendDrag(e.window, e.button, lastMouse.row, lastMouse.column, e.row, e.column);
-                        //});
+                        mainWindow.Invoke((Action)delegate () {
+                            mainWindow.appendDrag(e.window, e.button,
+                                ongoingMouse.row, ongoingMouse.column, e.row, e.column, true);
+                        });
                     }
                     // only process mouse click for earliest button pressed if multiple
                     // buttons are pressed at the same time
@@ -136,7 +136,7 @@ namespace SpeechConsole
                 if (e.buttons.Count == 1 && ongoingMouse != null && e.buttons[0] == ongoingMouse.button) {
                     mainWindow.Invoke((Action)delegate () {
                         mainWindow.appendDrag(e.window, e.buttons[0],
-                            ongoingMouse.row, ongoingMouse.column, e.row, e.column);
+                            ongoingMouse.row, ongoingMouse.column, e.row, e.column, false);
                     });
                 }
 
@@ -189,6 +189,16 @@ namespace SpeechConsole
             return new Result(true);
         }
 
+        public static object onFocus(string json) {
+            Console.WriteLine("Focus ()");
+
+            mainWindow.Invoke((Action)delegate () {
+                mainWindow.focusRequested();
+            });
+
+            return new Result(true);
+        }
+
         public static bool serveOneRequest() {
             HttpListenerContext context = listener.GetContext();
             HttpListenerRequest request = context.Request;
@@ -228,6 +238,10 @@ namespace SpeechConsole
 
                 case "/requestCommit":
                     resp = onRequestCommit(body);
+                    break;
+
+                case "/focus":
+                    resp = onFocus(body);
                     break;
 
                 default:

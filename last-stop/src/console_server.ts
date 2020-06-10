@@ -117,4 +117,13 @@ export class ConsoleServer {
     requestCommit(success?: (x: any) => any) {
         this.postRequest("requestCommit", {}, success);
     }
+
+    focus() {
+        // impose a 100 ms delay to prevent subsequent input events
+        // to a renderer window from stealing focus BACK if this message
+        // completes quickly
+        setTimeout(() => {
+            this.postRequest("focus", {});
+        }, 100);
+    }
 }

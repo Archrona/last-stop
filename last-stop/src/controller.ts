@@ -34,9 +34,12 @@ export class Controller {
 
         const finalUndo = this.app.model.store.getUndoCount();
         const time = elapsed.toPrecision(3);
-        const mem = Math.round(process.memoryUsage().rss / 1000000)
+        const mem = Math.round(process.memoryUsage().rss / 1000000);
         console.log(`  Speech: ${initialUndo} -> ${minUndo} -> ${finalUndo}  (${time} ms)  (${mem} MB)`);
 
+        if (this.lastSpeech.shouldFocusConsole) {
+            this.focusConsole();
+        }
 
         if (this.lastSpeech.shouldDoCommit) {
             console.log("          ... DID COMMIT");
@@ -46,6 +49,8 @@ export class Controller {
             console.log("          ... forced commit msg sending to SC");
             this.consoleCommitRequest();
         }
+
+        
 
         this.app.view.updateAllWindows();
     }
@@ -162,5 +167,9 @@ export class Controller {
                 this.app.view.getWindow(nextId).onSetActive();
             }
         }   
+    }
+
+    focusConsole() {
+        this.app.consoleServer.focus();
     }
 }

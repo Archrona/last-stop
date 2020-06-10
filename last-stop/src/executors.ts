@@ -4,13 +4,21 @@ import { Position, replaceAll, INSERTION_POINT } from "./shared";
 import { LEFT_MARGIN_COLUMNS } from "./subscription";
 import { clipboard } from "electron";
 
-export class ExecutorResult {
-    forceCommit: boolean;
-    doCommit: boolean;
+interface ExecutorResultOptions {
+    forceCommit?: boolean;
+    doCommit?: boolean;
+    focusSpeechConsole?: boolean
+}
 
-    constructor(forceCommit = false, doCommit = false) { 
-        this.forceCommit = forceCommit;
-        this.doCommit = doCommit;
+export class ExecutorResult {
+    requestCommit: boolean;
+    doCommit: boolean;
+    focusSpeechConsole: boolean;
+
+    constructor(options: ExecutorResultOptions = {}) { 
+        this.requestCommit = options.forceCommit ?? false;
+        this.doCommit = options.doCommit ?? false;
+        this.focusSpeechConsole = options.focusSpeechConsole ?? false;
     }
 }
 
@@ -110,12 +118,15 @@ export const EXECUTORS = {
         //console.log("activate " + windowId);
         model.setActiveWindow(windowId);
 
-        return new ExecutorResult(true);
+        return new ExecutorResult({ forceCommit: true });
     },
 
     onMouse: (model: Model, args: Array<any>) => {
         const sub = args[1];
         const windowId = parseInt(args[0]);
+        const button = args[2];
+
+        const result = new ExecutorResult();
 
         if (sub instanceof DocumentSubscription) {
             model.setActiveWindow(windowId);
@@ -125,18 +136,26 @@ export const EXECUTORS = {
             if (model.documents.hasKey(sub.document)) {
                 const doc = model.documents.get(sub.document);
                 const view = doc.getView(sub.anchorIndex);
+
                 const pos = new Position(
                     windowRow + view.row,
                     windowCol - LEFT_MARGIN_COLUMNS + view.column
                 ).normalize(doc);
-                doc.setMark(sub.anchorIndex, pos);
-                if (args[2] === 0) {
+                
+                if (button === 0 || button === 2) {
                     doc.setCursor(sub.anchorIndex, pos);
+                    doc.setMark(sub.anchorIndex, pos);
+                }
+
+                if (button === 2) {
+                    result.focusSpeechConsole = true;
+                    result.requestCommit = true;
+                    doc.absorbAdjacentInsertionPoints(sub.anchorIndex);
                 }
             }
         }
 
-        return new ExecutorResult();
+        return result;
     },
 
     // [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn]
@@ -144,8 +163,10 @@ export const EXECUTORS = {
         const sub = args[1];
         const windowId = parseInt(args[0]);
         const button = parseInt(args[2]);
+        const ongoing = args[7];
+        const result = new ExecutorResult();
 
-        if (sub instanceof DocumentSubscription && button === 0) {
+        if (sub instanceof DocumentSubscription && [0, 2].includes(button)) {
             model.setActiveWindow(windowId);
             const r1 = args[3], c1 = args[4], r2 = args[5], c2 = args[6];
             const doc = model.documents.get(sub.document);
@@ -163,9 +184,14 @@ export const EXECUTORS = {
 
             doc.setMark(sub.anchorIndex, p1);
             doc.setCursor(sub.anchorIndex, p2);
+
+            if (button == 2 && ongoing == 1) {
+                result.focusSpeechConsole = true;
+                result.requestCommit = true;
+            }
         }
 
-        return new ExecutorResult();
+        return result;
     },
 
     onKey: (model: Model, args: Array<any>) => {
@@ -236,7 +262,7 @@ export const EXECUTORS = {
         let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             doc.osPaste(ai);
-            //result.forceCommit = true;
+            result.requestCommit = true;
         });
         return result;
     },
@@ -322,7 +348,7 @@ export const EXECUTORS = {
     },
 
     onCommit: (model: Model, arg: Array<any>) => {
-        return new ExecutorResult(false, true);
+        return new ExecutorResult({ doCommit: true });
     },
 
     insertBetweenLines: (model: Model, arg: Array<any>) => {

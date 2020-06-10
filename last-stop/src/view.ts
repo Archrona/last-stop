@@ -19,9 +19,9 @@ const THEME = {
     token_0: getRGB(128, 0, 0),
     token_5: getRGB(0, 128, 0),
 
-    anchor_cursor: getRGB(255, 60, 255),
-    anchor_mark: getRGB(255, 60, 150), 
-    selection: getRGB(20, 40, 80),
+    anchor_cursor: getRGB(250, 40, 220),
+    anchor_mark: getRGB(210, 80, 240), 
+    selection: getRGB(30, 60, 100),
  
     accent_keyword: getRGB(255, 150, 190),
     keyword: getRGB(128, 128, 255),
@@ -39,7 +39,9 @@ const THEME = {
 
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),
-    line_number: getRGB(80, 90, 110),
+    active_line: getRGB(26, 26, 26),
+    line_number: getRGB(100, 120, 130),
+    active_line_number: getRGB(140, 160, 170),
     EOF: getRGB(60, 60, 60)
 };
 
@@ -77,7 +79,6 @@ export class Window {
                 nodeIntegration: true
             }
         });
-
         this.window.on("close", (event) => {
             console.log("Window id " + this.id + " closed!");
             view.windowClosed(this.id);

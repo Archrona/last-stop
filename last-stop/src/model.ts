@@ -705,6 +705,22 @@ export class DocumentNavigator extends Navigator {
         }
     }
 
+    absorbAdjacentInsertionPoints(anchorIndex: number): void {
+        let cursor = this.getCursor(anchorIndex);
+        let mark = this.getMark(anchorIndex);
+        if (cursor.compareTo(mark) === 0) {
+            const line = this.getLine(cursor.row);
+            if (cursor.column > 0 && line[cursor.column - 1] === INSERTION_POINT) {
+                mark.column--;
+                this.setMark(anchorIndex, mark);
+            }
+            if (cursor.column < line.length && line[cursor.column] === INSERTION_POINT) {
+                cursor.column++;
+                this.setCursor(anchorIndex, cursor);
+            }
+        }
+    }
+
     insert(anchorIndex: number, text: string, options: InsertOptions = {}): DocumentNavigator {
         const cursor = this.getAnchor("cursor_" + anchorIndex);
         const mark = this.getAnchor("mark_" + anchorIndex);

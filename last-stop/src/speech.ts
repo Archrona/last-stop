@@ -456,7 +456,7 @@ export class Speech {
 
         // If we have only a token, get current document's cursor.
         // Offset into the current line using the token index.
-        if (numeric.hasToken() &&! numeric.hasLine()) {
+        if (numeric.hasToken() && !numeric.hasLine()) {
             const document = this.app.model.getActiveDocument();
             if (document === null) {
                 return null;
@@ -519,8 +519,8 @@ export class Speech {
                 return new SpokenSelection(
                     document,
                     subscription.anchorIndex,
-                    new Position(documentLine, document.getLine(documentLine).length),
-                    new Position(documentLine, document.getLine(documentLine).length)
+                    new Position(pos.row, document.getLine(pos.row).length),
+                    new Position(pos.row, document.getLine(pos.row).length)
                 );
             }
 

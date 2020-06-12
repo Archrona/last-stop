@@ -69,4 +69,10 @@ body {
 #subscription {
     font-family: "Consolas", serif;
     color: rgb(200, 160, 230);
+    padding-right: 18px;
+}
+
+#context {
+    font-family: "Consolas", monospace;
+    color: rgb(130, 142, 180);
 }

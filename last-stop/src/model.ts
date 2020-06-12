@@ -484,6 +484,17 @@ export class DocumentNavigator extends Navigator {
         return this;
     }
 
+    setBaseContext(context: string): DocumentNavigator {
+        const languages = this.app.languages.contexts;
+        if (!languages.has(context)) {
+            throw new Error("setBaseContext: context " + context + " does not exist");
+        }
+        
+        this.clone().goKey("contexts").setIndex(0, [context]);
+        this._updateContexts(0, this.getLineCount() - 1);
+        return this;
+    }
+
     newAnchor(name: string, anchor: Anchor): void {
         const nav = this.clone().goKey("anchors");
         if (nav.hasKey(name)) {

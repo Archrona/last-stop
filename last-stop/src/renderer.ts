@@ -21,6 +21,7 @@ class Application {
     margin: number;
     text: Array<DrawableText>;
     isLoaded: boolean;
+    context: string;
 
     resizeTimeout: number;
 
@@ -40,6 +41,7 @@ class Application {
         this.lineSpacing = 1.35;
         this.margin = 20;
         this.resizeTimeout = 0;
+        this.context = "";
 
         this.isLoaded = false;
         // this.hasFocus = false;
@@ -107,14 +109,6 @@ class Application {
             this.onWheelEvent(event.deltaX, event.deltaY, event.deltaMode);
             event.preventDefault();
         });
-
-        // window.addEventListener('focusin', (event) => {
-        //     this.onFocusEvent(true);
-        // });
-          
-        // window.addEventListener('focusout', (event) => {
-        //     this.onFocusEvent(false);
-        // });
         
         ipcRenderer.on("update", (event, data) => {
             const subscription = data.subscription;
@@ -123,23 +117,24 @@ class Application {
             const expectedColumns = data.columns;
             const accentColor = data.modeAccent as string;
             
-            console.log(data);
-
             if (expectedLines !== this.lineCount || expectedColumns !== this.columnCount) {
                 this.sendResizeMessage();
             }
             else {
-                this.onUpdate(subscription, text, accentColor);
+                this.onUpdate(subscription, text, accentColor, data);
             }
         });
     }
 
-    onUpdate(subscription: string, text: Array<DrawableText>, accentColor: string) {
+    onUpdate(subscription: string, text: Array<DrawableText>, accentColor: string, data: any) {
         console.log("update: " + subscription + ", " + text.length + " DrawableText objects");
         this.text = text;
         this.subscription = subscription;
+        this.context = data.context as string;
         document.getElementById("subscription").innerText = this.subscription;
         document.getElementById("top").style.borderColor = accentColor;
+        document.getElementById("context").innerText = this.context;
+        
  
         this.render();
     }
@@ -323,17 +318,6 @@ class Application {
             y: y
         });
     }
-
-    // sendFocusMessage(focused: boolean): void {
-    //     if (this.id === -1) {
-    //         return;
-    //     }
-        
-    //     ipcRenderer.send("focus", {
-    //         id: this.id,
-    //         focused: focused
-    //     });
-    // }
 } 
 
 window["app"] = new Application();

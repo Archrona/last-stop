@@ -370,5 +370,20 @@ export const EXECUTORS = {
         }
         
         return new ExecutorResult();
+    },
+
+    setContext: (model: Model, arg: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            if (arg.length < 1) {
+                return;
+            }
+            
+            const context = arg[0];
+            if (typeof context === "string") {
+                doc.setBaseContext(context);
+            }
+        });
+        
+        return new ExecutorResult({ forceCommit: true });
     }
 }

@@ -51,6 +51,14 @@
 - (DONE)  right click and DRAG to xfer selection to speech
 - (DONE)  highlights current line in document
 
+- HTML support
+- CSS support
+- CSS/JS embedding into HTML
+- Markdown support
+- Latex support
+- Latex embedding into Markdown
+- Document base context setting commands
+
 - subscription setting commands
 - project sub
 - documents sub

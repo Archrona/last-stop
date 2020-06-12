@@ -6,6 +6,7 @@ import { getRGB, DrawableText } from "./shared";
 import { Main } from "./main";
 import { renderSubscription } from "./subscription";
 import { inspect } from "util";
+import { DocumentSubscription } from './model';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
@@ -218,6 +219,14 @@ export class Window {
                 this.app.model.subscriptions.get(this.id) : "no subscription";
             const sub = this.app.model.subscriptions.getDetails(this.id);
             
+            let context = "--";
+            if (sub instanceof DocumentSubscription
+                && this.app.model.documents.hasKey(sub.document))
+            {
+                const doc = this.app.model.documents.get(sub.document);
+                context = doc.getCursorContext(sub.anchorIndex, this.app.languages);
+            }
+
             const text = renderSubscription(
                 sub, this.topRowNumber, this.lines, this.columns, this.view.app);
 
@@ -226,6 +235,7 @@ export class Window {
                 text: text,
                 lines: this.lines,
                 columns: this.columns,
+                context: context,
                 modeAccent: this.getWindowAccent()  
             });
         }

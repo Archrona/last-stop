@@ -163,6 +163,17 @@
             "spoken": ["blank"],
             "run": "insertExact",
             "arguments": [" "]
+        },
+
+        {
+            "spoken": ["change to typescript", "change to type script", "change to java script", "change to javascript"],
+            "run": "setContext",
+            "arguments": ["typescript"]
+        },
+        {
+            "spoken": ["change to text"],
+            "run": "setContext",
+            "arguments": ["text"]
         }
     ]
 }

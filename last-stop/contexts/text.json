@@ -1,0 +1,32 @@
+{
+    "name": "text",
+    "extensions": ["txt"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "\\s+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "text",
+            "pattern": "\\S+" 
+        }
+    ],
+    "commands": [
+        "universal"
+    ],
+    "contextChanges": [],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "indentation": [],
+    "triggerAutomaticIndentation": [ ],
+    "spacing": [
+        {
+            "what": "never automatically insert space",
+            "rule": false
+        }
+    ]
+}

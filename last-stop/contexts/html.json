@@ -1,0 +1,42 @@
+{
+    "name": "html",
+    "extensions": ["html", "htm"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "html_tag",
+            "pattern": "<|>"
+        },
+        {
+            "type": "html_text",
+            "pattern": ".+"
+        }
+    ],
+    "commands": [
+        "universal"
+    ],
+    "contextChanges": [
+        
+    ],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "indentation": [
+
+    ],
+    "triggerAutomaticIndentation": [
+
+    ],
+    "spacing": [
+        {
+            "what": "default fallthrough",
+            "rule": false
+        }
+    ]
+}

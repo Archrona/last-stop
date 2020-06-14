@@ -1,0 +1,41 @@
+{
+    "name": "html_comment",
+    "extensions": [],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "comment_terminator",
+            "pattern": "-->"
+        },
+        {
+            "type": "comment",
+            "pattern": "[^ \\t\\r\\n-]+|-+(?!>)" 
+        }
+    ],
+    "commands": [
+        "universal"
+    ],
+    "contextChanges": [
+        {
+            "token": "-->",
+            "action": "pop",
+            "style": "comment"
+        }
+    ],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "indentation": [],
+    "spacing": [
+        {
+            "what": "never automatically insert space",
+            "rule": false
+        }
+    ]
+}

@@ -11,19 +11,35 @@
             "pattern": "\\r|\\n|\\r\\n" 
         },
         {
+            "type": "comment",
+            "pattern": "<!--"
+        },
+        {
             "type": "html_tag",
             "pattern": "<|>"
         },
         {
             "type": "html_text",
-            "pattern": ".+"
+            "pattern": "[^<]+"
         }
     ],
     "commands": [
-        "universal"
+        "universal",
+        "struct_html"
     ],
     "contextChanges": [
-        
+        {
+            "token": "<",
+            "action": "push",
+            "target": "html_tag",
+            "style": "html_tag"
+        },
+        {
+            "token": "<!--",
+            "action": "push",
+            "target": "html_comment",
+            "style": "comment"
+        }
     ],
     "rawInput": true,
     "defaultCasing": "raw",
@@ -34,6 +50,11 @@
 
     ],
     "spacing": [
+        {
+            "what": "tag start/end",
+            "either": "<|>",
+            "rule": false
+        },
         {
             "what": "default fallthrough",
             "rule": false

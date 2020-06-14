@@ -1,0 +1,388 @@
+{
+    "group": "struct_html",
+    
+    "commands": [
+        {
+            "spoken": ["remark", "comment"],
+            "insert": "<!-- $_ -->"
+        },
+        {
+            "spoken": ["dock type", "doc type", "doctype", "dock type html", "doc type html", "doctype html", "document type", "document type html"],
+            "insert": ["<!DOCTYPE html>"]
+        },
+
+        {
+            "spoken": ["tag"],
+            "insert": "<$_>$_</$_>$_"
+        },
+        {
+            "spoken": ["simple tag"],
+            "insert": "<$_>$_"
+        },
+
+        {
+            "spoken": ["html"],
+            "insert": "<html$_>$u$_$d</html>$_"
+        },
+        {
+            "spoken": ["head"],
+            "insert": "<head$_>$u$_$d</head>$_"
+        },
+        {
+            "spoken": ["title"],
+            "insert": "<title$_>$_</title>$_"
+        },
+        {
+            "spoken": ["body"],
+            "insert": "<body$_>$u$_$d</body>$_"
+        },
+        {
+            "spoken": ["heading won", "heading one", "heading 1", "h1", "h 1"],
+            "insert": "<h1$_>$_</h1>$_"
+        },
+        {
+            "spoken": ["heading too", "heading two", "heading to", "heading 2", "h2", "h 2"],
+            "insert": "<h2$_>$_</h2>$_"
+        },
+        {
+            "spoken": ["heading three", "heading 3", "h3", "h 3"],
+            "insert": "<h3$_>$_</h3>$_"
+        },
+        {
+            "spoken": ["heading four", "heading for", "heading 4", "h4", "h 4"],
+            "insert": "<h4$_>$_</h4>$_"
+        },
+        {
+            "spoken": ["heading five", "heading 5", "h5", "h 5"],
+            "insert": "<h5$_>$_</h5>$_"
+        },
+        {
+            "spoken": ["heading six", "heading sicks", "heading 6", "h6", "h 6"],
+            "insert": "<h6$_>$_</h6>$_"
+        },
+        {
+            "spoken": ["p", "paragraph"],
+            "insert": "<p$_>$_</p>$_"
+        },
+        {
+            "spoken": ["break", "br", "be are", "b are", "be r"],
+            "insert": "<br>"
+        },
+        {
+            "spoken": ["hr", "horizontal rule", "horizontal ruler"],
+            "insert": "<hr>"
+        },
+        {
+            "spoken": ["div", "division"],
+            "insert": "<div$_>$_</div>$_"
+        },
+        {
+            "spoken": ["span"],
+            "insert": "<span$_>$_</span>$_"
+        },
+        
+        {
+            "spoken": ["abbreviation"],
+            "insert": "<abbr$_>$_</abbr>$_"
+        },
+        {
+            "spoken": ["address"],
+            "insert": "<address$_>$_</address>$_"
+        },
+        {
+            "spoken": ["b", "bravo", "bold"],
+            "insert": "<b$_>$_</b>$_"
+        },
+        {
+            "spoken": ["block quote", "blockquote"],
+            "insert": "<blockquote$_>$_</blockquote>$_"
+        },
+        {
+            "spoken": ["cite", "site", "citation"],
+            "insert": "<cite$_>$_</cite>$_"
+        },
+        {
+            "spoken": ["code"],
+            "insert": "<code$_>$_</code>$_"
+        },
+        {
+            "spoken": ["definition", "dfn"],
+            "insert": "<dfn$_>$_</dfn>$_"
+        },
+        {
+            "spoken": ["emphasized", "em"],
+            "insert": "<em$_>$_</em>$_"
+        },
+        {
+            "spoken": ["italics", "italic"],
+            "insert": "<i$_>$_</i>$_"
+        },
+        {
+            "spoken": ["kbd", "keyboard"],
+            "insert": "<kbd$_>$_</kbd>$_"
+        },
+        {
+            "spoken": ["mark"],
+            "insert": "<mark$_>$_</mark>$_"
+        },
+        {
+            "spoken": ["pre", "preformatted"],
+            "insert": "<pre$_>$_</pre>$_"
+        },
+        {
+            "spoken": ["quote", "quotation"],
+            "insert": "<q$_>$_</q>$_"
+        },
+        {
+            "spoken": ["strike out", "strike"],
+            "insert": "<s$_>$_</s>$_"
+        },
+        {
+            "spoken": ["strong"],
+            "insert": "<strong$_>$_</strong>$_"
+        },
+        {
+            "spoken": ["subscript", "subscripted", "sub"],
+            "insert": "<sub$_>$_</sub>$_"
+        },
+        {
+            "spoken": ["superscript", "superscripted", "sup"],
+            "insert": "<sup$_>$_</sup>$_"
+        },
+        {
+            "spoken": ["underline", "underlined"],
+            "insert": "<u$_>$_</u>$_"
+        },
+
+
+
+        {
+            "spoken": ["form"],
+            "insert": "<form$_>$_</form>$_"
+        },
+        {
+            "spoken": ["input"],
+            "insert": "<input$_>$_"
+        },
+        {
+            "spoken": ["text area", "textarea"],
+            "insert": "<textarea$_>$_</textarea>$_"
+        },
+        {
+            "spoken": ["button"],
+            "insert": "<button$_>$_</button>$_"
+        },
+        {
+            "spoken": ["select", "selection"],
+            "insert": "<select$_>$_</select>$_"
+        },
+        {
+            "spoken": ["option group", "optgroup"],
+            "insert": "<optgroup$_>$_</optgroup>$_"
+        },
+        {
+            "spoken": ["option"],
+            "insert": "<option$_>$_</option>$_"
+        },
+        {
+            "spoken": ["label"],
+            "insert": "<label$_>$_</label>$_"
+        },
+        {
+            "spoken": ["field set", "fieldset"],
+            "insert": "<fieldset$_>$_</fieldset>$_"
+        },
+        {
+            "spoken": ["legend"],
+            "insert": "<legend$_>$_</legend>$_"
+        },
+        {
+            "spoken": ["data list", "datalist"],
+            "insert": "<datalist$_>$_</datalist>$_"
+        },
+        {
+            "spoken": ["output"],
+            "insert": "<output$_>$_</output>$_"
+        },
+
+
+
+        {
+            "spoken": ["iframe", "i frame", "inline frame", "in - line frame"],
+            "insert": "<iframe$_>$_</iframe>$_"
+        },
+
+
+        {
+            "spoken": ["img", "image"],
+            "insert": "<img$_>$_"
+        },
+        {
+            "spoken": ["image map", "map"],
+            "insert": "<map$_>$_</map>$_"
+        },
+        {
+            "spoken": ["area"],
+            "insert": "<area$_>$_"
+        },
+        {
+            "spoken": ["canvas"],
+            "insert": "<canvas$_>$_</canvas>$_"
+        },
+        {
+            "spoken": ["figure caption", "figcaption", "fig caption"],
+            "insert": "<figcaption$_>$_</figcaption>$_"
+        },
+        {
+            "spoken": ["figure"],
+            "insert": "<figure$_>$_</figure>$_"
+        },
+        {
+            "spoken": ["picture"],
+            "insert": "<picture$_>$_</picture>$_"
+        },
+        {
+            "spoken": ["svg"],
+            "insert": "<svg$_>$_</svg>$_"
+        },
+        {
+            "spoken": ["audio"],
+            "insert": "<audio$_>$_</audio>$_"
+        },
+        {
+            "spoken": ["source"],
+            "insert": "<source$_>$_"
+        },
+        {
+            "spoken": ["track"],
+            "insert": "<track$_>$_"
+        },
+        {
+            "spoken": ["video"],
+            "insert": "<video$_>$_</video>$_"
+        },
+
+
+        {
+            "spoken": ["anchor"],
+            "insert": "<a$_>$_</a>$_"
+        },
+        {
+            "spoken": ["link"],
+            "insert": "<link$_>$_</link>$_"
+        },
+        {
+            "spoken": ["nav", "navigation", "navigator"],
+            "insert": "<nav$_>$_</nav>$_"
+        },
+
+
+        {
+            "spoken": ["ul", "unordered list"],
+            "insert": "<ul$_>$_</ul>$_"
+        },
+        {
+            "spoken": ["ol", "ordered list"],
+            "insert": "<ol$_>$_</ol>$_"
+        },
+        {
+            "spoken": ["li", "list item"],
+            "insert": "<li$_>$_</li>$_"
+        },
+        {
+            "spoken": ["dl", "description list"],
+            "insert": "<dl$_>$_</dl>$_"
+        },
+        {
+            "spoken": ["dt", "define term"],
+            "insert": "<dt$_>$_</dt>$_"
+        },
+        {
+            "spoken": ["dd", "description"],
+            "insert": "<dd$_>$_</dd>$_"
+        },
+
+
+
+
+        {
+            "spoken": ["table"],
+            "insert": "<table$_>$_</table>$_"
+        },
+        {
+            "spoken": ["caption"],
+            "insert": "<caption$_>$_</caption>$_"
+        },
+        {
+            "spoken": ["th", "table header", "table heading"],
+            "insert": "<th$_>$_</th>$_"
+        },
+        {
+            "spoken": ["tr", "table row"],
+            "insert": "<tr$_>$_</tr>$_"
+        },
+        {
+            "spoken": ["td", "table cell", "table column", "cell", "sell"],
+            "insert": "<td$_>$_</td>$_"
+        },
+        {
+            "spoken": ["thead", "table head"],
+            "insert": "<thead$_>$_</thead>$_"
+        },
+        {
+            "spoken": ["tbody", "table body"],
+            "insert": "<tbody$_>$_</tbody>$_"
+        },
+        {
+            "spoken": ["tfoot", "table footer"],
+            "insert": "<tfoot$_>$_</tfoot>$_"
+        },
+        {
+            "spoken": ["column group", "colgroup"],
+            "insert": "<colgroup$_>$_</colgroup>$_"
+        },
+        {
+            "spoken": ["column"],
+            "insert": "<col$_>$_</col>$_"
+        },
+
+
+
+        {
+            "spoken": ["style"],
+            "insert": "<style$_>$_</style>$_"
+        },
+        {
+            "spoken": ["header"],
+            "insert": "<header$_>$_</header>$_"
+        },
+        {
+            "spoken": ["footer"],
+            "insert": "<footer$_>$_</footer>$_"
+        },
+
+
+        {
+            "spoken": ["meta", "meta -"],
+            "insert": "<meta$_>$_"
+        },
+        {
+            "spoken": ["base"],
+            "insert": "<base$_>$_"
+        },
+        {
+            "spoken": ["script"],
+            "insert": "<script$_>$_</script>$_"
+        },
+        {
+            "spoken": ["noscript", "no script"],
+            "insert": "<noscript$_>$_</noscript>$_"
+        },
+        {
+            "spoken": ["embed", "embedded"],
+            "insert": "<embed$_>$_"
+        }
+         
+  
+    ]
+}

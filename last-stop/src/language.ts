@@ -203,9 +203,16 @@ export class Languages {
         const tokens: Array<Token> = [];
 
         while (i < text.length) {
-            const context = (contextStack.length > 0 ?
-                contextStack[contextStack.length - 1] : baseContext);
+            if (contextStack.length === 0) {
+                throw new Error("zeroed out context stack (inside tokenization loop)");
+            }
+
+            const context = contextStack[contextStack.length - 1];
             const lang = this.contexts.get(context);
+            if (lang === undefined) {
+                throw new Error("could not find context " + context);
+            }
+
             const tokenTypes = lang.tokens;
             let found = false;
             let foundText = "";
@@ -216,6 +223,10 @@ export class Languages {
                 
                 if (matchResult !== null) {
                     foundText = matchResult[0];
+                    if (foundText.length === 0) {
+                        throw new Error("Regular expression for " 
+                            + type.type + " in context " + context + " matched empty string");
+                    }
 
                     if (includeWhite || type.type !== "white")
                         tokens.push(new Token(foundText, pos.clone(), type.type, context));
@@ -228,6 +239,7 @@ export class Languages {
                     }
 
                     found = true;
+
                     i += foundText.length;
                     break;
                 }
@@ -258,6 +270,9 @@ export class Languages {
 
                 if (change.action === "pop") {
                     contextStack.pop();
+                    if (contextStack.length === 0) {
+                        throw new Error("zeroed out context stack at token \"" + foundText + "\"");
+                    }
                 } 
                 else if (change.action === "push") {
                     contextStack.push(change.target);

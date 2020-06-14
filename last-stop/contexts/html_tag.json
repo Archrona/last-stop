@@ -1,0 +1,93 @@
+{
+    "name": "html_tag",
+    "extensions": [],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "html_attribute",
+            "pattern": "[-a-zA-Z0-9]+(?=\\s*=)"
+        },
+        {
+            "type": "html_identifier",
+            "pattern": "[-a-zA_Z0-9]+" 
+        },
+        {
+            "type": "punctuation",
+            "pattern": "=|\\/"
+        },
+        {
+            "type": "html_tag",
+            "pattern": ">"
+        }
+    ],
+    "commands": [
+        "universal",
+        "struct_html_tag"
+    ],
+    "contextChanges": [
+        {
+            "token": ">",
+            "action": "pop",
+            "style": "html_tag"
+        },
+        {
+            "token": "\"",
+            "action": "push",
+            "target": "double_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "'",
+            "action": "push",
+            "target": "single_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "<!--",
+            "action": "push",
+            "target": "html_comment",
+            "style": "comment"
+        }
+    ],
+    "rawInput": false,
+    "defaultCasing": "flat",
+    "indentation": [
+
+    ],
+    "triggerAutomaticIndentation": [
+
+    ],
+    "spacing": [
+        {
+            "what": "adjacent whitespace, period, or glue",
+            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d",
+            "rule": false
+        },
+        {
+            "what": "start of line",
+            "before": "^",
+            "rule": false
+        },
+        {
+            "what": "end of line",
+            "after": "$",
+            "rule": false
+        },
+        {
+            "what": "tag start/end, equals, !",
+            "either": "<|>|=|!",
+            "rule": false
+        },
+        {
+            "what": "default fallthrough",
+            "rule": true
+        }
+    ]
+}

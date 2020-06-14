@@ -1,0 +1,523 @@
+{
+    "group": "struct_html_tag",
+    
+    "commands": [
+        {
+            "spoken": ["attribute", "at"],
+            "insert": "$_=\"$_\"$_"
+        },
+
+        {
+            "spoken": ["accept"],
+            "insert": "accept=\"$_\"$_"
+        },
+        {
+            "spoken": ["accept character set", "accept char set", "accept charset"],
+            "insert": "accept-charset=\"$_\"$_"
+        },
+        {
+            "spoken": ["access key", "accesskey"],
+            "insert": "accesskey=\"$_\"$_"
+        },
+        {
+            "spoken": ["action"],
+            "insert": "action=\"$_\"$_"
+        },
+        {
+            "spoken": ["alternate", "alt"],
+            "insert": "alt=\"$_\"$_"
+        },
+        {
+            "spoken": ["asynchronous", "async", "a sink"],
+            "insert": "async"
+        },
+        {
+            "spoken": ["autocomplete", "auto complete"],
+            "insert": "autocomplete=\"$_\"$_"
+        },
+        {
+            "spoken": ["autofocus", "auto focus"],
+            "insert": "autofocus"
+        },
+        {
+            "spoken": ["autoplay"],
+            "insert": "autoplay"
+        },
+        {
+            "spoken": ["character set", "char set", "charset"],
+            "insert": "charset=\"$_\"$_"
+        },
+        {
+            "spoken": ["checked"],
+            "insert": "checked"
+        },
+        {
+            "spoken": ["cols", "calls", "columns"],
+            "insert": "cols=\"$_\"$_"
+        },
+        {
+            "spoken": ["colspan", "call span", "column span"],
+            "insert": "colspan=\"$_\"$_"
+        },
+        {
+            "spoken": ["content"],
+            "insert": "content=\"$_\"$_"
+        },
+        {
+            "spoken": ["content editable", "contenteditable"],
+            "insert": "contenteditable=\"$_\"$_"
+        },
+        {
+            "spoken": ["controls"],
+            "insert": "controls"
+        },
+        {
+            "spoken": ["coords", "cords", "coordinates"],
+            "insert": "coords=\"$_\"$_"
+        },
+        {
+            "spoken": ["data"],
+            "insert": "data=\"$_\"$_"
+        },
+        {
+            "spoken": ["date time", "datetime"],
+            "insert": "datetime=\"$_\"$_"
+        },
+        {
+            "spoken": ["default"],
+            "insert": "default"
+        },
+        {
+            "spoken": ["defer"],
+            "insert": "defer"
+        },
+        {
+            "spoken": ["dir", "direction"],
+            "insert": "dir=\"$_\"$_"
+        },
+        {
+            "spoken": ["dirname", "direction name"],
+            "insert": "dirname=\"$_\"$_"
+        },
+        {
+            "spoken": ["disabled"],
+            "insert": "disabled"
+        },
+        {
+            "spoken": ["draggable"],
+            "insert": "accept=\"$_\"$_"
+        },
+        {
+            "spoken": ["enctype", "encoding type"],
+            "insert": "enctype=\"$_\"$_"
+        },
+        {
+            "spoken": ["for", "four", "4"],
+            "insert": "for=\"$_\"$_"
+        },
+        {
+            "spoken": ["form"],
+            "insert": "form=\"$_\"$_"
+        },
+        {
+            "spoken": ["form action", "formaction"],
+            "insert": "formaction=\"$_\"$_"
+        },
+        {
+            "spoken": ["headers"],
+            "insert": "headers=\"$_\"$_"
+        },
+        {
+            "spoken": ["height"],
+            "insert": "height=\"$_\"$_"
+        },
+        {
+            "spoken": ["hidden"],
+            "insert": "hidden"
+        },
+        {
+            "spoken": ["href", "refer", "referring", "refer to", "referring to", "reference"],
+            "insert": "href=\"$_\"$_"
+        },
+        {
+            "spoken": ["http - equivalent", "http - equiv", "http equivalent", "http equiv"],
+            "insert": "http-equiv=\"$_\"$_"
+        },
+        {
+            "spoken": ["id"],
+            "insert": "id=\"$_\"$_"
+        },
+        {
+            "spoken": ["ismap", "is map"],
+            "insert": "ismap"
+        },
+        {
+            "spoken": ["kind"],
+            "insert": "kind=\"$_\"$_"
+        },
+        {
+            "spoken": ["label"],
+            "insert": "label=\"$_\"$_"
+        },
+        {
+            "spoken": ["language", "lang"],
+            "insert": "lang=\"$_\"$_"
+        },
+        {
+            "spoken": ["list"],
+            "insert": "list=\"$_\"$_"
+        },
+        {
+            "spoken": ["loop"],
+            "insert": "loop"
+        },
+        {
+            "spoken": ["max", "maximum"],
+            "insert": "max=\"$_\"$_"
+        },
+        {
+            "spoken": ["max length", "maximum length"],
+            "insert": "maxlength=\"$_\"$_"
+        },
+        {
+            "spoken": ["media"],
+            "insert": "media=\"$_\"$_"
+        },
+        {
+            "spoken": ["method"],
+            "insert": "method=\"$_\"$_"
+        },
+        {
+            "spoken": ["multiple"],
+            "insert": "multiple"
+        },
+        {
+            "spoken": ["muted"],
+            "insert": "muted"
+        },
+        {
+            "spoken": ["name"],
+            "insert": "name=\"$_\"$_"
+        },
+        {
+            "spoken": ["novalidate", "no validate"],
+            "insert": "novalidate"
+        },
+        {
+            "spoken": ["on abort"],
+            "insert": "onabort=\"$_\"$_"
+        },
+        {
+            "spoken": ["on after print"],
+            "insert": "onafterprint=\"$_\"$_"
+        },
+        {
+            "spoken": ["on before print"],
+            "insert": "onbeforeprint=\"$_\"$_"
+        },
+        {
+            "spoken": ["on before unload"],
+            "insert": "onbeforeunload=\"$_\"$_"
+        },
+        {
+            "spoken": ["on blur"],
+            "insert": "onblur=\"$_\"$_"
+        },
+        {
+            "spoken": ["on can play"],
+            "insert": "oncanplay=\"$_\"$_"
+        },
+        {
+            "spoken": ["on can play through"],
+            "insert": "oncanplaythrough=\"$_\"$_"
+        },
+        {
+            "spoken": ["on change"],
+            "insert": "onchange=\"$_\"$_"
+        },
+        {
+            "spoken": ["on click"],
+            "insert": "onclick=\"$_\"$_"
+        },
+        {
+            "spoken": ["on context menu"],
+            "insert": "oncontextmenu=\"$_\"$_"
+        },
+        {
+            "spoken": ["on copy"],
+            "insert": "oncopy=\"$_\"$_"
+        },
+        {
+            "spoken": ["on cut"],
+            "insert": "oncut=\"$_\"$_"
+        },
+        {
+            "spoken": ["on double click"],
+            "insert": "ondblclick=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag"],
+            "insert": "ondrag=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag end", "on drag and"],
+            "insert": "ondragend=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag enter"],
+            "insert": "ondragenter=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag leave"],
+            "insert": "ondragleave=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag over"],
+            "insert": "ondragover=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drag start"],
+            "insert": "ondragstart=\"$_\"$_"
+        },
+        {
+            "spoken": ["on drop"],
+            "insert": "ondrop=\"$_\"$_"
+        },
+        {
+            "spoken": ["on error"],
+            "insert": "onerror=\"$_\"$_"
+        },
+        {
+            "spoken": ["on focus"],
+            "insert": "onfocus=\"$_\"$_"
+        },
+        {
+            "spoken": ["on input"],
+            "insert": "oninput=\"$_\"$_"
+        },
+        {
+            "spoken": ["on invalid"],
+            "insert": "oninvalid=\"$_\"$_"
+        },
+        {
+            "spoken": ["on key down"],
+            "insert": "onkeydown=\"$_\"$_"
+        },
+        {
+            "spoken": ["on key press", "on keypress"],
+            "insert": "onkeypress=\"$_\"$_"
+        },
+        {
+            "spoken": ["on key up"],
+            "insert": "onkeyup=\"$_\"$_"
+        },
+        {
+            "spoken": ["on load"],
+            "insert": "onload=\"$_\"$_"
+        },
+        {
+            "spoken": ["on loaded data"],
+            "insert": "onloadeddata=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse down"],
+            "insert": "onmousedown=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse move"],
+            "insert": "onmousemove=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse out"],
+            "insert": "onmouseout=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse over"],
+            "insert": "onmouseover=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse up"],
+            "insert": "onmouseup=\"$_\"$_"
+        },
+        {
+            "spoken": ["on mouse wheel"],
+            "insert": "onmousewheel=\"$_\"$_"
+        },
+        {
+            "spoken": ["on offline"],
+            "insert": "onoffline=\"$_\"$_"
+        },
+        {
+            "spoken": ["on online"],
+            "insert": "ononline=\"$_\"$_"
+        },
+        {
+            "spoken": ["on page hide"],
+            "insert": "onpagehide=\"$_\"$_"
+        },
+        {
+            "spoken": ["on page show"],
+            "insert": "onpageshow=\"$_\"$_"
+        },
+        {
+            "spoken": ["on paste"],
+            "insert": "onpaste=\"$_\"$_"
+        },
+        {
+            "spoken": ["on reset"],
+            "insert": "onreset=\"$_\"$_"
+        },
+        {
+            "spoken": ["on resize"],
+            "insert": "onresize=\"$_\"$_"
+        },
+        {
+            "spoken": ["on scroll"],
+            "insert": "onscroll=\"$_\"$_"
+        },
+        {
+            "spoken": ["on search"],
+            "insert": "onsearch=\"$_\"$_"
+        },
+        {
+            "spoken": ["on select"],
+            "insert": "onselect=\"$_\"$_"
+        },
+        {
+            "spoken": ["on storage"],
+            "insert": "onstorage=\"$_\"$_"
+        },
+        {
+            "spoken": ["on submit"],
+            "insert": "onsubmit=\"$_\"$_"
+        },
+        {
+            "spoken": ["on unload"],
+            "insert": "onunload=\"$_\"$_"
+        },
+        {
+            "spoken": ["on wheel"],
+            "insert": "onwheel=\"$_\"$_"
+        },
+        {
+            "spoken": ["pattern"],
+            "insert": "pattern=\"$_\"$_"
+        },
+        {
+            "spoken": ["placeholder", "place holder"],
+            "insert": "placeholder=\"$_\"$_"
+        },
+        {
+            "spoken": ["poster"],
+            "insert": "poster=\"$_\"$_"
+        },
+        {
+            "spoken": ["read only", "read - only", "readonly"],
+            "insert": "readonly"
+        },
+        {
+            "spoken": ["rel", "relative", "related", "relate", "relation", "relationship"],
+            "insert": "rel=\"$_\"$_"
+        },
+        {
+            "spoken": ["required"],
+            "insert": "required"
+        },
+        {
+            "spoken": ["rows", "rose"],
+            "insert": "rows=\"$_\"$_"
+        },
+        {
+            "spoken": ["row span", "rowspan"],
+            "insert": "rowspan=\"$_\"$_"
+        },
+        {
+            "spoken": ["scope"],
+            "insert": "scope=\"$_\"$_"
+        },
+        {
+            "spoken": ["selected"],
+            "insert": "selected"
+        },
+        {
+            "spoken": ["shape"],
+            "insert": "shape=\"$_\"$_"
+        },
+        {
+            "spoken": ["size"],
+            "insert": "size=\"$_\"$_"
+        },
+        {
+            "spoken": ["sizes"],
+            "insert": "sizes=\"$_\"$_"
+        },
+        {
+            "spoken": ["span"],
+            "insert": "span=\"$_\"$_"
+        },
+        {
+            "spoken": ["spell check", "spellcheck"],
+            "insert": "height=\"$_\"$_"
+        },
+        {
+            "spoken": ["source", "src"],
+            "insert": "src=\"$_\"$_"
+        },
+        {
+            "spoken": ["source doc", "source document", "srcdoc"],
+            "insert": "srcdoc=\"$_\"$_"
+        },
+        {
+            "spoken": ["source set", "srcset"],
+            "insert": "srcset=\"$_\"$_"
+        },
+        {
+            "spoken": ["start"],
+            "insert": "start=\"$_\"$_"
+        },
+        {
+            "spoken": ["step"],
+            "insert": "step=\"$_\"$_"
+        },
+        {
+            "spoken": ["style"],
+            "insert": "style=\"$_\"$_"
+        },
+        {
+            "spoken": ["tab index", "tabindex"],
+            "insert": "tabindex=\"$_\"$_"
+        },
+        {
+            "spoken": ["target"],
+            "insert": "target=\"$_\"$_"
+        },
+        {
+            "spoken": ["title"],
+            "insert": "title=\"$_\"$_"
+        },
+        {
+            "spoken": ["translate"],
+            "insert": "translate=\"$_\"$_"
+        },
+        {
+            "spoken": ["type"],
+            "insert": "type=\"$_\"$_"
+        },
+        {
+            "spoken": ["use map", "usemap"],
+            "insert": "usemap=\"$_\"$_"
+        },
+        {
+            "spoken": ["value"],
+            "insert": "value=\"$_\"$_"
+        },
+        {
+            "spoken": ["width"],
+            "insert": "width=\"$_\"$_"
+        },
+        {
+            "spoken": ["wrap"],
+            "insert": "wrap=\"$_\"$_"
+        }
+    ]
+}

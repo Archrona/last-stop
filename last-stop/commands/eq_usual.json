@@ -9,6 +9,6 @@
         {
             "spoken": ["not equals", "is not equal", "is not equal to"],
             "insert": "!="
-        }  
+        }
     ]
 }

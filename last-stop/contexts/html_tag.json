@@ -41,6 +41,13 @@
         },
         {
             "token": ">",
+            "searchBefore": "<\\s*[sS][tT][yY][lL][eE][^>]*",
+            "action": "push",
+            "target": "css",
+            "style": "html_tag"
+        },
+        {
+            "token": ">",
             "action": "pop",
             "style": "html_tag"
         },

@@ -1,0 +1,146 @@
+{
+    "name": "css",
+    "extensions": ["css"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "accent_keyword",
+            "pattern": "(?:@media|not|only|and|all|print|screen|speech|calc|important)(?=[^-a-zA-Z])"
+        },
+        {
+            "type": "keyword",
+            "pattern": "(?:cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax|:[-a-zA-Z]+)(?=[^-a-zA-Z])"
+        },
+        {
+            "type": "css_color",
+            "pattern": "\\#[0-9a-fA-F]+"
+        },
+        {
+            "type": "css_property",
+            "pattern": "[-a-zA-Z]+:"
+        },
+        {
+            "type": "identifier",
+            "pattern": "[-a-zA-Z]+" 
+        },
+        {
+            "type": "number",
+            "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+        },
+        {
+            "type": "punctuation",
+            "pattern": "\\/\\*|[!\"#$%&'*+,-./:;<=>?@\\^_`|~]"
+        },
+        {
+            "type": "grouping",
+            "pattern": "[(){}\\[\\]]"
+        }
+    ],
+    "commands": [
+        "universal",
+        "numbers",
+        "eol_semi",
+        "eq_usual",
+        "grouping_css",
+        "op_css",
+        "comment_blockonly",
+        "struct_css"
+    ],
+    "contextChanges": [
+        {
+            "token": "\"",
+            "action": "push",
+            "target": "double_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "'",
+            "action": "push",
+            "target": "single_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "/*",
+            "action": "push",
+            "target": "comment_multiple_line",
+            "style": "comment"
+        },
+        {
+            "token": "<",
+            "searchAfter": "\\s*/\\s*[sS][tT][yY][lL][eE]",
+            "action": "pop",
+            "requiresParent": "html_tag",
+            "style": "html_attribute"
+        }
+    ],
+    "rawInput": false,
+    "defaultCasing": "midline",
+    "indentation": [
+        {
+            "what": "dedent on close group",
+            "current": "^\\s*[}\\])]",
+            "rule": "unindent"
+        },
+        {
+            "what": "indent when statement clearly not terminated",
+            "previous": "[(\\[{~!@#$%^&*-+=|\\\\:<.?]\\s*$",
+            "rule": "indent"
+        }
+    ],
+    "triggerAutomaticIndentation": [ "}" ],
+    "spacing": [
+        {
+            "what": "adjacent whitespace, period, or glue",
+            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d",
+            "rule": false
+        },
+        {
+            "what": "start of line",
+            "before": "^",
+            "rule": false
+        },
+        {
+            "what": "end of line",
+            "after": "$",
+            "rule": false
+        },
+        {
+            "what": "before closing punctuation, units",
+            "after": "[:%)\\]};},]|(?:(?:cm|mm|in|px|pt|pc|em|ex|ch|rem|vw|vh|vmin|vmax)(?=$|[^-a-zA-Z]))",
+            "rule": false
+        },
+        {
+            "what": "after opening punctuation",
+            "before": "[(\\[{$#@~\\\\!]",
+            "rule": false
+        },
+        {
+            "what": "around attribute selector operators",
+            "either": "~=|\\|=|\\^=|\\$=|\\*=",
+            "rule": false
+        },
+        {
+            "what": "before index or call",
+            "before": "[-a-zA-Z0-9_\\)\\]\\.]",
+            "after": "\\(|\\[",
+            "rule": false
+        },
+        {
+            "what": "negative numbers",
+            "before": "(?:^|[~!@#$^&*([{'\"<,.\\/?+\\-|=])\\s*-",
+            "after": "[0-9a-zA-Z_]",
+            "rule": false
+        },
+        {
+            "what": "default fallthrough",
+            "rule": true
+        }
+    ]
+}

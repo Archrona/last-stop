@@ -179,6 +179,11 @@
             "spoken": ["change to html"],
             "run": "setContext",
             "arguments": ["html"]
+        },
+        {
+            "spoken": ["change to css"],
+            "run": "setContext",
+            "arguments": ["css"]
         }
     ]
 }

@@ -42,6 +42,8 @@ const THEME = {
     html_attribute: getRGB(180, 190, 220),
     html_identifier: getRGB(130, 150, 200),
     html_character_reference: getRGB(230, 140, 140),
+    css_property: getRGB(230, 160, 180),
+    css_color: getRGB(255, 110, 110),
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),
     active_line: getRGB(26, 26, 26),

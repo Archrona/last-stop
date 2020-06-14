@@ -1,0 +1,657 @@
+{
+    "group": "struct_css",
+    
+    "commands": [
+        {
+            "spoken": ["then", "than"],
+            "run": "insertExact",
+            "arguments": [" "]
+        },
+        {
+            "spoken": ["and"],
+            "insert": "and"
+        },
+        {
+            "spoken": ["important"],
+            "insert": "!important"
+        },
+
+
+        {
+            "spoken": ["with active"],
+            "insert": ":active"
+        },
+        {
+            "spoken": ["with checked"],
+            "insert": ":checked"
+        },
+        {
+            "spoken": ["with default"],
+            "insert": ":default"
+        },
+        {
+            "spoken": ["with defined"],
+            "insert": ":defined"
+        },
+        {
+            "spoken": ["with disabled"],
+            "insert": ":disabled"
+        },
+        {
+            "spoken": ["with empty"],
+            "insert": ":empty"
+        },
+        {
+            "spoken": ["with enabled"],
+            "insert": ":enabled"
+        },
+        {
+            "spoken": ["with first"],
+            "insert": ":first"
+        },
+        {
+            "spoken": ["with first child"],
+            "insert": ":first-child"
+        },
+        {
+            "spoken": ["with first of type"],
+            "insert": ":first-of-type"
+        },
+        {
+            "spoken": ["with fullscreen", "with full screen"],
+            "insert": ":fullscreen"
+        },
+        {
+            "spoken": ["with focus"],
+            "insert": ":focus"
+        },
+        {
+            "spoken": ["with focus within"],
+            "insert": ":focus-within"
+        },
+        {
+            "spoken": ["with host"],
+            "insert": ":host"
+        },
+        {
+            "spoken": ["with hover"],
+            "insert": ":hover"
+        },
+        {
+            "spoken": ["with indeterminate"],
+            "insert": ":indeterminate"
+        },
+        {
+            "spoken": ["with in range"],
+            "insert": ":in-range"
+        },
+        {
+            "spoken": ["with invalid"],
+            "insert": ":invalid"
+        },
+        {
+            "spoken": ["with language", "with lang"],
+            "insert": ":lang"
+        },
+        {
+            "spoken": ["with last child"],
+            "insert": ":last-child"
+        },
+        {
+            "spoken": ["with last of type"],
+            "insert": ":last-of-type"
+        },
+        {
+            "spoken": ["with left"],
+            "insert": ":left"
+        },
+        {
+            "spoken": ["with link"],
+            "insert": ":link"
+        },
+        {
+            "spoken": ["with not"],
+            "insert": ":not"
+        },
+        {
+            "spoken": ["with indexed child"],
+            "insert": ":nth-child"
+        },
+        {
+            "spoken": ["with indexed last child"],
+            "insert": ":nth-last-child"
+        },
+        {
+            "spoken": ["with indexed last of type"],
+            "insert": ":nth-last-of-type"
+        },
+        {
+            "spoken": ["with indexed of type"],
+            "insert": ":nth-of-type"
+        },
+        {
+            "spoken": ["with only child"],
+            "insert": ":only-child"
+        },
+        {
+            "spoken": ["with only of type"],
+            "insert": ":only-of-type"
+        },
+        {
+            "spoken": ["with optional"],
+            "insert": ":optional"
+        },
+        {
+            "spoken": ["with out of range"],
+            "insert": ":out-of-range"
+        },
+        {
+            "spoken": ["with placeholder shown"],
+            "insert": ":placeholder-shown"
+        },
+        {
+            "spoken": ["with read only", "with readonly"],
+            "insert": ":read-only"
+        },
+        {
+            "spoken": ["with read write"],
+            "insert": ":read-write"
+        },
+        {
+            "spoken": ["with required"],
+            "insert": ":required"
+        },
+        {
+            "spoken": ["with right"],
+            "insert": ":right"
+        },
+        {
+            "spoken": ["with root"],
+            "insert": ":root"
+        },
+        {
+            "spoken": ["with scope"],
+            "insert": ":scope"
+        },
+        {
+            "spoken": ["with target"],
+            "insert": ":target"
+        },
+        {
+            "spoken": ["with valid"],
+            "insert": ":valid"
+        },
+        {
+            "spoken": ["with visited"],
+            "insert": ":visited"
+        },
+
+
+        {
+            "spoken": ["with after"],
+            "insert": "::after"
+        },
+        {
+            "spoken": ["with backdrop"],
+            "insert": "::backdrop"
+        },
+        {
+            "spoken": ["with before"],
+            "insert": "::before"
+        },
+        {
+            "spoken": ["with cue", "with q"],
+            "insert": "::cue"
+        },
+        {
+            "spoken": ["with cue region", "with q region"],
+            "insert": "::cue-region"
+        },
+        {
+            "spoken": ["with first letter"],
+            "insert": "::first-letter"
+        },
+        {
+            "spoken": ["with first line"],
+            "insert": "::first-line"
+        },
+        {
+            "spoken": ["with placeholder"],
+            "insert": "::placeholder"
+        },
+        {
+            "spoken": ["with selection"],
+            "insert": "::selection"
+        },
+        {
+            "spoken": ["with slotted"],
+            "insert": "::slotted"
+        },
+
+
+
+
+
+        {
+            "spoken": ["heading won", "heading one", "heading 1", "h1", "h 1"],
+            "insert": "h1"
+        },
+        {
+            "spoken": ["heading too", "heading two", "heading to", "heading 2", "h2", "h 2"],
+            "insert": "h2"
+        },
+        {
+            "spoken": ["heading three", "heading 3", "h3", "h 3"],
+            "insert": "h3"
+        },
+        {
+            "spoken": ["heading four", "heading for", "heading 4", "h4", "h 4"],
+            "insert": "h4"
+        },
+        {
+            "spoken": ["heading five", "heading 5", "h5", "h 5"],
+            "insert": "h5"
+        },
+        {
+            "spoken": ["heading six", "heading sicks", "heading 6", "h6", "h 6"],
+            "insert": "h6"
+        },
+        {
+            "spoken": ["paragraph"],
+            "insert": "p"
+        },
+        {
+            "spoken": ["break", "br", "be are", "b are", "be r"],
+            "insert": "br"
+        },
+        {
+            "spoken": ["hr", "horizontal rule", "horizontal ruler"],
+            "insert": "hr"
+        },
+        {
+            "spoken": ["div", "division"],
+            "insert": "div"
+        },
+        {
+            "spoken": ["span"],
+            "insert": "span"
+        },
+        
+        {
+            "spoken": ["abbreviation"],
+            "insert": "abbr"
+        },
+        {
+            "spoken": ["address"],
+            "insert": "address"
+        },
+        {
+            "spoken": ["bravo", "bold"],
+            "insert": "b"
+        },
+        {
+            "spoken": ["block quote", "blockquote"],
+            "insert": "blockquote"
+        },
+        {
+            "spoken": ["cite", "site", "citation"],
+            "insert": "cite"
+        },
+        {
+            "spoken": ["code"],
+            "insert": "code"
+        },
+        {
+            "spoken": ["definition", "dfn"],
+            "insert": "dfn"
+        },
+        {
+            "spoken": ["emphasized", "em"],
+            "insert": "em"
+        },
+        {
+            "spoken": ["italics", "italic"],
+            "insert": "i"
+        },
+        {
+            "spoken": ["kbd", "keyboard"],
+            "insert": "kbd"
+        },
+        {
+            "spoken": ["mark"],
+            "insert": "mark"
+        },
+        {
+            "spoken": ["pre", "preformatted"],
+            "insert": "pre"
+        },
+        {
+            "spoken": ["quote", "quotation"],
+            "insert": "quote"
+        },
+        {
+            "spoken": ["strike out", "strike"],
+            "insert": "s"
+        },
+        {
+            "spoken": ["strong"],
+            "insert": "strong"
+        },
+        {
+            "spoken": ["subscript", "subscripted", "sub"],
+            "insert": "sub"
+        },
+        {
+            "spoken": ["superscript", "superscripted", "sup"],
+            "insert": "sup"
+        },
+        {
+            "spoken": ["underline", "underlined"],
+            "insert": "u"
+        },
+
+
+
+        {
+            "spoken": ["form"],
+            "insert": "form"
+        },
+        {
+            "spoken": ["input"],
+            "insert": "input"
+        },
+        {
+            "spoken": ["text area", "textarea"],
+            "insert": "textarea"
+        },
+        {
+            "spoken": ["button"],
+            "insert": "button"
+        },
+        {
+            "spoken": ["select", "selection"],
+            "insert": "select"
+        },
+        {
+            "spoken": ["option group", "optgroup"],
+            "insert": "optgroup"
+        },
+        {
+            "spoken": ["option"],
+            "insert": "option"
+        },
+        {
+            "spoken": ["label"],
+            "insert": "label"
+        },
+        {
+            "spoken": ["field set", "fieldset"],
+            "insert": "fieldset"
+        },
+        {
+            "spoken": ["legend"],
+            "insert": "legend"
+        },
+        {
+            "spoken": ["data list", "datalist"],
+            "insert": "datalist"
+        },
+        {
+            "spoken": ["output"],
+            "insert": "output"
+        },
+
+
+
+        {
+            "spoken": ["iframe", "i frame", "inline frame", "in - line frame"],
+            "insert": "iframe"
+        },
+
+
+        {
+            "spoken": ["img", "image"],
+            "insert": "img"
+        },
+        {
+            "spoken": ["image map", "map"],
+            "insert": "map"
+        },
+        {
+            "spoken": ["area"],
+            "insert": "area"
+        },
+        {
+            "spoken": ["canvas"],
+            "insert": "canvas"
+        },
+        {
+            "spoken": ["figure caption", "figcaption", "fig caption"],
+            "insert": "figcaption"
+        },
+        {
+            "spoken": ["figure"],
+            "insert": "figure"
+        },
+        {
+            "spoken": ["picture"],
+            "insert": "picture"
+        },
+        {
+            "spoken": ["svg"],
+            "insert": "svg"
+        },
+        {
+            "spoken": ["audio"],
+            "insert": "audio"
+        },
+        {
+            "spoken": ["source"],
+            "insert": "source"
+        },
+        {
+            "spoken": ["track"],
+            "insert": "track"
+        },
+        {
+            "spoken": ["video"],
+            "insert": "video"
+        },
+
+
+        {
+            "spoken": ["anchor"],
+            "insert": "a"
+        },
+        {
+            "spoken": ["link"],
+            "insert": "link"
+        },
+        {
+            "spoken": ["nav", "navigation", "navigator"],
+            "insert": "nav"
+        },
+
+
+        {
+            "spoken": ["ul", "unordered list"],
+            "insert": "ul"
+        },
+        {
+            "spoken": ["ol", "ordered list"],
+            "insert": "ol"
+        },
+        {
+            "spoken": ["li", "list item"],
+            "insert": "li"
+        },
+        {
+            "spoken": ["dl", "description list"],
+            "insert": "dl"
+        },
+        {
+            "spoken": ["dt", "define term"],
+            "insert": "dt"
+        },
+        {
+            "spoken": ["dd", "description"],
+            "insert": "dd"
+        },
+
+
+
+
+        {
+            "spoken": ["table"],
+            "insert": "table"
+        },
+        {
+            "spoken": ["caption"],
+            "insert": "caption"
+        },
+        {
+            "spoken": ["th", "table header", "table heading"],
+            "insert": "th"
+        },
+        {
+            "spoken": ["tr", "table row"],
+            "insert": "tr"
+        },
+        {
+            "spoken": ["td", "table cell", "table column", "cell", "sell"],
+            "insert": "td"
+        },
+        {
+            "spoken": ["thead", "table head"],
+            "insert": "thead"
+        },
+        {
+            "spoken": ["tbody", "table body"],
+            "insert": "tbody"
+        },
+        {
+            "spoken": ["tfoot", "table footer"],
+            "insert": "tfoot"
+        },
+        {
+            "spoken": ["column group", "colgroup"],
+            "insert": "colgroup"
+        },
+        {
+            "spoken": ["column"],
+            "insert": "col"
+        },
+
+
+
+        {
+            "spoken": ["style"],
+            "insert": "style"
+        },
+        {
+            "spoken": ["header"],
+            "insert": "header"
+        },
+        {
+            "spoken": ["footer"],
+            "insert": "footer"
+        },
+
+
+        {
+            "spoken": ["meta", "meta -"],
+            "insert": "meta"
+        },
+        {
+            "spoken": ["base"],
+            "insert": "base"
+        },
+        {
+            "spoken": ["script"],
+            "insert": "script"
+        },
+        {
+            "spoken": ["noscript", "no script"],
+            "insert": "noscript"
+        },
+        {
+            "spoken": ["embed", "embedded"],
+            "insert": "embed"
+        },
+
+
+
+        {
+            "spoken": ["at character set", "at char set"],
+            "insert": "@charset \"$_\""
+        },
+        {
+            "spoken": ["at font face"],
+            "insert": "@font-face"
+        },
+        {
+            "spoken": ["at import"],
+            "insert": "@import"
+        },
+        {
+            "spoken": ["at keyframes", "at keyframe", "at key frames"],
+            "insert": "@keyframes"
+        },
+        {
+            "spoken": ["at media", "media"],
+            "insert": "@media"
+        },
+        {
+            "spoken": ["at page"],
+            "insert": "@page"
+        },
+
+        {
+            "spoken": ["centimeters", "cm"],
+            "insert": "cm"
+        },
+        {
+            "spoken": ["millimeters", "mm"],
+            "insert": "mm"
+        },
+        {
+            "spoken": ["inches", "in"],
+            "insert": "in"
+        },
+        {
+            "spoken": ["pixels", "px"],
+            "insert": "px"
+        },
+        {
+            "spoken": ["points", "pt"],
+            "insert": "pt"
+        },
+        {
+            "spoken": ["em", "empire", "umpire", "empires", "umpires"],
+            "insert": "em"
+        },
+        {
+            "spoken": ["rem"],
+            "insert": "rem"
+        },
+        {
+            "spoken": ["viewport width", "view width", "vw"],
+            "insert": "vw"
+        },
+        {
+            "spoken": ["viewport height", "view height", "vh"],
+            "insert": "vh"
+        },
+
+        {
+            "spoken": ["rgb"],
+            "insert": "rgb($_)$_"
+        },
+        {
+            "spoken": ["calculate", "calc"],
+            "insert": "calc($_)$_"
+        }
+
+        
+    ]
+}

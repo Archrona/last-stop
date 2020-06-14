@@ -1,0 +1,104 @@
+{
+    "group": "op_css",
+    
+    "commands": [
+        {
+            "spoken": ["is", "our", "are", "equal", "be"],
+            "insert": "="
+        },
+        {
+            "spoken": [".", "dot"],
+            "insert": "."
+        },
+        {
+            "spoken": ["below", "is below", "less than", "is less than", "smaller than", "is smaller than"],
+            "insert": "<"
+        },
+        {
+            "spoken": ["above", "is above", "greater than", "is greater than", "is bigger than", "bigger than"],
+            "insert": ">"
+        },
+        {
+            "spoken": [
+                "at most", "is at most",
+                "less than or equal to", "is less than or equal to",
+                "smaller than or equal to", "is smaller than or equal to"
+            ],
+            "insert": "<="
+        },
+        {
+            "spoken": [
+                "at least", "is at least",
+                "greater than or equal to", "is greater than or equal to",
+                "bigger than or equal to", "is bigger than or equal to"
+            ],
+            "insert": ">="
+        },
+        {
+            "spoken": ["plus"],
+            "insert": "+"
+        },
+        {
+            "spoken": ["minas", "minus"],
+            "insert": "-"
+        },
+        {
+            "spoken": ["times"],
+            "insert": "*"
+        },
+        {
+            "spoken": ["divide", "divided by"],
+            "insert": "/"
+        },
+        {
+            "spoken": ["modulo", "remainder", "percent"],
+            "insert": "%"
+        },
+        {
+            "spoken": ["everything", "star"],
+            "insert": "*"
+        },
+        {
+            "spoken": ["id"],
+            "insert": "#"
+        },
+        {
+            "spoken": ["class"],
+            "insert": "."
+        },
+        {
+            "spoken": ["child selector"],
+            "insert": ">"
+        },
+        {
+            "spoken": ["sibling selector"],
+            "insert": "~"
+        },
+
+        {
+            "spoken": ["is one of", "is 1 of"],
+            "insert": "~="
+        },
+        {
+            "spoken": ["is subcode"],
+            "insert": "|="
+        },
+        {
+            "spoken": ["is prefixed", "is prefixed by"],
+            "insert": "^="
+        },
+        {
+            "spoken": ["is suffixed", "is suffixed by"],
+            "insert": "$="
+        },
+        {
+            "spoken": ["contains"],
+            "insert": "*="
+        },
+
+        {
+            "spoken": ["as", "with"],
+            "insert": ":"
+        }
+    ]
+}

@@ -1,0 +1,12 @@
+{
+    "group": "struct_latex_text",
+    
+    "commands": [
+        {
+            "spoken": ["bold"],
+            "insert": "\\textbf{$_} $_"
+        }
+        
+
+    ]
+}

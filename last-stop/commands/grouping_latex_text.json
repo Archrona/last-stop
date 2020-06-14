@@ -1,0 +1,22 @@
+{
+    "group": "grouping_latex_text",
+    
+    "commands": [
+        {
+            "spoken": ["with arguments", "with argument"],
+            "insert": "$g[$_]$_"
+        },
+        {
+            "spoken": ["say"],
+            "insert": " ``$_'' $_"
+        },
+        {
+            "spoken": ["math"],
+            "insert": " $$$_$$ $_"
+        },
+        {
+            "spoken": ["display math"],
+            "insert": "\\[$n$_$n\\]$_"
+        }
+    ]
+}

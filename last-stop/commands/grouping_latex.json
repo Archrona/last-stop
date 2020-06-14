@@ -1,0 +1,11 @@
+{
+    "group": "grouping_latex",
+    
+    "commands": [
+        {
+            "spoken": ["block"],
+            "insert": "$g{$_}$_"
+        }       
+        
+    ]
+}

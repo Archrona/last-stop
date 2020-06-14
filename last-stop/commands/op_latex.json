@@ -1,0 +1,158 @@
+{
+    "group": "op_latex",
+    
+    "commands": [
+        {
+            "spoken": ["equals"],
+            "insert": "="
+        },
+        {
+            "spoken": ["equivalent", "is equivalent to"],
+            "insert": "\\equiv "
+        },
+        {
+            "spoken": ["is approximately", "is approximately equal to"],
+            "insert": "\\approx "
+        },
+        {
+            "spoken": ["is congruent", "is congruent to"],
+            "insert": "\\cong "
+        },
+        {
+            "spoken": ["is similar", "is similar to"],
+            "insert": "\\sim "
+        },
+        {
+            "spoken": ["is proportional", "is proportional to"],
+            "insert": "\\propto "
+        },
+        {
+            "spoken": ["not equals", "does not equal", "is not equal to"],
+            "insert": "\\neq "
+        },
+        {
+            "spoken": ["below", "is below", "less than", "is less than", "smaller than", "is smaller than"],
+            "insert": "<"
+        },
+        {
+            "spoken": ["above", "is above", "greater than", "is greater than", "is bigger than", "bigger than"],
+            "insert": ">"
+        },
+        {
+            "spoken": [
+                "at most", "is at most",
+                "less than or equal to", "is less than or equal to",
+                "smaller than or equal to", "is smaller than or equal to"
+            ],
+            "insert": "\\leq "
+        },
+        {
+            "spoken": [
+                "at least", "is at least",
+                "greater than or equal to", "is greater than or equal to",
+                "bigger than or equal to", "is bigger than or equal to"
+            ],
+            "insert": "\\geq"
+        },
+        {
+            "spoken": ["there exists", "exists"],
+            "insert": "\\exists "
+        },
+        {
+            "spoken": ["for all", "4 all", "four all"],
+            "insert": "\\forall "
+        },
+        {
+            "spoken": ["in"],
+            "insert": "\\in "
+        },
+        {
+            "spoken": ["is not in", "not in"],
+            "insert": "\\notin "
+        },
+        {
+            "spoken": ["divides"],
+            "insert": "\\mid "
+        },
+        {
+            "spoken": ["plus or minus", "plus minus"],
+            "insert": "\\pm "
+        },
+        {
+            "spoken": ["minus or plus", "minus plus"],
+            "insert": "\\mp "
+        },
+        {
+            "spoken": ["cross"],
+            "insert": "\\times "
+        },
+        {
+            "spoken": ["bullet"],
+            "insert": "\\cdot "
+        },
+        {
+            "spoken": ["compose", "composed with"],
+            "insert": "\\circ "
+        },
+        {
+            "spoken": ["subset", "is a subset of"],
+            "insert": "\\subseteq "
+        },
+        {
+            "spoken": ["superset", "is a superset of"],
+            "insert": "\\supseteq "
+        },
+        {
+            "spoken": ["proper subset", "is a proper subset of"],
+            "insert": "\\subset "
+        },
+        {
+            "spoken": ["proper superset", "is a proper superset of"],
+            "insert": "\\supset "
+        },
+        {
+            "spoken": ["union", "cup"],
+            "insert": "\\cup "
+        },
+        {
+            "spoken": ["intersection", "cap"],
+            "insert": "\\cup "
+        },
+        {
+            "spoken": ["set minus"],
+            "insert": "\\setminus "
+        },
+        {
+            "spoken": ["empty set", "nothing"],
+            "insert": "\\emptyset "
+        },
+        {
+            "spoken": ["maps to", "mapping to"],
+            "insert": "\\mapsto "
+        },
+        {
+            "spoken": ["implies"],
+            "insert": "\\Rightarrow "
+        },
+        {
+            "spoken": ["implied by", "is implied by"],
+            "insert": "\\Leftarrow "
+        },
+        {
+            "spoken": ["iff", "if and only if"],
+            "insert": "\\Leftrightarrow "
+        },
+        {
+            "spoken": ["and", "land"],
+            "insert": "\\land "
+        },
+        {
+            "spoken": ["or", "lore"],
+            "insert": "\\lor will "
+        },
+        {
+            "spoken": ["not"],
+            "insert": "\\neg "
+        }
+    ]
+}

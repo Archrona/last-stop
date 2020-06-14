@@ -789,11 +789,20 @@ export class Speech {
 
         // Numbers and punctuation cannot lead identifiers - they stand alone.
         // Raw also outputs as-is.
-        if ((raw && REMAP.remap(this.tokens[i].text.toLowerCase()) !== "literally")
+        const lower = this.tokens[i].text.toLowerCase();
+        if ((raw && REMAP.remap(lower) !== "literally")
             || this.tokens[i].type === "number"
             || this.tokens[i].type === "punctuation")
         {
-            return this.runExecutor(i, 1, EXECUTORS.insertExact, [word], context);
+            let toInsert = word;
+            if (ALPHABET.alphabet.has(lower)) {
+                const info = ALPHABET.alphabet.get(lower);
+                toInsert = info.character;
+                if (info.casing.firstCaps === Capitalization.Upper)
+                    toInsert = toInsert.toUpperCase();
+            }
+
+            return this.runExecutor(i, 1, EXECUTORS.insertExact, [toInsert], context);
         }
 
         // Folks, we have an identifier

@@ -1,0 +1,48 @@
+{
+    "group": "struct_latex",
+    
+    "commands": [
+        {
+            "spoken": ["command"],
+            "insert": "\\$_"
+        },
+        {
+            "spoken": ["then"],
+            "run": "insertExact",
+            "arguments": [" "]
+        },
+
+
+        
+        {
+            "spoken": ["document class"],
+            "insert": "\\documentclass"
+        },
+        {
+            "spoken": ["begin"],
+            "insert": "\\begin{$_}$n$_$n\\end{$_}$_"
+        },
+        {
+            "spoken": ["use package"],
+            "insert": "\\usepackage"
+        },
+        {
+            "spoken": ["title"],
+            "insert": "\\title{$_}$_"
+        },
+        {
+            "spoken": ["author"],
+            "insert": "\\author{$_}$_"
+        },
+        {
+            "spoken": ["date"],
+            "insert": "\\date{$_}$_"
+        },
+        {
+            "spoken": ["make title"],
+            "insert": "\\maketitle"
+        }
+        
+
+    ]
+}

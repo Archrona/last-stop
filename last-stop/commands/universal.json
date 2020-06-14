@@ -7,6 +7,13 @@
             "run": "nop"
         },
         {
+            "spoken": ["blank", "shove", "space"],
+            "run": "insertExact",
+            "arguments": [" "]
+        },
+
+
+        {
             "spoken": ["step"],
             "run": "step",
             "arguments": ["1"]
@@ -71,6 +78,11 @@
             "spoken": ["sponge"],
             "run": "sponge",
             "arguments": ["ud"]
+        },
+        {
+            "spoken": ["glue"],
+            "run": "sponge",
+            "arguments": ["lr"]
         },
         {
             "spoken": ["sponge left"],
@@ -159,12 +171,7 @@
             "insert": "$u$_$d"
         },
     
-        {
-            "spoken": ["blank"],
-            "run": "insertExact",
-            "arguments": [" "]
-        },
-
+        
         {
             "spoken": ["change to typescript", "change to type script", "change to java script", "change to javascript"],
             "run": "setContext",
@@ -184,6 +191,11 @@
             "spoken": ["change to css"],
             "run": "setContext",
             "arguments": ["css"]
+        },
+        {
+            "spoken": ["change to latex"],
+            "run": "setContext",
+            "arguments": ["latex"]
         }
     ]
 }

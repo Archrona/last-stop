@@ -13,6 +13,10 @@
         {
             "spoken": ["dorsal"],
             "insert": "\\\\"
-        }  
+        },
+        {
+            "spoken": ["insertion point"],
+            "insert": "$$_"
+        }
     ]
 }

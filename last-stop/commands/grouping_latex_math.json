@@ -1,0 +1,18 @@
+{
+    "group": "grouping_latex_math",
+    
+    "commands": [
+        {
+            "spoken": ["at"],
+            "insert": "$g[$_]$_"
+        },
+        {
+            "spoken": ["group"],
+            "insert": " ($_) $_"
+        },
+        {
+            "spoken": ["of"],
+            "insert": "($_)$_"
+        }
+    ]
+}

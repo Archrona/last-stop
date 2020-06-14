@@ -1,0 +1,76 @@
+{
+    "name": "latex_math",
+    "extensions": [],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "latex_math_number",
+            "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+        },
+        {
+            "type": "latex_math_command",
+            "pattern": "\\\\[a-zA-Z]+(?=[^a-zA-Z]|$)"
+        },
+        {
+            "type": "string_escape",
+            "pattern": "\\\\."
+        },
+        {
+            "type": "latex_math_punctuation",
+            "pattern": "[!\"#%&*+,-./:;<=>?@\\^_`|~(){}\\[\\]]"
+        },
+        {
+            "type": "latex_math_text",
+            "pattern": "[-A-Za-z0-9_]+|."
+        }
+    ],
+    "commands": [
+        "universal",
+        "numbers",
+        "eol_latex",
+        "grouping_latex",
+        "grouping_latex_math",
+        "op_latex",
+        "struct_latex",
+        "struct_latex_math"
+    ],
+    "contextChanges": [
+        {
+            "token": "%",
+            "action": "push",
+            "target": "comment_single_line",
+            "style": "comment"
+        },
+        {
+            "token": "$",
+            "action": "pop",
+            "style": "latex_math_delimiter"
+        },
+        {
+            "token": "\\]",
+            "action": "pop",
+            "style": "latex_math_delimiter"
+        }
+    ],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "indentation": [
+
+    ],
+    "triggerAutomaticIndentation": [
+
+    ],
+    "spacing": [
+        {
+            "what": "default fallthrough",
+            "rule": false
+        }
+    ]
+}

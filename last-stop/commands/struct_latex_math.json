@@ -1,0 +1,95 @@
+{
+    "group": "struct_latex_math",
+    
+    "commands": [
+
+        {
+            "spoken": ["chunk"],
+            "insert": " \\left( $_ \\right) $_"
+        },
+        {
+            "spoken": ["cage"],
+            "insert": " \\left[ $_ \\right] $_"
+        },
+        {
+            "spoken": ["curly"],
+            "insert": " \\left{ $_ \\right} $_"
+        },
+        {
+            "spoken": ["angles"],
+            "insert": " \\langle $_ \\rangle $_"
+        },
+
+        {
+            "spoken": ["over", "fraction"],
+            "insert": " \\frac{$_}{$_} $_"
+        },
+
+        {
+            "spoken": ["to the", "to the power of"],
+            "insert": "^{$_} $_"
+        },
+        {
+            "spoken": ["squared"],
+            "insert": "^2 "
+        },
+        {
+            "spoken": ["cubed"],
+            "insert": "^3 "
+        },
+        {
+            "spoken": ["root", "route", "square root", "square route"],
+            "insert": "\\sqrt{$_} $_"
+        },
+
+        {
+            "spoken": ["sub", "subscript"],
+            "insert": "_{$_} $_"
+        },
+        {
+            "spoken": ["subzero"],
+            "insert": "_0 "
+        },
+
+
+        {
+            "spoken": ["bold"],
+            "insert": "\\mathbf{$_} $_"
+        },
+        {
+            "spoken": ["roman"],
+            "insert": "\\mathrm{$_} $_"
+        },
+        {
+            "spoken": ["black"],
+            "insert": "\\mathbb{$_} $_"
+        },
+        {
+            "spoken": ["double"],
+            "insert": "\\mathds{$_} $_"
+        },
+        {
+            "spoken": ["the reals", "reals", "real numbers"],
+            "insert": "\\mathbb{R} $_"
+        },
+        {
+            "spoken": ["integers", "the integers"],
+            "insert": "\\mathbb{Z} $_"
+        },
+        {
+            "spoken": ["rationals", "the rationals"],
+            "insert": "\\mathbb{Q} $_"
+        },
+        {
+            "spoken": ["complex", "complex numbers"],
+            "insert": "\\mathbb{C} $_"
+        },
+        {
+            "spoken": ["naturals", "the naturals", "natural numbers"],
+            "insert": "\\mathbb{N} $_"
+        }
+
+        
+
+    ]
+}

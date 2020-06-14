@@ -1,0 +1,72 @@
+{
+    "name": "latex",
+    "extensions": ["tex"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "latex_command",
+            "pattern": "\\\\[a-zA-Z]+(?=[^a-zA-Z]|$)"
+        },
+        {
+            "type": "string_escape",
+            "pattern": "\\\\."
+        },
+        {
+            "type": "latex_punctuation",
+            "pattern": "[!\"#%&*+,-./:;<=>?@\\^_`|~(){}\\[\\]$]"
+        },
+        {
+            "type": "latex_text",
+            "pattern": "[-A-Za-z0-9_]+|."
+        }
+    ],
+    "commands": [
+        "universal",
+        "eol_latex",
+        "grouping_latex",
+        "grouping_latex_text",
+        "struct_latex",
+        "struct_latex_text"
+    ],
+    "contextChanges": [
+        {
+            "token": "%",
+            "action": "push",
+            "target": "comment_single_line",
+            "style": "comment"
+        },
+        {
+            "token": "$",
+            "action": "push",
+            "target": "latex_math",
+            "style": "latex_math_delimiter"
+        },
+        {
+            "token": "\\[",
+            "action": "push",
+            "target": "latex_math",
+            "style": "latex_math_delimiter"
+        }
+    ],
+    "rawInput": true,
+    "defaultCasing": "raw",
+    "indentation": [
+
+    ],
+    "triggerAutomaticIndentation": [
+
+    ],
+    "spacing": [
+        {
+            "what": "default fallthrough",
+            "rule": false
+        }
+    ]
+}

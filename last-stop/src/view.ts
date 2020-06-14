@@ -37,13 +37,26 @@ const THEME = {
     string_text: getRGB(150, 220, 140),
     comment: getRGB(20, 140, 20),
     regular_expression: getRGB(80, 180, 20),
+
     html_tag: getRGB(190, 190, 190),
     html_text: getRGB(220, 220, 220),
     html_attribute: getRGB(180, 190, 220),
     html_identifier: getRGB(130, 150, 200),
     html_character_reference: getRGB(230, 140, 140),
+
     css_property: getRGB(230, 160, 180),
     css_color: getRGB(255, 110, 110),
+
+    latex_command: getRGB(140, 160, 220),
+    latex_punctuation: getRGB(200, 205, 220),
+    latex_text: getRGB(220, 220, 220),
+
+    latex_math_delimiter: getRGB(160, 130, 60),
+    latex_math_number: getRGB(190, 168, 80),     //220, 160, 50),
+    latex_math_command: getRGB(220, 200, 150),
+    latex_math_punctuation: getRGB(220, 200, 150),
+    latex_math_text: getRGB(190, 168, 80),
+
     general: getRGB(240, 240, 240),
     background: getRGB(20, 20, 20),
     active_line: getRGB(26, 26, 26),

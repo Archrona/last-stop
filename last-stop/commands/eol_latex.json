@@ -1,0 +1,11 @@
+{
+    "group": "eol_latex",
+    
+    "commands": [
+        {
+            "spoken": ["finish", "finished"],
+            "run": "insertAtEOL",
+            "arguments": ["$n$n"]
+        }
+    ]
+}

@@ -53,7 +53,8 @@
         "struct_semi",
         "struct_js",
         "struct_ts",
-        "comment_semi"
+        "comment_semi",
+        "idioms_jest"
     ],
     "contextChanges": [
         {

@@ -1,0 +1,18 @@
+{
+    "group": "idioms_jest",
+    
+    "commands": [
+        {
+            "spoken": ["expect to be"],
+            "insert": "expect($_)$_.toBe($_)"
+        },
+        {
+            "spoken": ["expect to equal", "expect to equals"],
+            "insert": "expect($_)$_.toEqual($_)"
+        },
+        {
+            "spoken": ["expect to throw"],
+            "insert": "expect(() => {$u$_$d}.toThrow($_)$n$_"
+        }
+    ]
+}

@@ -34,6 +34,13 @@
     "contextChanges": [
         {
             "token": ">",
+            "searchBefore": "<\\s*[sS][cC][rR][iI][pP][tT][^>]*",
+            "action": "push",
+            "target": "typescript",
+            "style": "html_tag"
+        },
+        {
+            "token": ">",
             "action": "pop",
             "style": "html_tag"
         },

@@ -92,6 +92,13 @@
             "action": "pop",
             "requiresParent": "back_quoted_string_js",
             "style": "string_escape"
+        },
+        {
+            "token": "<",
+            "searchAfter": "\\s*/\\s*[sS][cC][rR][iI][pP][tT]",
+            "action": "pop",
+            "requiresParent": "html_tag",
+            "style": "html_attribute"
         }
     ],
     "rawInput": false,

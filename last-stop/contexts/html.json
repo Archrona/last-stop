@@ -15,6 +15,10 @@
             "pattern": "<!--"
         },
         {
+            "type": "html_character_reference",
+            "pattern": "&[^;]+;"
+        },
+        {
             "type": "html_tag",
             "pattern": "<|>"
         },

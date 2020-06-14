@@ -42,11 +42,16 @@ interface TokenContext {
  *      }
 */
 interface ContextChange {
-    token: string;
+    token?: string;
+    category?: string;
     action: string;
     target?: string;
     style: string;
     requiresParent?: string;
+    searchBefore?: string;
+    searchBeforeRe?: RegExp;
+    searchAfter?: string;
+    searchAfterRe?: RegExp;
 }
 
 /**
@@ -157,6 +162,15 @@ export class Languages {
         const result = new Map();
 
         for (const languageData of data) {
+            for (const cc of languageData.contextChanges) {
+                if (cc.searchBefore !== undefined) {
+                    cc.searchBeforeRe = new RegExp("(?:" + cc.searchBefore + ")$", "mu");
+                }
+                if (cc.searchAfter !== undefined) {
+                    cc.searchAfterRe = new RegExp("^(?:" + cc.searchAfter + ")", "mu");
+                }
+            }
+
             for (const tokenTypeInformation of languageData.tokens) {
                 tokenTypeInformation.re = new RegExp(tokenTypeInformation.pattern, 'my');
             }
@@ -253,7 +267,9 @@ export class Languages {
             }
 
             for (const change of lang.contextChanges) {
-                if (change.token !== foundText) {
+                if ((change.token !== undefined && change.token !== foundText)
+                    || (change.category !== undefined && change.category !== tokens[tokens.length - 1].type))
+                {
                     continue;
                 }
 
@@ -264,6 +280,26 @@ export class Languages {
                     continue;
                 }
                 
+                if (change.searchBeforeRe !== undefined) {
+                    const before = text.substring(0, i - tokens[tokens.length - 1].text.length);
+                    if (!change.searchBeforeRe.test(before)) {
+                        //console.log(`SB "${before}" with ${inspect(change.searchBeforeRe)} fails`);
+                        continue;
+                    } else {
+                        //console.log(`SB "${before}" with ${inspect(change.searchBeforeRe)} SUCCESS`);
+                    }
+                }
+
+                if (change.searchAfterRe !== undefined) {
+                    const after = text.substring(i);
+                    if (!change.searchAfterRe.test(after)) {
+                        //console.log(`SB "${before}" with ${inspect(change.searchBeforeRe)} fails`);
+                        continue;
+                    } else {
+                        //console.log(`SB "${before}" with ${inspect(change.searchBeforeRe)} SUCCESS`);
+                    }
+                }
+
                 if (change.style !== undefined) {
                     tokens[tokens.length - 1].type = change.style;
                 }

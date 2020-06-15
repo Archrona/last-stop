@@ -3,6 +3,10 @@
     
     "commands": [
         {
+            "spoken": ["jest test case", "just test case"],
+            "insert": "test($_, () => {$u$_$d});$n$_"
+        },
+        {
             "spoken": ["expect to be"],
             "insert": "expect($_)$_.toBe($_)"
         },
@@ -12,7 +16,7 @@
         },
         {
             "spoken": ["expect to throw"],
-            "insert": "expect(() => {$u$_$d}.toThrow($_)$n$_"
+            "insert": "expect(() => {$u$_$d}.toThrow($_)"
         }
     ]
 }

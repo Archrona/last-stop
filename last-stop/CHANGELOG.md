@@ -2,6 +2,18 @@
 # Version 0.4.0
 ## 6/27/2020
 
+
+
+
+- project sub
+
+- COMMENTS/DOCS
+- clipboard commands -> retroactive meaning change
+- clipboard $location commands
+- transitives (move, copy X to Y / above Y / below Y)
+- horizontal scroll
+- shift-cursor, ctrl-cursor
+
 - work out proper grammar for locations, implement
 - implement line N
 - implement go invalid line doesn't dump bullshit, just silently fails
@@ -30,12 +42,29 @@
 - (??) implement context override signals
 - (??) get a better token index display than the stupid dots
 - (??) ctrl-z from raw
-- (??) wordwrap rather than cut off long lines
+
+
+
+# Version 0.3.1
+## 6/19/2020
+
+- Markdown support
+- Latex embedding into Markdown
+
+- click map for events rather than raw row/col
+- word wrap rather than cut off long lines
+
+- documents sub
+- handle events aimed at non-document subs
+
+- subscription setting commands
+- window opening/closing commands
+- recycle window IDs
 
 
 
 # Version 0.3.0
-## 6/15/2020
+## 6/16/2020
 
 - (DONE)  Resize events don't rapid fire - 100 ms delay to cache events
 - (DONE)  multiple editor windows
@@ -50,31 +79,11 @@
 - (DONE)  right click xfer to speech, absorb insertion points
 - (DONE)  right click and DRAG to xfer selection to speech
 - (DONE)  highlights current line in document
-
-- HTML support
-- CSS support
-- CSS/JS embedding into HTML
-- Markdown support
-- Latex support
-- Latex embedding into Markdown
-- Document base context setting commands
-
-- subscription setting commands
-- project sub
-- documents sub
-- handle events aimed at non-document subs
-- html/css support
-- COMMENTS/DOCS
-- clipboard commands -> retroactive meaning change
-- clipboard $location commands
-- transitives (move, copy X to Y / above Y / below Y)
-- horizontal scroll
-- shift-cursor, ctrl-cursor
-
-
-
-
-
+- (DONE)  HTML support
+- (DONE)  CSS support
+- (DONE)  CSS/JS embedding into HTML
+- (DONE)  Latex support
+- (DONE)  Document base context setting commands
 
 
 # Version 0.2.0

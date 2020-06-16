@@ -1,7 +1,7 @@
 {
   "name": "last-stop",
   "productName": "last-stop",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Last Stop: Voice Coding",
   "main": ".webpack/main",
   "scripts": {

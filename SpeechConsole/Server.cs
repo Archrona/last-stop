@@ -15,7 +15,7 @@ namespace SpeechConsole
         public static Window mainWindow;
         public static bool finalText;
 
-        public static MouseEvent ongoingMouse = null;
+        //public static MouseEvent ongoingMouse = null;
 
         public class Result
         {
@@ -35,165 +35,179 @@ namespace SpeechConsole
             }
         }
 
-        public class KeyEvent
+        public class SetInputModeEvent
         {
-            public int window;
-            public bool down;
-            public string key;
-            public List<string> modifiers;
+            public string mode;
         }
 
-        public class MouseEvent
-        {
-            public int window;
-            public bool down;
-            public int row;
-            public int column;
-            public int button;
-        }
+        //public class KeyEvent
+        //{
+        //    public int window;
+        //    public bool down;
+        //    public string key;
+        //    public List<string> modifiers;
+        //}
 
-        public class MouseMoveEvent
-        {
-            public int window;
-            public int row;
-            public int column;
-            public List<int> buttons;
-        }
+        //public class MouseEvent
+        //{
+        //    public int window;
+        //    public bool down;
+        //    public int row;
+        //    public int column;
+        //    public int button;
+        //}
 
-        public class ScrollEvent
-        {
-            public int window;
-            public double x;
-            public double y;
-        }
+        //public class MouseMoveEvent
+        //{
+        //    public int window;
+        //    public int row;
+        //    public int column;
+        //    public List<int> buttons;
+        //}
+
+        //public class ScrollEvent
+        //{
+        //    public int window;
+        //    public double x;
+        //    public double y;
+        //}
 
 
-        public static object onKey(string json) {
-            try {
-                var e = JsonConvert.DeserializeObject<KeyEvent>(json);
-                Console.WriteLine("Key " + e.key + ", down " + e.down);
+        //public static object onKey(string json) {
+        //    try {
+        //        var e = JsonConvert.DeserializeObject<KeyEvent>(json);
+        //        Console.WriteLine("Key " + e.key + ", down " + e.down);
 
-                if (e.down) {
-                    mainWindow.Invoke((Action)delegate () {
-                        mainWindow.appendKey(e.window, e.key, e.modifiers);
-                    });
-                }
+        //        if (e.down) {
+        //            mainWindow.Invoke((Action)delegate () {
+        //                mainWindow.appendKey(e.window, e.key, e.modifiers);
+        //            });
+        //        }
 
-                return new Result(true);
-            } catch (Exception e) {
-                return new ErrorResult("could not parse body of key event");
-            }
-        }
+        //        return new Result(true);
+        //    } catch (Exception e) {
+        //        return new ErrorResult("could not parse body of key event");
+        //    }
+        //}
 
-        public static object onMouse(string json) {
-            try {
-                var e = JsonConvert.DeserializeObject<MouseEvent>(json);
-                Console.WriteLine("Mouse " + e.button + ", down " 
-                    + e.down + ", (" + e.row + ", " + e.column + ")");
+        //public static object onMouse(string json) {
+        //    try {
+        //        var e = JsonConvert.DeserializeObject<MouseEvent>(json);
+        //        Console.WriteLine("Mouse " + e.button + ", down " 
+        //            + e.down + ", (" + e.row + ", " + e.column + ")");
 
-                if (e.down) {
-                    if (ongoingMouse == null) {
-                        ongoingMouse = e;
-                    } else {
-                        // we just pressed two buttons simultaneously.
-                        // ignore this press
-                    }
-                }
-                else {
-                    if (ongoingMouse != null
-                        && e.button == ongoingMouse.button
-                        && e.window == ongoingMouse.window
-                        && (e.row != ongoingMouse.row || e.column != ongoingMouse.column)) 
-                    {
-                        mainWindow.Invoke((Action)delegate () {
-                            mainWindow.appendDrag(e.window, e.button,
-                                ongoingMouse.row, ongoingMouse.column, e.row, e.column, true);
-                        });
-                    }
-                    // only process mouse click for earliest button pressed if multiple
-                    // buttons are pressed at the same time
-                    else if (ongoingMouse.button == e.button) {
-                        mainWindow.Invoke((Action)delegate () {
-                            mainWindow.appendMouse(e.window, e.button, e.down, e.row, e.column);
-                        });
-                    }
+        //        if (e.down) {
+        //            if (ongoingMouse == null) {
+        //                ongoingMouse = e;
+        //            } else {
+        //                // we just pressed two buttons simultaneously.
+        //                // ignore this press
+        //            }
+        //        }
+        //        else {
+        //            if (ongoingMouse != null
+        //                && e.button == ongoingMouse.button
+        //                && e.window == ongoingMouse.window
+        //                && (e.row != ongoingMouse.row || e.column != ongoingMouse.column)) 
+        //            {
+        //                mainWindow.Invoke((Action)delegate () {
+        //                    mainWindow.appendDrag(e.window, e.button,
+        //                        ongoingMouse.row, ongoingMouse.column, e.row, e.column, true);
+        //                });
+        //            }
+        //            // only process mouse click for earliest button pressed if multiple
+        //            // buttons are pressed at the same time
+        //            else if (ongoingMouse.button == e.button) {
+        //                mainWindow.Invoke((Action)delegate () {
+        //                    mainWindow.appendMouse(e.window, e.button, e.down, e.row, e.column);
+        //                });
+        //            }
 
-                    ongoingMouse = null;
-                }
+        //            ongoingMouse = null;
+        //        }
 
-                return new Result(true);
-            }
-            catch (Exception e) {
-                return new ErrorResult("could not parse body of mouse event");
-            }
-        }
+        //        return new Result(true);
+        //    }
+        //    catch (Exception e) {
+        //        return new ErrorResult("could not parse body of mouse event");
+        //    }
+        //}
 
-        public static object onMouseMove(string json) {
-            try {
-                var e = JsonConvert.DeserializeObject<MouseMoveEvent>(json);
-                
-                // Ongoing drag
-                if (e.buttons.Count == 1 && ongoingMouse != null && e.buttons[0] == ongoingMouse.button) {
-                    mainWindow.Invoke((Action)delegate () {
-                        mainWindow.appendDrag(e.window, e.buttons[0],
-                            ongoingMouse.row, ongoingMouse.column, e.row, e.column, false);
-                    });
-                }
+        //public static object onMouseMove(string json) {
+        //    try {
+        //        var e = JsonConvert.DeserializeObject<MouseMoveEvent>(json);
 
-                return new Result(true);
-            }
-            catch (Exception e) {
-                return new ErrorResult("could not parse body of mouse event");
-            }
-        }
+        //        // Ongoing drag
+        //        if (e.buttons.Count == 1 && ongoingMouse != null && e.buttons[0] == ongoingMouse.button) {
+        //            mainWindow.Invoke((Action)delegate () {
+        //                mainWindow.appendDrag(e.window, e.buttons[0],
+        //                    ongoingMouse.row, ongoingMouse.column, e.row, e.column, false);
+        //            });
+        //        }
 
-        public static object onScroll(string json) {
-            try {
-                var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
-                Console.WriteLine("Scroll (" + e.x + ", " + e.y + ")");
+        //        return new Result(true);
+        //    }
+        //    catch (Exception e) {
+        //        return new ErrorResult("could not parse body of mouse event");
+        //    }
+        //}
 
-                mainWindow.Invoke((Action)delegate () {
-                    mainWindow.appendScroll(e.window, e.x, e.y);
-                });
+        //public static object onScroll(string json) {
+        //    try {
+        //        var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
+        //        Console.WriteLine("Scroll (" + e.x + ", " + e.y + ")");
 
-                return new Result(true);
-            }
-            catch (Exception e) {
-                return new ErrorResult("could not parse body of scroll event");
-            }
-        }
+        //        mainWindow.Invoke((Action)delegate () {
+        //            mainWindow.appendScroll(e.window, e.x, e.y);
+        //        });
 
-        public static object onActivate(string json) {
-            try {
-                var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
-                Console.WriteLine("Activate ()");
+        //        return new Result(true);
+        //    }
+        //    catch (Exception e) {
+        //        return new ErrorResult("could not parse body of scroll event");
+        //    }
+        //}
 
-                mainWindow.Invoke((Action)delegate () {
-                    mainWindow.appendActivate(e.window);
-                });
+        //public static object onActivate(string json) {
+        //    try {
+        //        var e = JsonConvert.DeserializeObject<ScrollEvent>(json);
+        //        Console.WriteLine("Activate ()");
 
-                return new Result(true);
-            }
-            catch (Exception e) {
-                return new ErrorResult("could not parse body of activate event");
-            }
-        }
+        //        mainWindow.Invoke((Action)delegate () {
+        //            mainWindow.appendActivate(e.window);
+        //        });
 
-        public static object onRequestCommit(string json) {
-            Console.WriteLine("RequestCommit ()");
+        //        return new Result(true);
+        //    }
+        //    catch (Exception e) {
+        //        return new ErrorResult("could not parse body of activate event");
+        //    }
+        //}
 
-            mainWindow.Invoke((Action)delegate () {
-                mainWindow.commitRequested();
-            });
+        //public static object onRequestCommit(string json) {
+        //    Console.WriteLine("RequestCommit ()");
 
-            return new Result(true);
-        }
+        //    mainWindow.Invoke((Action)delegate () {
+        //        mainWindow.commitRequested();
+        //    });
+
+        //    return new Result(true);
+        //}
 
         public static object onFocus(string json) {
             Console.WriteLine("Focus ()");
 
             mainWindow.Invoke((Action)delegate () {
                 mainWindow.focusRequested();
+            });
+
+            return new Result(true);
+        }
+
+        public static object onSetInputMode(string json) {
+            var e = JsonConvert.DeserializeObject<SetInputModeEvent>(json);
+            mainWindow.Invoke((Action)delegate () {
+                mainWindow.setInputMode(e.mode);
             });
 
             return new Result(true);
@@ -216,29 +230,33 @@ namespace SpeechConsole
             object resp = new ErrorResult("fell through");
 
             switch (path) {
-                case "/key":
-                    resp = onKey(body);
+                //case "/key":
+                //    resp = onKey(body);
+                //    break;
+
+                //case "/mouse":
+                //    resp = onMouse(body);
+                //    break;
+
+                //case "/mouseMove":
+                //    resp = onMouseMove(body);
+                //    break;
+
+                //case "/scroll":
+                //    resp = onScroll(body);
+                //    break;
+
+                //case "/activate":
+                //    resp = onActivate(body);
+                //    break;
+
+                case "/setInputMode":
+                    resp = onSetInputMode(body);
                     break;
 
-                case "/mouse":
-                    resp = onMouse(body);
-                    break;
-
-                case "/mouseMove":
-                    resp = onMouseMove(body);
-                    break;
-
-                case "/scroll":
-                    resp = onScroll(body);
-                    break;
-
-                case "/activate":
-                    resp = onActivate(body);
-                    break;
-
-                case "/requestCommit":
-                    resp = onRequestCommit(body);
-                    break;
+                //case "/requestCommit":
+                //    resp = onRequestCommit(body);
+                //    break;
 
                 case "/focus":
                     resp = onFocus(body);

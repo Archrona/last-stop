@@ -140,106 +140,111 @@ export class Window {
         this.doUpdate();
     }
 
-    onMouseDown(row: number, column: number, button: number) {
-        const nsElapsed = process.hrtime.bigint() - this.focusedAt;
-        if (nsElapsed < 50000000) {
-            this.rejectingMouseEvent = true;
-            return;  // reject clicks within 50 ms of focus
-        }
+    // onMouseDown(row: number, column: number, button: number) {
+    //     const nsElapsed = process.hrtime.bigint() - this.focusedAt;
+    //     if (nsElapsed < 50000000) {
+    //         this.rejectingMouseEvent = true;
+    //         return;  // reject clicks within 50 ms of focus
+    //     }
 
-        console.log(`Mouse DOWN: r${row}, c${column}, button${button}`);
+    //     console.log(`Mouse DOWN: r${row}, c${column}, button${button}`);
 
-        // this.app.consoleServer.postRequest("mouse", {
-        //     "window": this.id,
-        //     "down": true,
-        //     "row": row,
-        //     "column": column,
-        //     "button": button
-        // });
-    }  
+    //     if (this.app.controller.inputMode === "raw") {
+    //         const sub = this.app.model.subscriptions.getDetails(this.id);
+    //         console.log(sub);
+    //     } else {
 
-    onMouseUp(row: number, column: number, button: number) {
-        if (this.rejectingMouseEvent) {
-            this.rejectingMouseEvent = false;
-            return;
-        }
-
-        console.log(`  Mouse UP: r${row}, c${column}, button${button}`);
-
-        // this.app.consoleServer.postRequest("mouse", {
-        //     "window": this.id,
-        //     "down": false,
-        //     "row": row,
-        //     "column": column,
-        //     "button": button
-        // });
-    }
-
-    onMouseMove(row: number, column: number, buttons: Array<number>) {
-        if (this.rejectingMouseEvent) {
-            return;
-        }
+    //     }
         
-        console.log(`Mouse MOVE: r${row}, c${column}, button${inspect(buttons)}`);
+    // }  
 
-        // this.app.consoleServer.postRequest("mouseMove", {
-        //     "window": this.id,
-        //     "row": row,
-        //     "column": column,
-        //     "buttons": buttons
-        // });
-    }
+    // onMouseUp(row: number, column: number, button: number) {
+    //     if (this.rejectingMouseEvent) {
+    //         this.rejectingMouseEvent = false;
+    //         return;
+    //     }
 
-    onKeyDown(key: string, modifiers: Array<string>) {
-        if (this.view.app.handleGlobalHotkeys(this.id, key, modifiers)) {
-            return;
-        }
+    //     if (this.app.controller.inputMode === "raw") {
 
-        console.log(`  Key DOWN: k${key}, mod${inspect(modifiers)}`);
+    //     } else {
+    //         this.app.controller.setInputModeRaw();
+    //     }
+
+    //     console.log(`  Mouse UP: r${row}, c${column}, button${button}`);
+
+    //     // this.app.consoleServer.postRequest("mouse", {
+    //     //     "window": this.id,
+    //     //     "down": false,
+    //     //     "row": row,
+    //     //     "column": column,
+    //     //     "button": button
+    //     // });
+    // }
+
+    // onMouseMove(row: number, column: number, buttons: Array<number>) {
+    //     if (this.rejectingMouseEvent) {
+    //         return;
+    //     }
+        
+    //     //console.log(`Mouse MOVE: r${row}, c${column}, button${inspect(buttons)}`);
+
+    //     // this.app.consoleServer.postRequest("mouseMove", {
+    //     //     "window": this.id,
+    //     //     "row": row,
+    //     //     "column": column,
+    //     //     "buttons": buttons
+    //     // });
+    // }
+
+    // onKeyDown(key: string, modifiers: Array<string>) {
+    //     if (this.view.app.handleGlobalHotkeys(this.id, key, modifiers)) {
+    //         return;
+    //     }
+
+    //     console.log(`  Key DOWN: k${key}, mod${inspect(modifiers)}`);
          
-        // this.app.consoleServer.postRequest("key", {
-        //     "window": this.id,
-        //     "down": true,
-        //     "key": key,
-        //     "modifiers": modifiers
-        // });
-    }
+    //     // this.app.consoleServer.postRequest("key", {
+    //     //     "window": this.id,
+    //     //     "down": true,
+    //     //     "key": key,
+    //     //     "modifiers": modifiers
+    //     // });
+    // }
     
-    onKeyUp(key: string, modifiers: Array<string>) {
-        console.log(`    Key UP: k${key}, mod${inspect(modifiers)}`);
+    // onKeyUp(key: string, modifiers: Array<string>) {
+    //     console.log(`    Key UP: k${key}, mod${inspect(modifiers)}`);
          
-        // this.app.consoleServer.postRequest("key", {
-        //     "window": this.id,
-        //     "down": false,
-        //     "key": key,
-        //     "modifiers": modifiers
-        // });
-    }
+    //     // this.app.consoleServer.postRequest("key", {
+    //     //     "window": this.id,
+    //     //     "down": false,
+    //     //     "key": key,
+    //     //     "modifiers": modifiers
+    //     // });
+    // }
 
-    onScroll(x: number, y: number): void {
-        console.log(`    Scroll: x${x}, y${y}`);
+    // onScroll(x: number, y: number): void {
+    //     console.log(`    Scroll: x${x}, y${y}`);
 
-        // this.app.consoleServer.postRequest("scroll", {
-        //     "window": this.id,
-        //     "x": x,
-        //     "y": y
-        // });
-    }
+    //     // this.app.consoleServer.postRequest("scroll", {
+    //     //     "window": this.id,
+    //     //     "x": x,
+    //     //     "y": y
+    //     // });
+    // }
     
     onReady() {
         console.log("     Ready: win id " + this.id + " UwU OwO >w<");
 
         this.isReady = true;
-
         this.doUpdate();
     }
 
     onSetActive(): void {
         console.log(`    Active: win id ${this.id}`);
 
-        this.app.consoleServer.postRequest("activate", {
-            "window": this.id
-        });
+        // this.app.consoleServer.postRequest("activate", {
+        //     "window": this.id
+        // });
     }
 
     needsUpdate() {
@@ -267,7 +272,7 @@ export class Window {
 
             this.window.webContents.send("update", new RendererUpdate(
                 subName, text, zones, this.lines, this.columns,
-                context, this.getWindowAccent()
+                context, this.getWindowAccent(), this.app.controller.inputMode
             ));
         }
     }

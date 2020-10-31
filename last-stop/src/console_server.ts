@@ -52,7 +52,7 @@ export class ConsoleServer {
                 break;
 
             case "copyAndErase":
-                this.app.controller.onConsoleCopyAndErase();
+                //this.app.controller.onConsoleCopyAndErase();
                 break;
 
             // case "commitChanges":
@@ -61,6 +61,14 @@ export class ConsoleServer {
 
             case "reloadData":
                 this.app.controller.onReloadData();
+                break;
+
+            case "requestSpeechMode":
+                this.app.controller.onConsoleRequestSpeechMode();
+                break;
+
+            case "introduce":
+                this.app.controller.onConsoleIntroduce();
                 break;
 
             default:
@@ -102,7 +110,7 @@ export class ConsoleServer {
             this.nodeServer = null;
 
             setTimeout(() => { this.startServer(); }, SERVER_RESTART_DELAY);
-        })
+        });
     }
 
     postRequest(

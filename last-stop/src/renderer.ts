@@ -142,6 +142,9 @@ class Application {
         document.getElementById("context").innerText = this.context;
         
         document.getElementById("top").style.borderColor = update.modeAccent;
+        document.getElementById("top").style.backgroundColor = (
+            update.inputMode === "speech" ? "#115511" : "#222222"
+        );
         
         this.render();
     }

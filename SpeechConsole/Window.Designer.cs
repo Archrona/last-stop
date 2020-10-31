@@ -46,6 +46,7 @@
             this.input.Size = new System.Drawing.Size(1040, 138);
             this.input.TabIndex = 0;
             this.input.TextChanged += new System.EventHandler(this.input_TextChanged);
+            this.input.MouseUp += new System.Windows.Forms.MouseEventHandler(this.input_MouseUp);
             // 
             // textChangeMonitor
             // 
@@ -64,6 +65,7 @@
             this.Text = "Last Stop SC";
             this.Load += new System.EventHandler(this.Window_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Window_KeyDown);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.Window_MouseClick);
             this.ResumeLayout(false);
             this.PerformLayout();
 

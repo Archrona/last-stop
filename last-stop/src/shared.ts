@@ -224,7 +224,8 @@ export class RendererUpdate {
         public lines: number,
         public columns: number,
         public context: string,
-        public modeAccent: string
+        public modeAccent: string,
+        public inputMode: string     // "speech" or "raw"
     ) { }
 }
 

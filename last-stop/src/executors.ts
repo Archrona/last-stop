@@ -133,6 +133,7 @@ export const EXECUTORS = {
 
             const windowRow = args[3];
             const windowCol = args[4];
+
             if (model.documents.hasKey(sub.document)) {
                 const doc = model.documents.get(sub.document);
                 const view = doc.getView(sub.anchorIndex);

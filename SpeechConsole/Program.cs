@@ -19,20 +19,16 @@ namespace SpeechConsole
     {
         private static readonly HttpClient client = new HttpClient();
 
-        public static void transfer() {
-            onSpeech(Server.mainWindow.getText());
-        }
-
-        public static string ESCAPE_START = "▸";
-        public static string ESCAPE_END = "◂";
-        public static string ESCAPE_SPLIT = "‖";
-        public static string ESCAPE_SUBSPLIT = "′";
-        public static string ESCAPE_KEY = "κ";
-        public static string ESCAPE_MOUSE = "μ";
-        public static string ESCAPE_SCROLL = "σ";
-        public static string ESCAPE_DRAG = "δ";
-        public static string ESCAPE_ACTIVATE = "α";
-        public static string ESCAPE_COMMIT = "χ";
+        //public static string ESCAPE_START = "▸";
+        //public static string ESCAPE_END = "◂";
+        //public static string ESCAPE_SPLIT = "‖";
+        //public static string ESCAPE_SUBSPLIT = "′";
+        //public static string ESCAPE_KEY = "κ";
+        //public static string ESCAPE_MOUSE = "μ";
+        //public static string ESCAPE_SCROLL = "σ";
+        //public static string ESCAPE_DRAG = "δ";
+        //public static string ESCAPE_ACTIVATE = "α";
+        //public static string ESCAPE_COMMIT = "χ";
 
         public class Command
         {

@@ -25,6 +25,7 @@ namespace SpeechConsole
         private int ticksSinceChanged;
         private bool sendImmediateUpdate;
         private bool disableInputUpdates;
+        private string inputMode; // "raw" or "speech"
 
         public string getText() {
             return input.Text;
@@ -67,6 +68,14 @@ namespace SpeechConsole
             ticksSinceChanged = 0;
             sendImmediateUpdate = false;
             disableInputUpdates = false;
+
+            inputMode = "unknown";
+            input.Enabled = false;
+            input.BackColor = Color.FromArgb(128, 128, 128);
+
+            Program.sendMessage(new Program.Command("introduce"), (Task t) => {
+                Console.WriteLine("introduce: faulted = " + t.IsFaulted);
+            });
         }
 
         private void input_TextChanged(object sender, EventArgs e) {
@@ -76,7 +85,9 @@ namespace SpeechConsole
             }
 
             if (sendImmediateUpdate) {
-                Program.onSpeech(input.Text);
+                if (inputMode == "speech") {
+                    Program.onSpeech(input.Text);
+                }
                 sendImmediateUpdate = false;
                 textChanged = false;
             } else {
@@ -92,11 +103,11 @@ namespace SpeechConsole
 
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.S && e.Control) {
-                commitRequested();
+                //commitRequested();
             }
            
             if (e.KeyCode == Keys.D0 && e.Control) {
-                Program.onReloadData();
+                //Program.onReloadData();
             }
         }
 
@@ -104,144 +115,61 @@ namespace SpeechConsole
             if (textChanged) {
                 ticksSinceChanged++;
                 if (ticksSinceChanged >= 2) {
-                    Program.onSpeech(input.Text);
+                    if (inputMode == "speech") {
+                        Program.onSpeech(input.Text);
+                    }
                     textChanged = false;
                     ticksSinceChanged = 0;
                 }
             } else {
                 ticksSinceChanged = 0;
             }
+        }
+
+
+        //public void commitRequested() {
+        //    string text = input.Text;
+        //    text += " " + Program.ESCAPE_START + Program.ESCAPE_COMMIT + "0" + Program.ESCAPE_END;
+
+        //    disableInputUpdates = true;
+        //    Program.sendMessage(new Program.SpeechMessage(text), (Task t) => {
+        //        Console.WriteLine("onSpeech: faulted = " + t.IsFaulted);
+        //        disableInputUpdates = false;
+        //    });
+
+        //    input.Text = "";
+        //}
+
+        public void setInputMode(string mode) {
+
+            if (mode == "raw" && this.inputMode != "raw") {
+                this.input.Text = "";
+                this.input.Enabled = false;
+                this.input.BackColor = Color.FromArgb(50, 50, 50);
+                this.inputMode = "raw";
+            } 
+            else if (mode == "speech" && this.inputMode != "speech") {
+                this.input.Text = "";
+                this.input.Enabled = true;
+                this.input.BackColor = Color.FromArgb(24, 24, 24);
+                this.inputMode = "speech";
+
+                input.Focus();
+            }
+        }
+
+        private void input_MouseUp(object sender, MouseEventArgs e) {
             
         }
 
-        public void appendSpecial(string type, int window, string special) {
-            sendImmediateUpdate = true;
+        private void Window_MouseClick(object sender, MouseEventArgs e) {
+            if (inputMode == "raw") {
+                Program.sendMessage(new Program.Command("requestSpeechMode"), (Task t) => {
+                    Console.WriteLine("requestSpeechMode: faulted = " + t.IsFaulted);
+                });
 
-            var text = input.Text;
 
-            int i = text.Length - 1;
-            int first = 0, last = 0;
-
-            while (i > 0) {
-                if (text[i] == ' ') {
-                    i--;
-                } else if (text[i] == Program.ESCAPE_END[0]) {
-                    last = i;
-                    first = last - 1;
-
-                    while (first >= 0 && text[first] != Program.ESCAPE_START[0])
-                        first--;
-
-                    if (first < 0)
-                        break;
-
-                    string body = text.Substring(first + 1, last - first - 1);
-                    if (body[0] != type[0])
-                        break;
-
-                    int prime = body.IndexOf(Program.ESCAPE_SUBSPLIT[0], 0);
-                    string win = body.Substring(1, prime - 1);
-                    int winInt = int.Parse(win);
-                    if (winInt != window)
-                        break;
-
-                    if (type == Program.ESCAPE_SCROLL) {
-                        string[] parts = body.Split(Program.ESCAPE_SUBSPLIT[0]);
-                        string[] next = special.Split(Program.ESCAPE_SUBSPLIT[0]);
-                        int x = int.Parse(parts[1]) + int.Parse(next[0]);
-                        int y = int.Parse(parts[2]) + int.Parse(next[1]);
-
-                        input.Text = text.Substring(0, first + 1) +
-                            parts[0] + Program.ESCAPE_SUBSPLIT +
-                            x + Program.ESCAPE_SUBSPLIT +
-                            y + Program.ESCAPE_END;
-                    }
-                    else if (type == Program.ESCAPE_DRAG) {
-                        string[] parts = body.Split(Program.ESCAPE_SUBSPLIT[0]);
-                        input.Text = text.Substring(0, first + 1) +
-                            parts[0] + Program.ESCAPE_SUBSPLIT +
-                            special + Program.ESCAPE_END;
-                    }
-                    else {
-                        input.Text = text.Substring(0, last)
-                            + Program.ESCAPE_SUBSPLIT + special + Program.ESCAPE_END;
-                    }
-
-                    input.SelectionStart = input.Text.Length;
-                    input.SelectionLength = 0;
-                    return;
-                } else {
-                    break;
-                }
             }
-
-            appendNewSpecial(type, window, special);
-        }
-
-        public void appendNewSpecial(string type, int window, string special = "") {
-            if (input.Text.Length > 0 && input.Text[input.Text.Length - 1] != ' ') {
-                input.Text += " ";
-            }
-
-            input.Text += Program.ESCAPE_START + type + window +
-                (special.Length == 0 ? "" : Program.ESCAPE_SUBSPLIT + special) + 
-                Program.ESCAPE_END;
-
-            input.SelectionStart = input.Text.Length;
-            input.SelectionLength = 0;
-        }
-
-        
-
-        public void appendKey(int window, string k, List<string> modifiers) {
-            if (modifiers.Contains("meta")) k = "W-" + k; 
-            if (modifiers.Contains("alt")) k = "M-" + k;
-            if (modifiers.Contains("control")) k = "C-" + k;
-
-            appendSpecial(Program.ESCAPE_KEY, window, k);
-        }
-
-        public void appendMouse(int window, int button, bool down, int row, int column) {
-            appendSpecial(Program.ESCAPE_MOUSE, window,
-                button
-                + Program.ESCAPE_SUBSPLIT + row
-                + Program.ESCAPE_SUBSPLIT + column
-            );
-        }
-
-        public void appendScroll(int window, double x, double y) {
-            appendSpecial(Program.ESCAPE_SCROLL, window,
-                ((int)(x / 2.0))
-                + Program.ESCAPE_SUBSPLIT + ((int)(y / 2.0))
-            );
-        }
-
-        public void appendDrag(int window, int button, int row1, int column1, int row2, int column2, bool finished) {
-            appendSpecial(Program.ESCAPE_DRAG, window,
-                button
-                + Program.ESCAPE_SUBSPLIT + row1
-                + Program.ESCAPE_SUBSPLIT + column1
-                + Program.ESCAPE_SUBSPLIT + row2
-                + Program.ESCAPE_SUBSPLIT + column2
-                + Program.ESCAPE_SUBSPLIT + (finished ? "1" : "0")
-            );
-        }
-        
-        public void appendActivate(int window) {
-            appendNewSpecial(Program.ESCAPE_ACTIVATE, window);
-        }
-
-        public void commitRequested() {
-            string text = input.Text;
-            text += " " + Program.ESCAPE_START + Program.ESCAPE_COMMIT + "0" + Program.ESCAPE_END;
-
-            disableInputUpdates = true;
-            Program.sendMessage(new Program.SpeechMessage(text), (Task t) => {
-                Console.WriteLine("onSpeech: faulted = " + t.IsFaulted);
-                disableInputUpdates = false;
-            });
-
-            input.Text = "";
         }
     }
 }

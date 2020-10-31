@@ -3,7 +3,7 @@
 
 import './index.css';
 import { ipcRenderer } from 'electron';
-import { DrawableText } from "./shared";
+import { DrawableText, ClickZone, RendererUpdate } from "./shared";
 
 class Application {
     id: number;
@@ -19,7 +19,10 @@ class Application {
     charHeight: number;
     lineHeight: number;
     margin: number;
+
     text: Array<DrawableText>;
+    zones: Array<ClickZone>;
+
     isLoaded: boolean;
     context: string;
 
@@ -42,6 +45,9 @@ class Application {
         this.margin = 20;
         this.resizeTimeout = 0;
         this.context = "";
+
+        this.text = [];
+        this.zones = [];
 
         this.isLoaded = false;
         // this.hasFocus = false;
@@ -111,31 +117,32 @@ class Application {
         });
         
         ipcRenderer.on("update", (event, data) => {
-            const subscription = data.subscription;
-            const text = data.text as Array<DrawableText>;
-            const expectedLines = data.lines;
-            const expectedColumns = data.columns;
-            const accentColor = data.modeAccent as string;
-            
-            if (expectedLines !== this.lineCount || expectedColumns !== this.columnCount) {
+            const update = data as RendererUpdate;
+
+            if (update.lines !== this.lineCount || update.columns !== this.columnCount) {
                 this.sendResizeMessage();
             }
             else {
-                this.onUpdate(subscription, text, accentColor, data);
+                this.onUpdate(update);
             }
+
         });
     }
 
-    onUpdate(subscription: string, text: Array<DrawableText>, accentColor: string, data: any) {
-        console.log("update: " + subscription + ", " + text.length + " DrawableText objects");
-        this.text = text;
-        this.subscription = subscription;
-        this.context = data.context as string;
+    onUpdate(update: RendererUpdate): void {
+        console.log(update);
+        
+        this.text = update.text;
+        this.zones = update.zones;
+        
+        this.subscription = update.subscription;
         document.getElementById("subscription").innerText = this.subscription;
-        document.getElementById("top").style.borderColor = accentColor;
+        
+        this.context = update.context;
         document.getElementById("context").innerText = this.context;
         
- 
+        document.getElementById("top").style.borderColor = update.modeAccent;
+        
         this.render();
     }
 

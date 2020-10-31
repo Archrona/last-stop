@@ -2,11 +2,12 @@
 //   Windows and the overall View.
 
 import { BrowserWindow } from 'electron';
-import { getRGB, DrawableText } from "./shared";
+import { getRGB, DrawableText, RendererUpdate } from "./shared";
 import { Main } from "./main";
 import { renderSubscription } from "./subscription";
 import { inspect } from "util";
 import { DocumentSubscription } from './model';
+import { SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY } from './console_server';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
@@ -99,6 +100,7 @@ export class Window {
                 nodeIntegration: true
             }
         });
+
         this.window.on("close", (event) => {
             console.log("Window id " + this.id + " closed!");
             view.windowClosed(this.id);
@@ -145,13 +147,15 @@ export class Window {
             return;  // reject clicks within 50 ms of focus
         }
 
-        this.app.consoleServer.postRequest("mouse", {
-            "window": this.id,
-            "down": true,
-            "row": row,
-            "column": column,
-            "button": button
-        });
+        console.log(`Mouse DOWN: r${row}, c${column}, button${button}`);
+
+        // this.app.consoleServer.postRequest("mouse", {
+        //     "window": this.id,
+        //     "down": true,
+        //     "row": row,
+        //     "column": column,
+        //     "button": button
+        // });
     }  
 
     onMouseUp(row: number, column: number, button: number) {
@@ -160,13 +164,15 @@ export class Window {
             return;
         }
 
-        this.app.consoleServer.postRequest("mouse", {
-            "window": this.id,
-            "down": false,
-            "row": row,
-            "column": column,
-            "button": button
-        });
+        console.log(`  Mouse UP: r${row}, c${column}, button${button}`);
+
+        // this.app.consoleServer.postRequest("mouse", {
+        //     "window": this.id,
+        //     "down": false,
+        //     "row": row,
+        //     "column": column,
+        //     "button": button
+        // });
     }
 
     onMouseMove(row: number, column: number, buttons: Array<number>) {
@@ -174,53 +180,63 @@ export class Window {
             return;
         }
         
-        //console.log(`move ${row}, ${column}, buts ${inspect(buttons)}`);
-        this.app.consoleServer.postRequest("mouseMove", {
-            "window": this.id,
-            "row": row,
-            "column": column,
-            "buttons": buttons
-        });
+        console.log(`Mouse MOVE: r${row}, c${column}, button${inspect(buttons)}`);
+
+        // this.app.consoleServer.postRequest("mouseMove", {
+        //     "window": this.id,
+        //     "row": row,
+        //     "column": column,
+        //     "buttons": buttons
+        // });
     }
 
     onKeyDown(key: string, modifiers: Array<string>) {
         if (this.view.app.handleGlobalHotkeys(this.id, key, modifiers)) {
             return;
         }
+
+        console.log(`  Key DOWN: k${key}, mod${inspect(modifiers)}`);
          
-        this.app.consoleServer.postRequest("key", {
-            "window": this.id,
-            "down": true,
-            "key": key,
-            "modifiers": modifiers
-        });
+        // this.app.consoleServer.postRequest("key", {
+        //     "window": this.id,
+        //     "down": true,
+        //     "key": key,
+        //     "modifiers": modifiers
+        // });
     }
     
     onKeyUp(key: string, modifiers: Array<string>) {
-        this.app.consoleServer.postRequest("key", {
-            "window": this.id,
-            "down": false,
-            "key": key,
-            "modifiers": modifiers
-        });
+        console.log(`    Key UP: k${key}, mod${inspect(modifiers)}`);
+         
+        // this.app.consoleServer.postRequest("key", {
+        //     "window": this.id,
+        //     "down": false,
+        //     "key": key,
+        //     "modifiers": modifiers
+        // });
     }
 
     onScroll(x: number, y: number): void {
-        this.app.consoleServer.postRequest("scroll", {
-            "window": this.id,
-            "x": x,
-            "y": y
-        });
+        console.log(`    Scroll: x${x}, y${y}`);
+
+        // this.app.consoleServer.postRequest("scroll", {
+        //     "window": this.id,
+        //     "x": x,
+        //     "y": y
+        // });
     }
     
     onReady() {
-        console.log("Window id " + this.id + " is ready UwU OwO >w<");
+        console.log("     Ready: win id " + this.id + " UwU OwO >w<");
+
         this.isReady = true;
 
         this.doUpdate();
     }
 
     onSetActive(): void {
+        console.log(`    Active: win id ${this.id}`);
+
         this.app.consoleServer.postRequest("activate", {
             "window": this.id
         });
@@ -246,17 +262,13 @@ export class Window {
                 context = doc.getCursorContext(sub.anchorIndex, this.app.languages);
             }
 
-            const text = renderSubscription(
+            const [text, zones] = renderSubscription(
                 sub, this.topRowNumber, this.lines, this.columns, this.view.app);
 
-            this.window.webContents.send("update", {
-                subscription: subName,
-                text: text,
-                lines: this.lines,
-                columns: this.columns,
-                context: context,
-                modeAccent: this.getWindowAccent()  
-            });
+            this.window.webContents.send("update", new RendererUpdate(
+                subName, text, zones, this.lines, this.columns,
+                context, this.getWindowAccent()
+            ));
         }
     }
 
@@ -282,7 +294,7 @@ export class View {
         this.createWindow();
     }
 
-    getColor(name: string) {
+    getColor(name: string): string {
         const color = THEME[name];
         if (color === undefined) {
             return THEME["general"];

@@ -2,7 +2,7 @@
 //   Renders subscriptions from the store into DrawableText.
 
 import { Main } from "./main";
-import { Position, DrawableText, splitIntoLines } from "./shared";
+import { Position, DrawableText, splitIntoLines, ClickZone } from "./shared";
 import { Anchor, Subscription, DocumentNavigator, DocumentSubscription, NotFoundSubscription } from "./model";
 import { TokenizeResult } from "./language";
 
@@ -163,24 +163,33 @@ function calculateRightMargin(row: number): number {
     return Math.floor(Math.log(row) / Math.log(10) + 1);
 }
 
-function renderDocument(sub: DocumentSubscription, app: Main, rows: number, columns: number): Array<DrawableText>
+function renderDocument(sub: DocumentSubscription, app: Main, rows: number,
+    columns: number): [Array<DrawableText>, Array<ClickZone>]
 {
     const doc = app.model.documents.get(sub.document);
     const anchorIndex = sub.anchorIndex;
     const view = doc.getView(anchorIndex);
     const rightMargin = calculateRightMargin(view.row);
 
-    const result = [];
     const lines = doc.getLineCount();
     const selectionLeft = doc.getSelectionStart(anchorIndex);
     const selectionRight = doc.getSelectionEnd(anchorIndex);
 
     const activeLine = (selectionLeft.compareTo(selectionRight) === 0 ? selectionLeft.row : -1);
+    
+    const result = [];
+    const zones = [];
 
     let longLineIndicator = false;
 
     for (let r = 0; r < rows; r++) {
         const lineIndex = view.row + r;
+
+        zones.push(new ClickZone(
+            r, LEFT_MARGIN_COLUMNS,
+            (columns - rightMargin) - LEFT_MARGIN_COLUMNS, 1,
+            ["doc", sub.document, lineIndex.toString(), view.column.toString(), "$r", "$c"]
+        ));
 
         // Mark active line with background color
         if (activeLine !== -1 && activeLine == lineIndex) {
@@ -206,8 +215,6 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
             ));
         }
 
-        
-
         renderDocumentSelection(
             selectionLeft, selectionRight,
             lineIndex, result, view, columns, app, r);
@@ -229,16 +236,20 @@ function renderDocument(sub: DocumentSubscription, app: Main, rows: number, colu
         }
     }
 
-    return result;
+    return [result, zones];
 }
 
-export function renderSubscription(sub: Subscription, topRow: number, rows: number, columns: number, app: Main): Array<DrawableText>
+export function renderSubscription(sub: Subscription, topRow: number, rows: number, 
+    columns: number, app: Main): [Array<DrawableText>, Array<ClickZone>]
 {
     let drawable = renderMargin(topRow, rows, app);
+    let zones = [];
 
     try {
         if (sub instanceof DocumentSubscription) {
-            drawable = drawable.concat(renderDocument(sub, app, rows, columns));
+            let [d, z] = renderDocument(sub, app, rows, columns)
+            drawable = drawable.concat(d);
+            zones = zones.concat(z);
         } else if (sub instanceof NotFoundSubscription) {
             drawable = drawable.concat(renderError("Subscription not found for this window", app));
         } else {
@@ -249,5 +260,5 @@ export function renderSubscription(sub: Subscription, topRow: number, rows: numb
         console.log(e);
     }
 
-    return drawable;
+    return [drawable, zones];
 }

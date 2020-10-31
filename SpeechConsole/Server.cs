@@ -266,10 +266,10 @@ namespace SpeechConsole
             finalText = false;
 
             listener = new HttpListener();
-            listener.Prefixes.Add("http://localhost:5001/");
+            listener.Prefixes.Add("http://localhost:6001/");
             listener.Start();
 
-            Console.WriteLine("Listening on 5001...");
+            Console.WriteLine("Listening on 6001...");
 
             Task.Factory.StartNew(() => {
                 while (serveOneRequest()) {

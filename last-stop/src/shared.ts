@@ -197,6 +197,37 @@ export class DrawableText {
     }
 }
 
+export class ClickZone {
+    row: number;
+    column: number;
+    width: number;
+    height: number;
+    
+    commandWords: Array<string>;
+    
+    constructor(row: number, column: number, width: number, height: number,
+        commandWords: Array<string>)
+    {
+        this.row = row;
+        this.column = column;
+        this.width = width;
+        this.height = height;
+        this.commandWords = commandWords.slice();
+    }
+}
+
+export class RendererUpdate {
+    constructor(
+        public subscription: string,
+        public text: Array<DrawableText>,
+        public zones: Array<ClickZone>,
+        public lines: number,
+        public columns: number,
+        public context: string,
+        public modeAccent: string
+    ) { }
+}
+
 export class IndentationPolicy {
     
     useSpaces: boolean;

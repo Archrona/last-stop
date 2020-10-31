@@ -1,6 +1,6 @@
 // console_server.ts
 //   Maintains and talks to the speech console, an external C# process.
-//   Listens for JSON over HTTP on port 5000 (us) and port 5001 (the console).
+//   Listens for JSON over HTTP.
 
 import express, { Express } from 'express';
 
@@ -10,8 +10,8 @@ import { createServer, Server } from 'http';
 import axios, { AxiosResponse } from 'axios';
 import { inspect } from "util";
 
-const PORT = 5000;
-const CONSOLE_PORT = 5001;
+const PORT = 6000;
+const CONSOLE_PORT = 6001;
 export const SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY = 200;
 const SERVER_RESTART_DELAY = 200;
 const CONSOLE_URI = `http://localhost:${CONSOLE_PORT}/`

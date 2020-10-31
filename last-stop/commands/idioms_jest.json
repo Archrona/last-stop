@@ -16,7 +16,7 @@
         },
         {
             "spoken": ["expect to throw"],
-            "insert": "expect(() => {$u$_$d}.toThrow($_)"
+            "insert": "expect(() => {$u$_$d}).toThrow($_)"
         }
     ]
 }

@@ -1,0 +1,162 @@
+{
+    "group": "op_python",
+    
+    "commands": [
+        {
+            "spoken": ["is", "our", "are", "equal", "be"],
+            "insert": "="
+        },
+        {
+            "spoken": ["is expression", "our expression", "are expression", "equal expression"],
+            "insert": ":="
+        },
+        {
+            "spoken": ["colon", ":"],
+            "insert": "$g:"
+        },
+        {
+            "spoken": [".", "dot"],
+            "insert": "."
+        },
+        {
+            "spoken": ["spread"],
+            "insert": "..."
+        },
+        {
+            "spoken": ["arrow", "aero", "maps to"],
+            "insert": "->"
+        },
+        {
+            "spoken": ["below", "is below", "less than", "is less than", "smaller than", "is smaller than"],
+            "insert": "<"
+        },
+        {
+            "spoken": ["above", "is above", "greater than", "is greater than", "is bigger than", "bigger than"],
+            "insert": ">"
+        },
+        {
+            "spoken": [
+                "at most", "is at most",
+                "less than or equal to", "is less than or equal to",
+                "smaller than or equal to", "is smaller than or equal to"
+            ],
+            "insert": "<="
+        },
+        {
+            "spoken": [
+                "at least", "is at least",
+                "greater than or equal to", "is greater than or equal to",
+                "bigger than or equal to", "is bigger than or equal to"
+            ],
+            "insert": ">="
+        },
+        {
+            "spoken": ["plus"],
+            "insert": "+"
+        },
+        {
+            "spoken": ["minas", "minus"],
+            "insert": "-"
+        },
+        {
+            "spoken": ["times"],
+            "insert": "*"
+        },
+        {
+            "spoken": ["divide", "divided by"],
+            "insert": "/"
+        },
+        {
+            "spoken": ["integer divide", "integer divided by"],
+            "insert": "//"
+        },
+        {
+            "spoken": ["modulo", "remainder"],
+            "insert": "%"
+        },
+        {
+            "spoken": ["exponent"],
+            "insert": "**"
+        },
+        {
+            "spoken": ["matrix multiply"],
+            "insert": "@"
+        },
+        {
+            "spoken": ["decorator"],
+            "insert": "@$g"
+        },
+        {
+            "spoken": ["shift left"],
+            "insert": "<<"
+        },
+        {
+            "spoken": ["shift right", "shift write"],
+            "insert": ">>"
+        },
+        {
+            "spoken": ["plus equals"],
+            "insert": "+="
+        },
+        {
+            "spoken": ["minas equals", "minus equals"],
+            "insert": "-="
+        },
+        {
+            "spoken": ["times equals"],
+            "insert": "*="
+        },
+        {
+            "spoken": ["divide equals", "divided by equals"],
+            "insert": "/="
+        },
+        {
+            "spoken": ["modulo equals", "remainder equals"],
+            "insert": "%="
+        },
+        {
+            "spoken": ["exponent equals"],
+            "insert": "**="
+        },
+        {
+            "spoken": ["shift left equals"],
+            "insert": "<<="
+        },
+        {
+            "spoken": ["shift right equals", "shift write equals"],
+            "insert": ">>="
+        },
+        {
+            "spoken": ["logical and", "land"],
+            "insert": "and"
+        },
+        {
+            "spoken": ["logical or", "logical ore", "lore"],
+            "insert": "or"
+        },
+        {
+            "spoken": ["logical not", "not"],
+            "insert": "not"
+        },
+        {
+            "spoken": ["bitwise and", "band"],
+            "insert": "&"
+        },
+        {
+            "spoken": ["bitwise or", "bore", "boar"],
+            "insert": "|"
+        },
+        {
+            "spoken": ["bitwise not"],
+            "insert": "~"
+        },
+        {
+            "spoken": [
+                "exclusive or", "exclusive ore",
+                "bitwise exclusive or",
+                "xor", "bitwise xor"
+            ],
+            "insert": "^"
+        }
+    ]
+}

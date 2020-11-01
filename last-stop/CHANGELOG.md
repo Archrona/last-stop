@@ -1,9 +1,6 @@
 
-# Version 0.4.0
-## 6/27/2020
-
-
-
+# Version FUTURE
+## ???
 
 - project sub
 
@@ -43,11 +40,6 @@
 - (??) get a better token index display than the stupid dots
 - (??) ctrl-z from raw
 
-
-
-# Version 0.3.1
-## 6/19/2020
-
 - Markdown support
 - Latex embedding into Markdown
 
@@ -61,6 +53,32 @@
 - window opening/closing commands
 - recycle window IDs
 
+
+
+# Version 0.4.1
+## 11/8/2020
+
+- (DONE)  Python support
+- (DONE)  Custom app menu
+- (DONE)  Added "reload commands" to menu
+- C# support
+- dedent command for python
+
+
+
+# Version 0.4.0
+## 10/31/2020
+
+- (DONE)  separated input stream into two modes: raw input (keyboard/mouse) and speech
+- (DONE)  editor and console are always in only one mode
+- (DONE)  moving between them in UI triggers mode change
+- (DONE)  moving raw -> speech enables console UI
+- (DONE)  moving speech -> raw commits
+- (DONE)  "please" commits
+- (DONE)  deferred commands (copy, cut, etc.) won't run until commit (nor will subsequent cmds)
+
+
+---
 
 
 # Version 0.3.0

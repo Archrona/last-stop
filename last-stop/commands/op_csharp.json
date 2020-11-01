@@ -1,0 +1,18 @@
+{
+    "group": "op_csharp",
+    
+    "commands": [
+        {
+            "spoken": ["scope"],
+            "insert": "::"
+        },
+        {
+            "spoken": ["extends"],
+            "insert": ":"
+        },
+        {
+            "spoken": ["with"],
+            "insert": "$g<$_>$_"
+        }
+    ]
+}

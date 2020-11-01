@@ -1,0 +1,129 @@
+{
+    "name": "python",
+    "extensions": ["py"],
+    "tokens": [
+        {
+            "type": "white",
+            "pattern": "[ \\t]+"
+        },
+        {
+            "type": "newline",
+            "pattern": "\\r|\\n|\\r\\n" 
+        },
+        {
+            "type": "accent_keyword",
+            "pattern": "(?:assert|async|await|break|class|continue|def|del|elif|else|finally|for|from|global|if|import|nonlocal|pass|raise|return|try|while|yield)(?=[^a-zA-Z0-9])"
+        },
+        {
+            "type": "keyword",
+            "pattern": "(?:False|None|True|and|as|except|in|is|lambda|not|or|with)(?=[^a-zA-Z0-9])"
+        },
+        {
+            "type": "type_identifier",
+            "pattern": "[A-Z][a-zA-Z0-9_]*"
+        },            
+        {
+            "type": "identifier",
+            "pattern": "[a-z_][a-zA-Z0-9_]*" 
+        },
+        {
+            "type": "regular_expression",
+            "pattern": "\\/(?!\\*)(?:[^\\[/\\\\]|\\\\.|\\[[^\\]]*\\])*\\/"
+        },
+        {
+            "type": "number",
+            "pattern": "([0-9]+(\\.[0-9]*)?)|(\\.[0-9]+)"
+        },
+        {
+            "type": "punctuation",
+            "pattern": "\\*\\*=|<<=|>>=|\\^=|\\|=|\\&=|\\@=|\\%=|\\/\\/=|\\*=|-=|\\+=|->|==|\\!=|>=|<=|>>|<<|\\/\\/|\\*\\*|[,:.;@=+\\-*/%&|^~<>]"
+        },
+        {
+            "type": "grouping",
+            "pattern": "[(){}\\[\\]]"
+        }
+    ],
+    "commands": [
+        "universal",
+        "numbers",
+        "eol_python",
+        "eq_usual",
+        "grouping_python",
+        "op_python",
+        "struct_python",
+        "comment_python"
+    ],
+    "contextChanges": [
+        {
+            "token": "\"",
+            "action": "push",
+            "target": "double_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "'",
+            "action": "push",
+            "target": "single_quoted_string",
+            "style": "string_delimiter"
+        },
+        {
+            "token": "#",
+            "action": "push",
+            "target": "comment_single_line",
+            "style": "comment"
+        }
+    ],
+    "rawInput": false,
+    "defaultCasing": "snake",
+    "indentation": [
+        {
+            "what": "indent at colon",
+            "previous": ":\\s*$",
+            "rule": "indent"
+        }
+    ],
+    "triggerAutomaticIndentation": [ ],
+    "spacing": [
+        {
+            "what": "adjacent whitespace, period, or glue",
+            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d",
+            "rule": false
+        },
+        {
+            "what": "start of line",
+            "before": "^",
+            "rule": false
+        },
+        {
+            "what": "end of line",
+            "after": "$",
+            "rule": false
+        },
+        {
+            "what": "before closing punctuation",
+            "after": "[)\\]};:},]|\\+\\+|--",
+            "rule": false
+        },
+        {
+            "what": "after opening punctuation",
+            "before": "[(\\[{$#@~\\\\!]",
+            "rule": false
+        },
+        {
+            "what": "before index or call",
+            "before": "[a-zA-Z0-9_\\)\\]\\.](?<!and|as|async|await|del|elif|else|except|for|from|global|if|import|in|is|lambda|nonlocal|not|or|raise|return|try|while|with|yield)",
+            "after": "\\(|\\[",
+            "rule": false
+        },
+        {
+            "what": "negative numbers",
+            "before": "(?:^|[~!@#$%^&*([{:'\"<,.\\/?+\\-|=])\\s*-",
+            "after": "[0-9a-zA-Z_]",
+            "rule": false
+        },
+        {
+            "what": "default fallthrough",
+            "rule": true
+        }
+    ]
+}

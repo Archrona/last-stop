@@ -1,7 +1,7 @@
 import { Speech } from "./speech";
 import { Main } from "./main";
 import { replaceAll, INSERTION_POINT, Position } from "./shared";
-import { clipboard } from "electron";
+import { clipboard, Menu } from "electron";
 import { SPEECH_CONSOLE_CLOSED_RESPAWN_DELAY } from "./console_server";
 import { inspect } from "util";
 import { DocumentSubscription, Model } from "./model";
@@ -30,9 +30,41 @@ export class Controller {
         this.app = app;
         this.lastSpeech = null;
         this.pendingMouse = null;
+
+        this.initializeMenu();
         
         console.log("Controller: Initial mode RAW.");
         this.inputMode = "raw";
+    }
+
+    initializeMenu() {
+        Menu.setApplicationMenu(Menu.buildFromTemplate([
+            {
+                label: 'File',
+                submenu: [
+                    {
+                        label: 'Reload commands/langauges',
+                        click: () => {
+                            this.onReloadData();
+                        }
+                    }
+                ]
+            },
+            {
+                label: 'View',
+                submenu: [
+                    { role: 'reload' },
+                    { role: 'forceReload' },
+                    { role: 'toggleDevTools' },
+                    { type: 'separator' },
+                    { role: 'resetZoom' },
+                    { role: 'zoomIn' },
+                    { role: 'zoomOut' },
+                    { type: 'separator' },
+                    { role: 'togglefullscreen' }
+                ]
+            }
+        ]));
     }
 
     setInputModeSpeech() {

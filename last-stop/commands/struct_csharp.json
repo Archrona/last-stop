@@ -1,0 +1,150 @@
+{
+    "group": "struct_csharp",
+    
+    "commands": [
+        {
+            "spoken": ["abstract"],
+            "insert": "abstract"
+        },
+        {
+            "spoken": ["as"],
+            "insert": "as"
+        },
+        {
+            "spoken": ["bullion", "bouillon", "boolean", "bool"],
+            "insert": "bool"
+        },
+        {
+            "spoken": ["bite", "byte"],
+            "insert": "byte"
+        },
+        {
+            "spoken": ["char"],
+            "insert": "char"
+        },
+        {
+            "spoken": ["class"],
+            "insert": "class"
+        },
+        {
+            "spoken": ["double"],
+            "insert": "double"
+        },
+        {
+            "spoken": ["enum", "enumeration"],
+            "insert": "enumeration"
+        },
+        {
+            "spoken": ["exports"],
+            "insert": "exports"
+        },
+        {
+            "spoken": ["final"],
+            "insert": "final"
+        },
+        {
+            "spoken": ["float"],
+            "insert": "float"
+        },
+        {
+            "spoken": ["cute"],
+            "insert": "$gf"
+        },
+        {
+            "spoken": ["for each", "four each", "4 each", "foreach"],
+            "insert": "foreach ($_ in $_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["implements"],
+            "insert": "implements"
+        },
+        {
+            "spoken": ["import"],
+            "insert": "import"
+        },
+        {
+            "spoken": ["integer", "int"],
+            "insert": "int"
+        },
+        {
+            "spoken": ["interface"],
+            "insert": "interface"
+        },
+        {
+            "spoken": ["lambda"],
+            "insert": "$_ => $_"
+        },
+        {
+            "spoken": ["long"],
+            "insert": "long"
+        },
+        {
+            "spoken": ["module"],
+            "insert": "module"
+        },
+        {
+            "spoken": ["native"],
+            "insert": "native"
+        },
+        {
+            "spoken": ["override"],
+            "insert": "override"
+        },
+        {
+            "spoken": ["package"],
+            "insert": "package"
+        },
+        {
+            "spoken": ["private"],
+            "insert": "private"
+        },
+        {
+            "spoken": ["protected"],
+            "insert": "protected"
+        },
+        {
+            "spoken": ["public"],
+            "insert": "public"
+        },
+        {
+            "spoken": ["requires"],
+            "insert": "requires"
+        },
+        {
+            "spoken": ["short"],
+            "insert": "short"
+        },
+        {
+            "spoken": ["static"],
+            "insert": "static"
+        },
+        {
+            "spoken": ["super"],
+            "insert": "super"
+        },
+        {
+            "spoken": ["synchronized"],
+            "insert": "synchronized ($_) {$u$_$d}$n$_"
+        },
+        {
+            "spoken": ["throws"],
+            "insert": "throws"
+        },
+        {
+            "spoken": ["transient"],
+            "insert": "transient"
+        },
+        {
+            "spoken": ["var", "variable", "let"],
+            "insert": "var"
+        },
+        {
+            "spoken": ["volatile"],
+            "insert": "volatile"
+        },
+        {
+            "spoken": ["wchar_t", "wide char", "wide character"],
+            "insert": "wchar_t"
+        }
+    ]
+}

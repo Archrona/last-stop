@@ -207,10 +207,31 @@
             "arguments": ["latex"],
             "deferUntilCommit": true
         },
+        {
+            "spoken": ["change to python"],
+            "run": "setContext",
+            "arguments": ["python"],
+            "deferUntilCommit": true
+        },
+        {
+            "spoken": ["change to cs", "change to c sharp", "change to see sharp"],
+            "run": "setContext",
+            "arguments": ["csharp"],
+            "deferUntilCommit": true
+        },
 
         {
             "spoken": ["please"],
             "run": "doCommit",
+            "arguments": []
+        },
+        {
+            "spoken": ["back down", "backdown"],
+            "insert": "$d"
+        },
+        {
+            "spoken": ["back up", "backup"],
+            "run": "dedent",
             "arguments": []
         }
     ]

@@ -1,0 +1,16 @@
+{
+    "group": "eol_python",
+    
+    "commands": [
+        {
+            "spoken": ["finish", "finished"],
+            "run": "insertAtEOL",
+            "arguments": ["$n"]
+        },
+        {
+            "spoken": ["and then"],
+            "run": "insertAtEOL",
+            "arguments": [",$n"]
+        }
+    ]
+}

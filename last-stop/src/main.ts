@@ -49,8 +49,8 @@ export class Main {
             this.view = new View(this);
             this.controller = new Controller(this);
 
-            const doc = this.model.documents.add("test.ts", "typescript");
-            this.model.subscriptions.set(11, "doc@test.ts@0");
+            const doc = this.model.documents.add("test.py", "python");
+            this.model.subscriptions.set(11, "doc@test.py@0");
             this.model.setActiveWindow(11);
 
             // let id = this.view.createWindow();

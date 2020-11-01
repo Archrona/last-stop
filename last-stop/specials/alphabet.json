@@ -1,5 +1,5 @@
 {
-    "contextual": [
+    "lower": [
         ["alpha"],
         ["bravo"],
         ["charlie"],
@@ -28,7 +28,7 @@
         ["zulu"]  
     ],
 
-    "lower": [
+    "contextual": [
         ["andrew"],
         ["bradley", "bradlee"],
         ["colby"],
@@ -51,7 +51,7 @@
         ["tommy"],
         ["ulysses"],
         ["virgil"],
-        ["whitney"],
+        ["whitney"], 
         ["xavier", "savior"],
         ["young"],
         ["zachary"]  

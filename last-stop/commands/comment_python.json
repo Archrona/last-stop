@@ -1,0 +1,11 @@
+{
+    "group": "comment_python",
+    
+    "commands": [
+        {
+            "spoken": ["remark", "comment"],
+            "run": "insertAtEOL",
+            "arguments": ["# "]
+        }
+    ]
+}

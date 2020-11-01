@@ -1,0 +1,132 @@
+{
+    "group": "struct_python",
+    
+    "commands": [
+        {
+            "spoken": ["false"],
+            "insert": "False"
+        },
+        {
+            "spoken": ["true"],
+            "insert": "True"
+        },
+        {
+            "spoken": ["none", "nothing"],
+            "insert": "None"
+        },
+
+        
+        {
+            "spoken": ["as"],
+            "insert": "as"
+        },
+        {
+            "spoken": ["assert"],
+            "insert": "assert"
+        },
+        {
+            "spoken": ["async", "asynchronous"],
+            "insert": "async"
+        },
+        {
+            "spoken": ["await", "a wait"],
+            "insert": "await"
+        },
+        {
+            "spoken": ["break"],
+            "insert": "break"
+        },
+        {
+            "spoken": ["class"],
+            "insert": "class"
+        },
+        {
+            "spoken": ["continue"],
+            "insert": "continue"
+        },
+        {
+            "spoken": ["def", "define", "the fine", "defined"],
+            "insert": "def"
+        },
+        {
+            "spoken": ["del", "dell", "delete", "the leet"],
+            "insert": "del"
+        },
+        {
+            "spoken": ["else if", "elif"],
+            "insert": "elif"
+        },
+        {
+            "spoken": ["else"],
+            "insert": "else"
+        },
+        {
+            "spoken": ["except", "accept"],
+            "insert": "except"
+        },
+        {
+            "spoken": ["finally"],
+            "insert": "finally"
+        },
+        {
+            "spoken": ["for", "four", "fore"],
+            "insert": "for"
+        },
+        {
+            "spoken": ["from"],
+            "insert": "from"
+        },
+        {
+            "spoken": ["global"],
+            "insert": "global"
+        },
+        {
+            "spoken": ["if"],
+            "insert": "if"
+        },
+        {
+            "spoken": ["in"],
+            "insert": "in"
+        },
+        {
+            "spoken": ["physical equality", "physical equals", "is the same", "is the same as"],
+            "insert": "is"
+        },
+        {
+            "spoken": ["lambda"],
+            "insert": "lambda"
+        },
+        {
+            "spoken": ["nonlocal", "non-local", "non- local", "not local"],
+            "insert": "nonlocal"
+        },
+        {
+            "spoken": ["pass"],
+            "insert": "pass"
+        },
+        {
+            "spoken": ["raise", "raze"],
+            "insert": "raise"
+        },
+        {
+            "spoken": ["return"],
+            "insert": "return"
+        },
+        {
+            "spoken": ["try"],
+            "insert": "try"
+        },
+        {
+            "spoken": ["while"],
+            "insert": "while"
+        },
+        {
+            "spoken": ["with"],
+            "insert": "with"
+        },
+        {
+            "spoken": ["yield"],
+            "insert": "yield"
+        }
+    ]
+}

@@ -1115,7 +1115,6 @@ export class Speech {
         }
 
         this.finalUndoIndex = this.app.model.store.getUndoCount();
-        console.log(this.executed);
         return false;
     }
 

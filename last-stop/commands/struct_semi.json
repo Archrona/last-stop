@@ -3,7 +3,7 @@
     
     "commands": [
         {
-            "spoken": ["break"],
+            "spoken": ["break", "brake"],
             "insert": "break"
         },
         {

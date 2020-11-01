@@ -1,0 +1,47 @@
+{
+    "group": "grouping_python",
+    
+    "commands": [
+        {
+            "spoken": ["group"],
+            "insert": "($_)$_"
+        },
+        {
+            "spoken": ["of"],
+            "insert": "$g($_)$_"
+        },
+        {
+            "spoken": ["call"],
+            "insert": "$g()"
+        },
+        {
+            "spoken": ["list"],
+            "insert": "[$_]$_"
+        },
+        {
+            "spoken": ["at"],
+            "insert": "$g[$_]$_"
+        },
+        {
+            "spoken": ["record"],
+            "insert": "{ $_ }$_"
+        },
+        {
+            "spoken": ["block"],
+            "run": "insertAtEOL",
+            "arguments": [":$u$_$d$_"]
+        },
+        {
+            "spoken": ["quotes", "say", "says"],
+            "insert": "\"$_\"$_"
+        },
+        {
+            "spoken": ["droplets", "droplet", "drops", "speak", "speaks"],
+            "insert": "'$_'$_"
+        },
+        {
+            "spoken": ["slashes"],
+            "insert": "f\"$_\"$_"
+        }
+    ]
+}

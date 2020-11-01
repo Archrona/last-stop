@@ -88,6 +88,13 @@ export const EXECUTORS = {
         return new ExecutorResult();
     },
 
+    dedent: (model: Model, args: Array<any>) => {
+        model.doActiveDocument((doc, ai) => {
+            // TODO
+        });
+        return new ExecutorResult();
+    },
+
     // onScroll: (model: Model, args: Array<any>) => {
     //     const sub = args[2];
 

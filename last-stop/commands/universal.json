@@ -3,7 +3,7 @@
     
     "commands": [
         {
-            "spoken": ["stop", "nop", "please"],
+            "spoken": ["stop", "nop"],
             "run": "nop"
         },
         {
@@ -50,28 +50,33 @@
         {
             "spoken": ["yank that", "yanks that", "yanked that"],
             "run": "cut",
-            "arguments": []
+            "arguments": [],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["grab that", "grabs that", "grabbed that", "grabbing that"],
             "run": "copy",
-            "arguments": []
+            "arguments": [],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["spit that", "spits that", "spitz that", "spitted that"],
             "run": "paste", 
-            "arguments": []
+            "arguments": [],
+            "deferUntilCommit": true
         },
 
         {
             "spoken": ["grab everything"],
             "run": "selectAllAndCopy", 
-            "arguments": []
+            "arguments": [],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["yank everything"],
             "run": "selectAllAndCut", 
-            "arguments": []
+            "arguments": [],
+            "deferUntilCommit": true
         },
 
         {
@@ -175,27 +180,38 @@
         {
             "spoken": ["change to typescript", "change to type script", "change to java script", "change to javascript"],
             "run": "setContext",
-            "arguments": ["typescript"]
+            "arguments": ["typescript"],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["change to text"],
             "run": "setContext",
-            "arguments": ["text"]
+            "arguments": ["text"],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["change to html"],
             "run": "setContext",
-            "arguments": ["html"]
+            "arguments": ["html"],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["change to css"],
             "run": "setContext",
-            "arguments": ["css"]
+            "arguments": ["css"],
+            "deferUntilCommit": true
         },
         {
             "spoken": ["change to latex"],
             "run": "setContext",
-            "arguments": ["latex"]
+            "arguments": ["latex"],
+            "deferUntilCommit": true
+        },
+
+        {
+            "spoken": ["please"],
+            "run": "doCommit",
+            "arguments": []
         }
     ]
 }

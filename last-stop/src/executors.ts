@@ -5,20 +5,14 @@ import { LEFT_MARGIN_COLUMNS } from "./subscription";
 import { clipboard } from "electron";
 
 interface ExecutorResultOptions {
-    forceCommit?: boolean;
     doCommit?: boolean;
-    focusSpeechConsole?: boolean
 }
 
 export class ExecutorResult {
-    requestCommit: boolean;
     doCommit: boolean;
-    focusSpeechConsole: boolean;
 
     constructor(options: ExecutorResultOptions = {}) { 
-        this.requestCommit = options.forceCommit ?? false;
         this.doCommit = options.doCommit ?? false;
-        this.focusSpeechConsole = options.focusSpeechConsole ?? false;
     }
 }
 
@@ -94,152 +88,152 @@ export const EXECUTORS = {
         return new ExecutorResult();
     },
 
-    onScroll: (model: Model, args: Array<any>) => {
-        const sub = args[2];
+    // onScroll: (model: Model, args: Array<any>) => {
+    //     const sub = args[2];
 
-        if (sub instanceof DocumentSubscription) {
-            const x = parseInt(args[3]);
-            const y = parseInt(args[4]);
-            const docName = sub.document;
-            if (model.documents.hasKey(docName)) {
-                const doc = model.documents.get(docName);
-                const view = doc.getView(sub.anchorIndex);
-                //view.column = Math.max(0, view.column + x);
-                view.row = Math.max(-20, Math.min(doc.getLineCount() + 40, view.row + y));
-                doc.setView(sub.anchorIndex, view);
-            }
-        }
+    //     if (sub instanceof DocumentSubscription) {
+    //         const x = parseInt(args[3]);
+    //         const y = parseInt(args[4]);
+    //         const docName = sub.document;
+    //         if (model.documents.hasKey(docName)) {
+    //             const doc = model.documents.get(docName);
+    //             const view = doc.getView(sub.anchorIndex);
+    //             //view.column = Math.max(0, view.column + x);
+    //             view.row = Math.max(-20, Math.min(doc.getLineCount() + 40, view.row + y));
+    //             doc.setView(sub.anchorIndex, view);
+    //         }
+    //     }
 
-        return new ExecutorResult();
-    },
+    //     return new ExecutorResult();
+    // },
 
-    onActivate: (model: Model, args: Array<any>) => {
-        const windowId = args[0] as number;
-        //console.log("activate " + windowId);
-        model.setActiveWindow(windowId);
+    // onActivate: (model: Model, args: Array<any>) => {
+    //     const windowId = args[0] as number;
+    //     //console.log("activate " + windowId);
+    //     model.setActiveWindow(windowId);
 
-        return new ExecutorResult({ forceCommit: true });
-    },
+    //     return new ExecutorResult({ forceCommit: true });
+    // },
 
-    onMouse: (model: Model, args: Array<any>) => {
-        const sub = args[1];
-        const windowId = parseInt(args[0]);
-        const button = args[2];
+    // onMouse: (model: Model, args: Array<any>) => {
+    //     const sub = args[1];
+    //     const windowId = parseInt(args[0]);
+    //     const button = args[2];
 
-        const result = new ExecutorResult();
+    //     const result = new ExecutorResult();
 
-        if (sub instanceof DocumentSubscription) {
-            model.setActiveWindow(windowId);
+    //     if (sub instanceof DocumentSubscription) {
+    //         model.setActiveWindow(windowId);
 
-            const windowRow = args[3];
-            const windowCol = args[4];
+    //         const windowRow = args[3];
+    //         const windowCol = args[4];
 
-            if (model.documents.hasKey(sub.document)) {
-                const doc = model.documents.get(sub.document);
-                const view = doc.getView(sub.anchorIndex);
+    //         if (model.documents.hasKey(sub.document)) {
+    //             const doc = model.documents.get(sub.document);
+    //             const view = doc.getView(sub.anchorIndex);
 
-                const pos = new Position(
-                    windowRow + view.row,
-                    windowCol - LEFT_MARGIN_COLUMNS + view.column
-                ).normalize(doc);
+    //             const pos = new Position(
+    //                 windowRow + view.row,
+    //                 windowCol - LEFT_MARGIN_COLUMNS + view.column
+    //             ).normalize(doc);
                 
-                if (button === 0 || button === 2) {
-                    doc.setCursor(sub.anchorIndex, pos);
-                    doc.setMark(sub.anchorIndex, pos);
-                }
+    //             if (button === 0 || button === 2) {
+    //                 doc.setCursor(sub.anchorIndex, pos);
+    //                 doc.setMark(sub.anchorIndex, pos);
+    //             }
 
-                if (button === 2) {
-                    result.focusSpeechConsole = true;
-                    result.requestCommit = true;
-                    doc.absorbAdjacentInsertionPoints(sub.anchorIndex);
-                }
-            }
-        }
+    //             if (button === 2) {
+    //                 result.focusSpeechConsole = true;
+    //                 result.requestCommit = true;
+    //                 doc.absorbAdjacentInsertionPoints(sub.anchorIndex);
+    //             }
+    //         }
+    //     }
 
-        return result;
-    },
+    //     return result;
+    // },
 
-    // [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn]
-    onDrag: (model: Model, args: Array<any>) => {
-        const sub = args[1];
-        const windowId = parseInt(args[0]);
-        const button = parseInt(args[2]);
-        const ongoing = args[7];
-        const result = new ExecutorResult();
+    // // [windowStr, sub, button, fromRow, fromColumn, toRow, toColumn]
+    // onDrag: (model: Model, args: Array<any>) => {
+    //     const sub = args[1];
+    //     const windowId = parseInt(args[0]);
+    //     const button = parseInt(args[2]);
+    //     const ongoing = args[7];
+    //     const result = new ExecutorResult();
 
-        if (sub instanceof DocumentSubscription && [0, 2].includes(button)) {
-            model.setActiveWindow(windowId);
-            const r1 = args[3], c1 = args[4], r2 = args[5], c2 = args[6];
-            const doc = model.documents.get(sub.document);
-            const view = doc.getView(sub.anchorIndex);
+    //     if (sub instanceof DocumentSubscription && [0, 2].includes(button)) {
+    //         model.setActiveWindow(windowId);
+    //         const r1 = args[3], c1 = args[4], r2 = args[5], c2 = args[6];
+    //         const doc = model.documents.get(sub.document);
+    //         const view = doc.getView(sub.anchorIndex);
 
-            const p1 = new Position(
-                r1 + view.row,
-                c1 - LEFT_MARGIN_COLUMNS + view.column
-            ).normalize(doc);
+    //         const p1 = new Position(
+    //             r1 + view.row,
+    //             c1 - LEFT_MARGIN_COLUMNS + view.column
+    //         ).normalize(doc);
 
-            const p2 = new Position(
-                r2 + view.row,
-                c2 - LEFT_MARGIN_COLUMNS + view.column
-            ).normalize(doc);
+    //         const p2 = new Position(
+    //             r2 + view.row,
+    //             c2 - LEFT_MARGIN_COLUMNS + view.column
+    //         ).normalize(doc);
 
-            doc.setMark(sub.anchorIndex, p1);
-            doc.setCursor(sub.anchorIndex, p2);
+    //         doc.setMark(sub.anchorIndex, p1);
+    //         doc.setCursor(sub.anchorIndex, p2);
 
-            if (button == 2 && ongoing == 1) {
-                result.focusSpeechConsole = true;
-                result.requestCommit = true;
-            }
-        }
+    //         if (button == 2 && ongoing == 1) {
+    //             result.focusSpeechConsole = true;
+    //             result.requestCommit = true;
+    //         }
+    //     }
 
-        return result;
-    },
+    //     return result;
+    // },
 
-    onKey: (model: Model, args: Array<any>) => {
-        const sub = args[1];
+    // onKey: (model: Model, args: Array<any>) => {
+    //     const sub = args[1];
 
-        if (sub instanceof DocumentSubscription) {
-            const docName = sub.document;
-            if (model.documents.hasKey(docName)) {
-                const doc = model.documents.get(docName);
-                let str = "";
+    //     if (sub instanceof DocumentSubscription) {
+    //         const docName = sub.document;
+    //         if (model.documents.hasKey(docName)) {
+    //             const doc = model.documents.get(docName);
+    //             let str = "";
                 
-                for (let i = 2; i < args.length; i++) {
-                    const key = args[i];
+    //             for (let i = 2; i < args.length; i++) {
+    //                 const key = args[i];
 
-                    if (typeof key === "string") {
-                        let context = doc.getCursorContext(sub.anchorIndex, model.app.languages);
-                        let autoIndent = 
-                            model.app.languages.contexts.get(context).triggerAutomaticIndentation;
+    //                 if (typeof key === "string") {
+    //                     let context = doc.getCursorContext(sub.anchorIndex, model.app.languages);
+    //                     let autoIndent = 
+    //                         model.app.languages.contexts.get(context).triggerAutomaticIndentation;
 
-                        if (key.length === 1) {
-                            str += key;
-                        } else {
-                            if (str.length > 0) {
-                                doc.insert(sub.anchorIndex, str);
-                                str = "";
-                            }
+    //                     if (key.length === 1) {
+    //                         str += key;
+    //                     } else {
+    //                         if (str.length > 0) {
+    //                             doc.insert(sub.anchorIndex, str);
+    //                             str = "";
+    //                         }
 
-                            doc.osKey(sub.anchorIndex, key);
-                        }
+    //                         doc.osKey(sub.anchorIndex, key);
+    //                     }
 
-                        if (autoIndent !== undefined && autoIndent.includes(key)) {
-                            if (str.length > 0) {
-                                doc.insert(sub.anchorIndex, str);
-                                str = "";
-                            }
-                            doc.automaticallyIndentSelection(sub.anchorIndex);
-                        }
-                    }
-                }
+    //                     if (autoIndent !== undefined && autoIndent.includes(key)) {
+    //                         if (str.length > 0) {
+    //                             doc.insert(sub.anchorIndex, str);
+    //                             str = "";
+    //                         }
+    //                         doc.automaticallyIndentSelection(sub.anchorIndex);
+    //                     }
+    //                 }
+    //             }
                 
-                if (str.length > 0)
-                    doc.insert(sub.anchorIndex, str);
-            }
-        }
+    //             if (str.length > 0)
+    //                 doc.insert(sub.anchorIndex, str);
+    //         }
+    //     }
 
-        return new ExecutorResult();
-    },
+    //     return new ExecutorResult();
+    // },
 
     cut: (model: Model, arg: Array<any>) => {
         let result = new ExecutorResult();
@@ -263,7 +257,7 @@ export const EXECUTORS = {
         let result = new ExecutorResult();
         model.doActiveDocument((doc, ai) => {
             doc.osPaste(ai);
-            result.requestCommit = true;
+            //result.requestCommit = true;
         });
         return result;
     },
@@ -348,7 +342,7 @@ export const EXECUTORS = {
         return new ExecutorResult();
     },
 
-    onCommit: (model: Model, arg: Array<any>) => {
+    doCommit: (model: Model, arg: Array<any>) => {
         return new ExecutorResult({ doCommit: true });
     },
 
@@ -385,6 +379,6 @@ export const EXECUTORS = {
             }
         });
         
-        return new ExecutorResult({ forceCommit: true });
+        return new ExecutorResult();
     }
 }

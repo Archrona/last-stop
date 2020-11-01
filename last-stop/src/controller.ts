@@ -98,13 +98,18 @@ export class Controller {
         const mem = Math.round(process.memoryUsage().rss / 1000000);
         console.log(`  Speech: ${initialUndo} -> ${minUndo} -> ${finalUndo}  (${time} ms)  (${mem} MB)`);
 
+
         // if (this.lastSpeech.shouldFocusConsole) {
         //     this.app.consoleServer.focus();
         // }
-        // if (this.lastSpeech.shouldDoCommit) {
-        //     console.log("          ... DID COMMIT");
-        //     this.lastSpeech = null;
-        // }
+        if (this.lastSpeech.shouldDoCommit) {
+            console.log("Controller: Requesting COMMIT.");
+            this.app.consoleServer.postRequest("performCommit", {}, () => {
+                console.log("Controller: Performing COMMIT.");
+                this.commit();
+                this.app.view.updateAllWindows();
+            });
+        }
         // else if (this.lastSpeech.shouldForceCommit) {
         //     console.log("          ... forced commit msg sending to SC");
         //     this.consoleCommitRequest();

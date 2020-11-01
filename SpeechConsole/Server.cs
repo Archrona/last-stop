@@ -213,6 +213,14 @@ namespace SpeechConsole
             return new Result(true);
         }
 
+        public static object onPerformCommit() {
+            mainWindow.Invoke((Action)delegate () {
+                mainWindow.clearText(false);
+            });
+
+            return new Result(true);
+        }
+
         public static bool serveOneRequest() {
             HttpListenerContext context = listener.GetContext();
             HttpListenerRequest request = context.Request;
@@ -260,6 +268,10 @@ namespace SpeechConsole
 
                 case "/focus":
                     resp = onFocus(body);
+                    break;
+
+                case "/performCommit":
+                    resp = onPerformCommit();
                     break;
 
                 default:

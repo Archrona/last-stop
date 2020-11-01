@@ -46,6 +46,7 @@
             this.input.Size = new System.Drawing.Size(1040, 138);
             this.input.TabIndex = 0;
             this.input.TextChanged += new System.EventHandler(this.input_TextChanged);
+            this.input.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.input_KeyPress);
             this.input.MouseUp += new System.Windows.Forms.MouseEventHandler(this.input_MouseUp);
             // 
             // textChangeMonitor

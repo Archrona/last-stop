@@ -90,10 +90,11 @@ namespace SpeechConsole
                 }
                 sendImmediateUpdate = false;
                 textChanged = false;
-            } else {
+            }
+            else {
                 textChanged = true;
             }
-            
+
             ticksSinceChanged = 0;
         }
 
@@ -170,6 +171,10 @@ namespace SpeechConsole
 
 
             }
+        }
+
+        private void input_KeyPress(object sender, KeyPressEventArgs e) {
+
         }
     }
 }

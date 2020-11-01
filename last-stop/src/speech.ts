@@ -2,16 +2,11 @@
 
 import { TokenizeResult, Token } from "./language";
 import { Main } from "./main";
-import { Position, INSERTION_POINT, ESCAPE_SUBSPLIT, ESCAPE_KEY, ESCAPE_MOUSE, ESCAPE_SCROLL, ESCAPE_DRAG, replaceAll, ESCAPE_ACTIVATE, ESCAPE_COMMIT } from "./shared";
-import { Model, DocumentNavigator, Anchor, DocumentSubscription, LineSubscription, Subscription } from "./model";
+import { Position } from "./shared";
+import { DocumentNavigator, DocumentSubscription, LineSubscription } from "./model";
 import { CommandList, Command } from "./commands";
-import { inspect } from "util";
 import * as fs from "fs";
-import { LEFT_MARGIN_COLUMNS } from "./subscription";
-import { clipboard, contextBridge } from "electron";
 import { Executor, ExecutorResult, EXECUTORS } from "./executors";
-
-
 
 
 enum Capitalization {
@@ -194,12 +189,17 @@ class Executed {
         public result: ExecutorResult) { }
 }
 
+class DeferUntilCommit {
+    constructor() { }
+}
+
 class DeferredWhite {
     constructor(public first: number, public text: string) { }
 }
 
 class ResumePoint {
-    constructor(public token: number, public executed: number, public undoCount: number) { }
+    constructor(public token: number, public executed: number, public undoCount: number,
+        public shouldDoCommit: boolean, public deferredUntilCommit: boolean) { }
 }
 
 
@@ -284,11 +284,10 @@ export class Speech {
     executed: Array<Executed>;
     resumePoints: Array<ResumePoint>;
 
-    shouldForceCommit: boolean;
     shouldDoCommit: boolean;
-    shouldFocusConsole: boolean;
+    deferredUntilCommit: boolean;
 
-    private constructor(app: Main, speech: string) {
+    private constructor(app: Main, speech: string, doDeferUntilCommit: boolean = false) {
         this.app = app;
         this.speech = speech;
         this.baseUndoIndex = this.getUndoIndex();
@@ -296,15 +295,16 @@ export class Speech {
         this.executed = [];
         this.resumePoints = [];
 
-        this.shouldForceCommit = false;
         this.shouldDoCommit = false;
-        this.shouldFocusConsole = false;
+        this.deferredUntilCommit = false;
 
         this.tokens = this.tokenize(this.speech).tokens;
-        this.run();
+        this.run(0, doDeferUntilCommit);
     }
 
-    reviseSpeech(speech: string): ReviseResult {
+    // TODO how do we pull changes in doDeferUntilCommit into state?
+    // It changes interp midway through cmds
+    reviseSpeech(speech: string, doDeferUntilCommit: boolean = false): ReviseResult {
         const timeStart = process.hrtime.bigint();
         const tokens = this.tokenize(speech).tokens;
         
@@ -342,6 +342,8 @@ export class Speech {
             this.app.model.store.undo(this.finalUndoIndex - this.resumePoints[rp].undoCount);
             this.finalUndoIndex = this.resumePoints[rp].undoCount;
             this.executed = this.executed.slice(0, this.resumePoints[rp].executed);
+            this.shouldDoCommit = this.resumePoints[rp].shouldDoCommit;
+            this.deferredUntilCommit = this.resumePoints[rp].deferredUntilCommit;
             this.tokens = this.tokens.slice(0, this.resumePoints[rp].token);
             this.resumePoints = this.resumePoints.slice(0, rp);
         }
@@ -350,7 +352,7 @@ export class Speech {
         this.tokens = tokens;
         this.speech = speech;
 
-        this.run(runFromToken);
+        this.run(runFromToken, doDeferUntilCommit);
 
         const timeEnd = process.hrtime.bigint();
         const totalElapsed = Number(timeEnd - timeStart) / 1000000;
@@ -465,7 +467,7 @@ export class Speech {
             const cursor = document[0].getCursor(document[1]);
             const mark = document[0].getMark(document[1]);
             
-            const [left, right] = Position.orderNormalize(cursor, mark, document[0]);
+            const [, right] = Position.orderNormalize(cursor, mark, document[0]);
             const tokens = document[0].getLineTokens(right.row);
             let tokenIndex = numeric.getToken();
             tokenIndex = Math.max(0, Math.min(tokens.tokens.length -1, tokenIndex));
@@ -694,7 +696,13 @@ export class Speech {
         return [location, index];
     }
     
-    private runMaybeCommand(i: number, context: string, cmd: Command): Executed {
+    private runMaybeCommand(
+        i: number,
+        context: string,
+        cmd: Command,
+        doDeferUntilCommit: boolean
+    ): Executed | DeferUntilCommit {
+
         const matched = [];
 
         let j = i;
@@ -755,17 +763,22 @@ export class Speech {
                 }
             });
 
-            return this.runExecutor(i, j - i, cmd.command, args, context);
+            if (cmd.deferUntilCommit && !doDeferUntilCommit && !this.shouldDoCommit) {
+                return new DeferUntilCommit();
+            } else {
+                return this.runExecutor(i, j - i, cmd.command, args, context);
+            }
         } else {
             return null;
         }
     }
 
     private runMaybeCommandList(
-        i: number, context: string, possibleCommands: Array<Command>): Executed
+        i: number, context: string, possibleCommands: Array<Command>,
+        doDeferUntilCommit: boolean): Executed | DeferUntilCommit
     {
         for (const cmd of possibleCommands) {
-            const maybe = this.runMaybeCommand(i, context, cmd);
+            const maybe = this.runMaybeCommand(i, context, cmd, doDeferUntilCommit);
             if (maybe !== null) {
                 return maybe;
             }
@@ -929,97 +942,98 @@ export class Speech {
         }
     }
 
-    private runEvent(i: number, context: string): Executed[] | null {
-        const event = this.tokens[i].text;
-        const parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
-        if (parts.length === 0) {
-            return null;
-        }
+    // private runEvent(i: number, context: string): Executed[] | null {
+    //     const event = this.tokens[i].text;
+    //     const parts = event.substring(1, event.length - 1).split(ESCAPE_SUBSPLIT);
+    //     if (parts.length === 0) {
+    //         return null;
+    //     }
 
-        const type = parts[0][0];
-        const windowStr = parts[0].substring(1);
-        const window = parseInt(windowStr);
+    //     const type = parts[0][0];
+    //     const windowStr = parts[0].substring(1);
+    //     const window = parseInt(windowStr);
         
-        const sub = this.app.model.subscriptions.getDetails(window);
+    //     const sub = this.app.model.subscriptions.getDetails(window);
 
-        switch (type) {
-            case ESCAPE_KEY:
-                return [this.runExecutor(i, 1, EXECUTORS.onKey, 
-                    ([windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+    //     switch (type) {
+    //         case ESCAPE_KEY:
+    //             return [this.runExecutor(i, 1, EXECUTORS.onKey, 
+    //                 ([windowStr, sub] as any[]).concat(parts.slice(1)), context)];
             
-            case ESCAPE_MOUSE:
-                {
-                    const result = [];
+    //         case ESCAPE_MOUSE:
+    //             {
+    //                 const result = [];
 
-                    for (let index = 1; index + 2 < parts.length; index += 3) {
-                        const button = parseInt(parts[index]);
-                        const row = parseInt(parts[index + 1]);
-                        const column = parseInt(parts[index + 2]);
+    //                 for (let index = 1; index + 2 < parts.length; index += 3) {
+    //                     const button = parseInt(parts[index]);
+    //                     const row = parseInt(parts[index + 1]);
+    //                     const column = parseInt(parts[index + 2]);
                         
-                        result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
-                            [windowStr, sub, button, row, column], context));
-                    }
-                    return result;
-                }
+    //                     result.push(this.runExecutor(i, 1, EXECUTORS.onMouse, 
+    //                         [windowStr, sub, button, row, column], context));
+    //                 }
+    //                 return result;
+    //             }
                
 
-            case ESCAPE_SCROLL:
-                return [this.runExecutor(i, 1, EXECUTORS.onScroll, 
-                    ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
+    //         case ESCAPE_SCROLL:
+    //             return [this.runExecutor(i, 1, EXECUTORS.onScroll, 
+    //                 ([type, windowStr, sub] as any[]).concat(parts.slice(1)), context)];
 
-            case ESCAPE_DRAG:
-                {
-                    const result = [];
+    //         case ESCAPE_DRAG:
+    //             {
+    //                 const result = [];
 
-                    for (let index = 1; index + 5 < parts.length; index += 6) {
-                        const button = parseInt(parts[index]);
-                        const fromRow = parseInt(parts[index + 1]);
-                        const fromColumn = parseInt(parts[index + 2]);
-                        const toRow = parseInt(parts[index + 3]);
-                        const toColumn = parseInt(parts[index + 4]);
-                        const ongoing = parseInt(parts[index + 5]);
+    //                 for (let index = 1; index + 5 < parts.length; index += 6) {
+    //                     const button = parseInt(parts[index]);
+    //                     const fromRow = parseInt(parts[index + 1]);
+    //                     const fromColumn = parseInt(parts[index + 2]);
+    //                     const toRow = parseInt(parts[index + 3]);
+    //                     const toColumn = parseInt(parts[index + 4]);
+    //                     const ongoing = parseInt(parts[index + 5]);
                         
-                        result.push(this.runExecutor(i, 1, EXECUTORS.onDrag, 
-                            [
-                                windowStr, sub, button,
-                                fromRow, fromColumn, toRow, toColumn, 
-                                ongoing
-                            ],
-                            context));
-                    }
-                    return result;
-                }
+    //                     result.push(this.runExecutor(i, 1, EXECUTORS.onDrag, 
+    //                         [
+    //                             windowStr, sub, button,
+    //                             fromRow, fromColumn, toRow, toColumn, 
+    //                             ongoing
+    //                         ],
+    //                         context));
+    //                 }
+    //                 return result;
+    //             }
 
-            case ESCAPE_ACTIVATE:
-                return [this.runExecutor(i, 1, EXECUTORS.onActivate, 
-                    [window], context)];
+    //         case ESCAPE_ACTIVATE:
+    //             return [this.runExecutor(i, 1, EXECUTORS.onActivate, 
+    //                 [window], context)];
 
-            case ESCAPE_COMMIT:
-                return [this.runExecutor(i, 1, EXECUTORS.onCommit, 
-                    [], context)];
-        }
+    //         case ESCAPE_COMMIT:
+    //             return [this.runExecutor(i, 1, EXECUTORS.onCommit, 
+    //                 [], context)];
+    //     }
 
-        return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
-    }
+    //     return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
+    // }
 
     private runOne(
         i: number,
         context: string,
         cmdList: CommandList,
-        deferred: DeferredWhite[]
-    ): (Executed | DeferredWhite)[]
+        deferred: DeferredWhite[],
+        doDeferUntilCommit: boolean
+    ): (Executed | DeferredWhite | DeferUntilCommit)[]
     {
         const word = this.tokens[i].text;
 
-        if (this.tokens[i].type === "event") {
-            const maybe = this.runEvent(i, context);
-            if (maybe !== null && maybe.length > 0) return maybe;
-            return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
-        }
+        // if (this.tokens[i].type === "event") {
+        //     const maybe = this.runEvent(i, context);
+        //     if (maybe !== null && maybe.length > 0) return maybe;
+        //     return [this.runExecutor(i, 1, EXECUTORS.nop, [], context)];
+        // }
 
         const possibleCommands = cmdList.commandIndex.get(word.toLowerCase());
         if (possibleCommands !== undefined) {
-            const maybe = this.runMaybeCommandList(i, context, possibleCommands);
+            const maybe = this.runMaybeCommandList(i, context, possibleCommands, doDeferUntilCommit);
             if (maybe !== null) return [maybe];
         }
 
@@ -1033,10 +1047,21 @@ export class Speech {
         return exec;
     }
 
-    private run(i: number = 0): boolean {
+    private run(i: number, doDeferUntilCommit: boolean): boolean {
         let deferred: DeferredWhite[] = [];
+        let stopFlag = false;
 
-        while (i < this.tokens.length) {
+        this.deferredUntilCommit = false;
+
+        // cheap hack TODO
+        if (this.tokens.length > 2
+            && REMAP.remap(this.tokens[this.tokens.length - 1].text) === "please"
+            && REMAP.remap(this.tokens[this.tokens.length - 2].text) !== "literally")
+        {
+            this.shouldDoCommit = true;
+        }
+
+        while (i < this.tokens.length && !stopFlag) {
             const context = this.getContext();
             //console.log("run ctx " + context + ": tok " + i + " = \"" + this.tokens[i].text + "\"");
             //console.log("   deferred: " + inspect(deferred));
@@ -1048,9 +1073,11 @@ export class Speech {
 
             let resumePoint = null;
             if (deferred.length === 0)
-                resumePoint = new ResumePoint(i, this.executed.length, this.getUndoIndex());
+                resumePoint = new ResumePoint(
+                    i, this.executed.length, this.getUndoIndex(),
+                    this.shouldDoCommit, this.deferredUntilCommit);
 
-            const exec = this.runOne(i, context, cmdList, deferred);
+            const exec = this.runOne(i, context, cmdList, deferred, doDeferUntilCommit);
             if (exec === null) {
                 throw new Error("run: execution must consume at least 1 token");
             }
@@ -1063,11 +1090,15 @@ export class Speech {
                     deferred = [];
                     i = e.first + e.length;
 
-                    this.shouldForceCommit = this.shouldForceCommit || e.result.requestCommit;
+                    //this.shouldForceCommit = this.shouldForceCommit || e.result.requestCommit;
                     this.shouldDoCommit = this.shouldDoCommit || e.result.doCommit;
-                    this.shouldFocusConsole = this.shouldFocusConsole || e.result.focusSpeechConsole;
+                    //this.shouldFocusConsole = this.shouldFocusConsole || e.result.focusSpeechConsole;
 
-                } else {
+                } else if (e instanceof DeferUntilCommit) {
+                    console.log("DEFER UNTIL COMMIT");
+                    stopFlag = true;
+                    this.deferredUntilCommit = true;
+                } else if (e instanceof DeferredWhite) {
                     deferred.push(e);
                     i = e.first + 1;
                 }
@@ -1084,6 +1115,7 @@ export class Speech {
         }
 
         this.finalUndoIndex = this.app.model.store.getUndoCount();
+        console.log(this.executed);
         return false;
     }
 

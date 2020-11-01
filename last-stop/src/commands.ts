@@ -16,6 +16,7 @@ interface CommandType {
     run?: string;
     insert?: string;
     arguments?: Array<string>;
+    deferUntilCommit?: boolean;
 }
  
 interface CommandGroupType {
@@ -31,11 +32,13 @@ export class Command {
     tokens: Array<string>;
     command: Executor;
     args: Array<string>;
+    deferUntilCommit: boolean;
 
     constructor(tokens: Array<string>, command: Executor, args: Array<string>) {
         this.tokens = tokens;
         this.command = command;
         this.args = args;
+        this.deferUntilCommit = false;
     }
 }
 
@@ -88,6 +91,7 @@ export class CommandList {
                 }
 
                 command = new Command(words, ex, args);
+                if (c.deferUntilCommit !== undefined) command.deferUntilCommit = c.deferUntilCommit;
             }
             else {
                 const ins = c.insert;

@@ -345,6 +345,8 @@ export class Controller {
         const window = this.app.view.getWindow(info.id);
         if (window === null) return;
 
+        if (this.app.controller.inputMode !== "raw") return;
+
         const model = this.app.model;
         const sub = model.subscriptions.getDetails(window.id);
         

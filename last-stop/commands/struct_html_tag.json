@@ -52,6 +52,10 @@
             "insert": "checked"
         },
         {
+            "spoken": ["class"],
+            "insert": "class=\"$_\"$_"
+        },
+        {
             "spoken": ["cols", "calls", "columns"],
             "insert": "cols=\"$_\"$_"
         },
@@ -512,7 +516,7 @@
             "insert": "value=\"$_\"$_"
         },
         {
-            "spoken": ["width"],
+            "spoken": ["width", "with"],
             "insert": "width=\"$_\"$_"
         },
         {

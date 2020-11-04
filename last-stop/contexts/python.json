@@ -86,7 +86,7 @@
     "spacing": [
         {
             "what": "adjacent whitespace, period, or glue",
-            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d",
+            "either": "\\.| |\\t|\\$g|\\$n|\\$u|\\$d|_",
             "rule": false
         },
         {

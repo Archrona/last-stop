@@ -85,6 +85,10 @@
             "insert": "if"
         },
         {
+            "spoken": ["import"],
+            "insert": "import"
+        },
+        {
             "spoken": ["in"],
             "insert": "in"
         },
@@ -94,7 +98,7 @@
         },
         {
             "spoken": ["lambda"],
-            "insert": "lambda"
+            "insert": "lambda $_: $_"
         },
         {
             "spoken": ["nonlocal", "non-local", "non- local", "not local"],
@@ -127,6 +131,23 @@
         {
             "spoken": ["yield"],
             "insert": "yield"
+        },
+
+        {
+            "spoken": ["my"],
+            "insert": "self.$g"
+        },
+        {
+            "spoken": ["self", "me"],
+            "insert": "self"
+        },
+        {
+            "spoken": ["constructor"],
+            "insert": "def __init__(self$_):$u$_$d$_"
+        },
+        {
+            "spoken": ["wrapping", "rapping", "wrapper", "rapper"],
+            "insert": "__$g$_$g__$_"
         }
     ]
 }

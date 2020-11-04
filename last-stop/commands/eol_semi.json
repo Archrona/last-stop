@@ -8,6 +8,11 @@
             "arguments": [";$n"]
         },
         {
+            "spoken": ["naked finish", "naked finished"],
+            "run": "insertAtEOL",
+            "arguments": ["$n"]
+        },
+        {
             "spoken": ["and then"],
             "run": "insertAtEOL",
             "arguments": [",$n"]

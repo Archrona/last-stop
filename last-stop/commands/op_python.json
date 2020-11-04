@@ -59,6 +59,10 @@
             "insert": "-"
         },
         {
+            "spoken": ["negative"],
+            "insert": "-$g"
+        },
+        {
             "spoken": ["times"],
             "insert": "*"
         },

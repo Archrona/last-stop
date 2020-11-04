@@ -8,11 +8,15 @@
     { "spoken": "shout", "internal": "shout" },
     { "spoken": "shouting", "internal": "shout" },
     { "spoken": "midline", "internal": "midline" },
+
     { "spoken": "lonely", "internal": "lonely" },
     { "spoken": "couple", "internal": "couple" },
     { "spoken": "triple", "internal": "triple" },
     { "spoken": "quadruple", "internal": "quadruple" },
+    { "spoken": "square", "internal": "quadruple" },
+
     { "spoken": "pick", "internal": "pick" },
+    
     { "spoken": "literally", "internal": "literally" },
     { "spoken": "precisely", "internal": "literally" },
     { "spoken": "through", "internal": "to" },

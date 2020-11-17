@@ -11,8 +11,8 @@
   "dependencies": {
     "glob": "^7.1.6",
     "handlebars": "^4.7.6",
-    "highlight.js": "^10.0.3",
+    "highlight.js": "^10.3.2",
     "linkify-it": "^3.0.2",
-    "markdown-it": "^11.0.0"
+    "markdown-it": "^11.0.1"
   }
 }

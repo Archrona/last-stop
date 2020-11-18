@@ -105,3 +105,11 @@ th {
     padding: 6px 14px;
     text-decoration: underline;
 }
+
+.linkContainer {
+    padding-left: 50px;
+}
+
+string-escape {
+    font-weight: bold;
+}

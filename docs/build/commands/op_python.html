@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>op_python</title>
+    <link rel="stylesheet" type="text/css" href="../cube.css">
+    <script>
+        function toggleNav() {
+            let sidebar = document.getElementById("mySidebar");
+            let main = document.getElementById("main");
+            console.log(sidebar.style.width)
+            if (sidebar.style.width == "300px") {
+                sidebar.style.width = "0";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "300px";
+                main.style.marginLeft = "300px";
+            }
+        }
+
+        // sort table
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        window.onload = function(){document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            console.log("clicked!");
+            const table = th.closest('table');
+            Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+        })))};
+
+        let dropdownButtons = document.getElementsByClassName("dropdownButton");
+        console.log(dropdownButtons);
+        for (const d of dropdownButtons) {
+            d.addEventListener("click", function(){
+                let dropdownContent = d.nextElementSibling;
+                console.log("clicked")
+                dropdownContent.style.display = 
+                    (dropdownContent.style.display === "block") ? "none" : "block";
+            })
+        };
+    </script>
+</head>
+
+<body>
+    <div class="sidenav" id="mySidebar">
+        <a href="#about">Placeholder Link</a>
+        <a href="#services">Placeholder Link</a>
+        <a href="#clients">Placeholder Link</a>
+        <a href="#contact">Placeholder Link</a>
+        <button class="dropdownButton">Placeholder Dropdown</button>
+        <div class="dropdown-container">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+        </div>
+        <a href="#contact">Search</a>
+    </div>
+
+    <div id="main">
+        <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
+        <div class="mainContainer">
+            <h1>op_python</h1>
+            <table>
+                <tr class="tableHeading">
+                    <th class="leftCol">Spoken</th>
+                    <th class="rightCol">Definition</th>
+                </tr>
+                <tr>
+        <td>is,our,are,equal,be</td>
+        <td>Inserts <code>&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>is expression,our expression,are expression,equal expression</td>
+        <td>Inserts <code>:&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>colon,:</td>
+        <td>Inserts <code>$g:</code></td>
+    </tr>
+                <tr>
+        <td>.,dot</td>
+        <td>Inserts <code>.</code></td>
+    </tr>
+                <tr>
+        <td>spread</td>
+        <td>Inserts <code>...</code></td>
+    </tr>
+                <tr>
+        <td>arrow,aero,maps to</td>
+        <td>Inserts <code>-&gt;</code></td>
+    </tr>
+                <tr>
+        <td>below,is below,less than,is less than,smaller than,is smaller than</td>
+        <td>Inserts <code>&lt;</code></td>
+    </tr>
+                <tr>
+        <td>above,is above,greater than,is greater than,is bigger than,bigger than</td>
+        <td>Inserts <code>&gt;</code></td>
+    </tr>
+                <tr>
+        <td>at most,is at most,less than or equal to,is less than or equal to,smaller than or equal to,is smaller than or equal to</td>
+        <td>Inserts <code>&lt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>at least,is at least,greater than or equal to,is greater than or equal to,bigger than or equal to,is bigger than or equal to</td>
+        <td>Inserts <code>&gt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>plus</td>
+        <td>Inserts <code>+</code></td>
+    </tr>
+                <tr>
+        <td>minas,minus</td>
+        <td>Inserts <code>-</code></td>
+    </tr>
+                <tr>
+        <td>negative</td>
+        <td>Inserts <code>-$g</code></td>
+    </tr>
+                <tr>
+        <td>times</td>
+        <td>Inserts <code>*</code></td>
+    </tr>
+                <tr>
+        <td>divide,divided by</td>
+        <td>Inserts <code>/</code></td>
+    </tr>
+                <tr>
+        <td>integer divide,integer divided by</td>
+        <td>Inserts <code>//</code></td>
+    </tr>
+                <tr>
+        <td>modulo,remainder</td>
+        <td>Inserts <code>%</code></td>
+    </tr>
+                <tr>
+        <td>exponent</td>
+        <td>Inserts <code>**</code></td>
+    </tr>
+                <tr>
+        <td>matrix multiply</td>
+        <td>Inserts <code>@</code></td>
+    </tr>
+                <tr>
+        <td>decorator</td>
+        <td>Inserts <code>@$g</code></td>
+    </tr>
+                <tr>
+        <td>shift left</td>
+        <td>Inserts <code>&lt;&lt;</code></td>
+    </tr>
+                <tr>
+        <td>shift right,shift write</td>
+        <td>Inserts <code>&gt;&gt;</code></td>
+    </tr>
+                <tr>
+        <td>plus equals</td>
+        <td>Inserts <code>+&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>minas equals,minus equals</td>
+        <td>Inserts <code>-&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>times equals</td>
+        <td>Inserts <code>*&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>divide equals,divided by equals</td>
+        <td>Inserts <code>/&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>modulo equals,remainder equals</td>
+        <td>Inserts <code>%&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>exponent equals</td>
+        <td>Inserts <code>**&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>shift left equals</td>
+        <td>Inserts <code>&lt;&lt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>shift right equals,shift write equals</td>
+        <td>Inserts <code>&gt;&gt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>logical and,land</td>
+        <td>Inserts <code>and</code></td>
+    </tr>
+                <tr>
+        <td>logical or,logical ore,lore</td>
+        <td>Inserts <code>or</code></td>
+    </tr>
+                <tr>
+        <td>logical not,not</td>
+        <td>Inserts <code>not</code></td>
+    </tr>
+                <tr>
+        <td>bitwise and,band</td>
+        <td>Inserts <code>&amp;</code></td>
+    </tr>
+                <tr>
+        <td>bitwise or,bore,boar</td>
+        <td>Inserts <code>|</code></td>
+    </tr>
+                <tr>
+        <td>bitwise not</td>
+        <td>Inserts <code>~</code></td>
+    </tr>
+                <tr>
+        <td>exclusive or,exclusive ore,bitwise exclusive or,xor,bitwise xor</td>
+        <td>Inserts <code>^</code></td>
+    </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

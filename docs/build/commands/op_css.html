@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>op_css</title>
+    <link rel="stylesheet" type="text/css" href="../cube.css">
+    <script>
+        function toggleNav() {
+            let sidebar = document.getElementById("mySidebar");
+            let main = document.getElementById("main");
+            console.log(sidebar.style.width)
+            if (sidebar.style.width == "300px") {
+                sidebar.style.width = "0";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "300px";
+                main.style.marginLeft = "300px";
+            }
+        }
+
+        // sort table
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        window.onload = function(){document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            console.log("clicked!");
+            const table = th.closest('table');
+            Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+        })))};
+
+        let dropdownButtons = document.getElementsByClassName("dropdownButton");
+        console.log(dropdownButtons);
+        for (const d of dropdownButtons) {
+            d.addEventListener("click", function(){
+                let dropdownContent = d.nextElementSibling;
+                console.log("clicked")
+                dropdownContent.style.display = 
+                    (dropdownContent.style.display === "block") ? "none" : "block";
+            })
+        };
+    </script>
+</head>
+
+<body>
+    <div class="sidenav" id="mySidebar">
+        <a href="#about">Placeholder Link</a>
+        <a href="#services">Placeholder Link</a>
+        <a href="#clients">Placeholder Link</a>
+        <a href="#contact">Placeholder Link</a>
+        <button class="dropdownButton">Placeholder Dropdown</button>
+        <div class="dropdown-container">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+        </div>
+        <a href="#contact">Search</a>
+    </div>
+
+    <div id="main">
+        <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
+        <div class="mainContainer">
+            <h1>op_css</h1>
+            <table>
+                <tr class="tableHeading">
+                    <th class="leftCol">Spoken</th>
+                    <th class="rightCol">Definition</th>
+                </tr>
+                <tr>
+        <td>is,our,are,equal,be</td>
+        <td>Inserts <code>&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>.,dot</td>
+        <td>Inserts <code>.</code></td>
+    </tr>
+                <tr>
+        <td>below,is below,less than,is less than,smaller than,is smaller than</td>
+        <td>Inserts <code>&lt;</code></td>
+    </tr>
+                <tr>
+        <td>above,is above,greater than,is greater than,is bigger than,bigger than</td>
+        <td>Inserts <code>&gt;</code></td>
+    </tr>
+                <tr>
+        <td>at most,is at most,less than or equal to,is less than or equal to,smaller than or equal to,is smaller than or equal to</td>
+        <td>Inserts <code>&lt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>at least,is at least,greater than or equal to,is greater than or equal to,bigger than or equal to,is bigger than or equal to</td>
+        <td>Inserts <code>&gt;&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>plus</td>
+        <td>Inserts <code>+</code></td>
+    </tr>
+                <tr>
+        <td>minas,minus</td>
+        <td>Inserts <code>-</code></td>
+    </tr>
+                <tr>
+        <td>times</td>
+        <td>Inserts <code>*</code></td>
+    </tr>
+                <tr>
+        <td>divide,divided by</td>
+        <td>Inserts <code>/</code></td>
+    </tr>
+                <tr>
+        <td>modulo,remainder,percent</td>
+        <td>Inserts <code>%</code></td>
+    </tr>
+                <tr>
+        <td>everything,star</td>
+        <td>Inserts <code>*</code></td>
+    </tr>
+                <tr>
+        <td>id</td>
+        <td>Inserts <code>#</code></td>
+    </tr>
+                <tr>
+        <td>class</td>
+        <td>Inserts <code>.</code></td>
+    </tr>
+                <tr>
+        <td>child selector</td>
+        <td>Inserts <code>&gt;</code></td>
+    </tr>
+                <tr>
+        <td>sibling selector</td>
+        <td>Inserts <code>~</code></td>
+    </tr>
+                <tr>
+        <td>is one of,is 1 of</td>
+        <td>Inserts <code>~&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>is subcode</td>
+        <td>Inserts <code>|&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>is prefixed,is prefixed by</td>
+        <td>Inserts <code>^&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>is suffixed,is suffixed by</td>
+        <td>Inserts <code>$&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>contains</td>
+        <td>Inserts <code>*&#x3D;</code></td>
+    </tr>
+                <tr>
+        <td>as,with</td>
+        <td>Inserts <code>:</code></td>
+    </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>struct_ts</title>
+    <link rel="stylesheet" type="text/css" href="../cube.css">
+    <script>
+        function toggleNav() {
+            let sidebar = document.getElementById("mySidebar");
+            let main = document.getElementById("main");
+            console.log(sidebar.style.width)
+            if (sidebar.style.width == "300px") {
+                sidebar.style.width = "0";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "300px";
+                main.style.marginLeft = "300px";
+            }
+        }
+
+        // sort table
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        window.onload = function(){document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            console.log("clicked!");
+            const table = th.closest('table');
+            Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+        })))};
+
+        let dropdownButtons = document.getElementsByClassName("dropdownButton");
+        console.log(dropdownButtons);
+        for (const d of dropdownButtons) {
+            d.addEventListener("click", function(){
+                let dropdownContent = d.nextElementSibling;
+                console.log("clicked")
+                dropdownContent.style.display = 
+                    (dropdownContent.style.display === "block") ? "none" : "block";
+            })
+        };
+    </script>
+</head>
+
+<body>
+    <div class="sidenav" id="mySidebar">
+        <a href="#about">Placeholder Link</a>
+        <a href="#services">Placeholder Link</a>
+        <a href="#clients">Placeholder Link</a>
+        <a href="#contact">Placeholder Link</a>
+        <button class="dropdownButton">Placeholder Dropdown</button>
+        <div class="dropdown-container">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+        </div>
+        <a href="#contact">Search</a>
+    </div>
+
+    <div id="main">
+        <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
+        <div class="mainContainer">
+            <h1>struct_ts</h1>
+            <table>
+                <tr class="tableHeading">
+                    <th class="leftCol">Spoken</th>
+                    <th class="rightCol">Definition</th>
+                </tr>
+                <tr>
+        <td>abstract</td>
+        <td>Inserts <code>abstract</code></td>
+    </tr>
+                <tr>
+        <td>declare</td>
+        <td>Inserts <code>declare</code></td>
+    </tr>
+                <tr>
+        <td>enumeration,enumerate,enum</td>
+        <td>Inserts <code>enum $_ {$u$_$d}$n$_</code></td>
+    </tr>
+                <tr>
+        <td>implements,implement</td>
+        <td>Inserts <code>implements</code></td>
+    </tr>
+                <tr>
+        <td>interface</td>
+        <td>Inserts <code>interface $_ {$u$_$d}$n$_</code></td>
+    </tr>
+                <tr>
+        <td>read only,readonly</td>
+        <td>Inserts <code>readonly</code></td>
+    </tr>
+                <tr>
+        <td>protected</td>
+        <td>Inserts <code>protected</code></td>
+    </tr>
+                <tr>
+        <td>private</td>
+        <td>Inserts <code>private</code></td>
+    </tr>
+                <tr>
+        <td>public</td>
+        <td>Inserts <code>public</code></td>
+    </tr>
+                <tr>
+        <td>static</td>
+        <td>Inserts <code>static</code></td>
+    </tr>
+                <tr>
+        <td>type</td>
+        <td>Inserts <code>type</code></td>
+    </tr>
+                <tr>
+        <td>maybe</td>
+        <td>Inserts <code>$g?</code></td>
+    </tr>
+                <tr>
+        <td>cast,cast as,cast to</td>
+        <td>Inserts <code>as</code></td>
+    </tr>
+                <tr>
+        <td>any</td>
+        <td>Inserts <code>any</code></td>
+    </tr>
+                <tr>
+        <td>never</td>
+        <td>Inserts <code>never</code></td>
+    </tr>
+                <tr>
+        <td>object</td>
+        <td>Inserts <code>object</code></td>
+    </tr>
+                <tr>
+        <td>number</td>
+        <td>Inserts <code>number</code></td>
+    </tr>
+                <tr>
+        <td>big integer,big int</td>
+        <td>Inserts <code>bigint</code></td>
+    </tr>
+                <tr>
+        <td>symbol</td>
+        <td>Inserts <code>symbol</code></td>
+    </tr>
+                <tr>
+        <td>string</td>
+        <td>Inserts <code>string</code></td>
+    </tr>
+                <tr>
+        <td>boolean,bullion,bool</td>
+        <td>Inserts <code>boolean</code></td>
+    </tr>
+                <tr>
+        <td>array,a ray</td>
+        <td>Inserts <code>Array&lt;$_&gt;$_$g</code></td>
+    </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

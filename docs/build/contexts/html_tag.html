@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>html_tag</title>
+    <link rel="stylesheet" type="text/css" href="../cube.css">
+    <script>
+        function toggleNav() {
+            let sidebar = document.getElementById("mySidebar");
+            let main = document.getElementById("main");
+            console.log(sidebar.style.width)
+            if (sidebar.style.width == "300px") {
+                sidebar.style.width = "0";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "300px";
+                main.style.marginLeft = "300px";
+            }
+        }
+
+        // sort table
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+        
+        window.onload = function () {
+            document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+                console.log("clicked!");
+                const table = th.closest('table');
+                Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                    .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this
+                        .asc))
+                    .forEach(tr => table.appendChild(tr));
+            })))
+        };
+
+        let dropdownButtons = document.getElementsByClassName("dropdownButton");
+        console.log(dropdownButtons);
+        for (const d of dropdownButtons) {
+            d.addEventListener("click", function () {
+                let dropdownContent = d.nextElementSibling;
+                console.log("clicked")
+                dropdownContent.style.display =
+                    (dropdownContent.style.display === "block") ? "none" : "block";
+            })
+        };
+    </script>
+</head>
+
+<body>
+    <div class="sidenav" id="mySidebar">
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#clients">Clients</a>
+        <a href="#contact">Contact</a>
+        <button class="dropdown-btn">Dropdown
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+        </div>
+        <a href="#contact">Search</a>
+    </div>
+
+    <div id="main">
+        <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
+        <div class="mainContainer">
+            <h1>html_tag</h1>
+            <div>
+                <div>Extensions: None</div>
+                <h3>Context Changes</h3>
+                <table>
+                    <tr class="tableHeading">
+                        <th>Token</th>
+                        <th>Action</th>
+                        <th>Target</th>
+                        <th>Style</th>
+                    </tr>
+                    <tr>
+        <td><code>&gt;</code></td>
+        <td>push</td>
+        <td><code>typescript</code></td>
+        <td><code>html_tag</code></td>
+    </tr>
+                    <tr>
+        <td><code>&gt;</code></td>
+        <td>push</td>
+        <td><code>css</code></td>
+        <td><code>html_tag</code></td>
+    </tr>
+                    <tr>
+        <td><code>&gt;</code></td>
+        <td>pop</td>
+        <td>None</td>
+        <td><code>html_tag</code></td>
+    </tr>
+                    <tr>
+        <td><code>&quot;</code></td>
+        <td>push</td>
+        <td><code>double_quoted_string</code></td>
+        <td><code>string_delimiter</code></td>
+    </tr>
+                    <tr>
+        <td><code>&#x27;</code></td>
+        <td>push</td>
+        <td><code>single_quoted_string</code></td>
+        <td><code>string_delimiter</code></td>
+    </tr>
+                    <tr>
+        <td><code>&lt;!--</code></td>
+        <td>push</td>
+        <td><code>html_comment</code></td>
+        <td><code>comment</code></td>
+    </tr>
+                </table>
+            </div>
+            <div>
+                <h3>Commands</h3>
+                <div class="linkContainer">
+                    <a href="../commands/universal.html">universal</a> <br>
+                    <a href="../commands/struct_html_tag.html">struct_html_tag</a> <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

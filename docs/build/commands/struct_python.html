@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>struct_python</title>
+    <link rel="stylesheet" type="text/css" href="../cube.css">
+    <script>
+        function toggleNav() {
+            let sidebar = document.getElementById("mySidebar");
+            let main = document.getElementById("main");
+            console.log(sidebar.style.width)
+            if (sidebar.style.width == "300px") {
+                sidebar.style.width = "0";
+                main.style.marginLeft = "0";
+            } else {
+                sidebar.style.width = "300px";
+                main.style.marginLeft = "300px";
+            }
+        }
+
+        // sort table
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        window.onload = function(){document.querySelectorAll('th').forEach(th => th.addEventListener('click', (() => {
+            console.log("clicked!");
+            const table = th.closest('table');
+            Array.from(table.querySelectorAll('tr:nth-child(n+2)'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => table.appendChild(tr));
+        })))};
+
+        let dropdownButtons = document.getElementsByClassName("dropdownButton");
+        console.log(dropdownButtons);
+        for (const d of dropdownButtons) {
+            d.addEventListener("click", function(){
+                let dropdownContent = d.nextElementSibling;
+                console.log("clicked")
+                dropdownContent.style.display = 
+                    (dropdownContent.style.display === "block") ? "none" : "block";
+            })
+        };
+    </script>
+</head>
+
+<body>
+    <div class="sidenav" id="mySidebar">
+        <a href="#about">Placeholder Link</a>
+        <a href="#services">Placeholder Link</a>
+        <a href="#clients">Placeholder Link</a>
+        <a href="#contact">Placeholder Link</a>
+        <button class="dropdownButton">Placeholder Dropdown</button>
+        <div class="dropdown-container">
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+            <a href="#">Link 3</a>
+        </div>
+        <a href="#contact">Search</a>
+    </div>
+
+    <div id="main">
+        <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
+        <div class="mainContainer">
+            <h1>struct_python</h1>
+            <table>
+                <tr class="tableHeading">
+                    <th class="leftCol">Spoken</th>
+                    <th class="rightCol">Definition</th>
+                </tr>
+                <tr>
+        <td>false</td>
+        <td>Inserts <code>False</code></td>
+    </tr>
+                <tr>
+        <td>true</td>
+        <td>Inserts <code>True</code></td>
+    </tr>
+                <tr>
+        <td>none,nothing</td>
+        <td>Inserts <code>None</code></td>
+    </tr>
+                <tr>
+        <td>as</td>
+        <td>Inserts <code>as</code></td>
+    </tr>
+                <tr>
+        <td>assert</td>
+        <td>Inserts <code>assert</code></td>
+    </tr>
+                <tr>
+        <td>async,asynchronous</td>
+        <td>Inserts <code>async</code></td>
+    </tr>
+                <tr>
+        <td>await,a wait</td>
+        <td>Inserts <code>await</code></td>
+    </tr>
+                <tr>
+        <td>break</td>
+        <td>Inserts <code>break</code></td>
+    </tr>
+                <tr>
+        <td>class</td>
+        <td>Inserts <code>class</code></td>
+    </tr>
+                <tr>
+        <td>continue</td>
+        <td>Inserts <code>continue</code></td>
+    </tr>
+                <tr>
+        <td>def,define,the fine,defined</td>
+        <td>Inserts <code>def</code></td>
+    </tr>
+                <tr>
+        <td>del,dell,delete,the leet</td>
+        <td>Inserts <code>del</code></td>
+    </tr>
+                <tr>
+        <td>else if,elif</td>
+        <td>Inserts <code>elif</code></td>
+    </tr>
+                <tr>
+        <td>else</td>
+        <td>Inserts <code>else</code></td>
+    </tr>
+                <tr>
+        <td>except,accept</td>
+        <td>Inserts <code>except</code></td>
+    </tr>
+                <tr>
+        <td>finally</td>
+        <td>Inserts <code>finally</code></td>
+    </tr>
+                <tr>
+        <td>for,four,fore</td>
+        <td>Inserts <code>for</code></td>
+    </tr>
+                <tr>
+        <td>from</td>
+        <td>Inserts <code>from</code></td>
+    </tr>
+                <tr>
+        <td>global</td>
+        <td>Inserts <code>global</code></td>
+    </tr>
+                <tr>
+        <td>if</td>
+        <td>Inserts <code>if</code></td>
+    </tr>
+                <tr>
+        <td>import</td>
+        <td>Inserts <code>import</code></td>
+    </tr>
+                <tr>
+        <td>in</td>
+        <td>Inserts <code>in</code></td>
+    </tr>
+                <tr>
+        <td>physical equality,physical equals,is the same,is the same as</td>
+        <td>Inserts <code>is</code></td>
+    </tr>
+                <tr>
+        <td>lambda</td>
+        <td>Inserts <code>lambda $_: $_</code></td>
+    </tr>
+                <tr>
+        <td>nonlocal,non-local,non- local,not local</td>
+        <td>Inserts <code>nonlocal</code></td>
+    </tr>
+                <tr>
+        <td>pass</td>
+        <td>Inserts <code>pass</code></td>
+    </tr>
+                <tr>
+        <td>raise,raze</td>
+        <td>Inserts <code>raise</code></td>
+    </tr>
+                <tr>
+        <td>return</td>
+        <td>Inserts <code>return</code></td>
+    </tr>
+                <tr>
+        <td>try</td>
+        <td>Inserts <code>try</code></td>
+    </tr>
+                <tr>
+        <td>while</td>
+        <td>Inserts <code>while</code></td>
+    </tr>
+                <tr>
+        <td>with</td>
+        <td>Inserts <code>with</code></td>
+    </tr>
+                <tr>
+        <td>yield</td>
+        <td>Inserts <code>yield</code></td>
+    </tr>
+                <tr>
+        <td>my</td>
+        <td>Inserts <code>self.$g</code></td>
+    </tr>
+                <tr>
+        <td>self,me</td>
+        <td>Inserts <code>self</code></td>
+    </tr>
+                <tr>
+        <td>constructor</td>
+        <td>Inserts <code>def __init__(self$_):$u$_$d$_</code></td>
+    </tr>
+                <tr>
+        <td>wrapping,rapping,wrapper,rapper</td>
+        <td>Inserts <code>__$g$_$g__$_</code></td>
+    </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

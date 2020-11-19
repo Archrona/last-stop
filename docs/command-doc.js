@@ -46,7 +46,7 @@ class Command {
             for (let i = 0; i < this.arguments.length; i++) {
                 result += cuteFormat(this.arguments[i].toString());
                 if (i != this.arguments.length - 1) {
-                    result += ",";
+                    result += ", ";
                 }
             }
             result += "]</code>";
@@ -88,7 +88,9 @@ const commandGroupTemplate = Handlebars.compile(
     String(fs.readFileSync("templates/commandGroupTemplate.html"))
 );
 
-//
+const mergedCommandsTemplate = Handlebars.compile(
+    String(fs.readFileSync("templates/mergedCommandsTemplate.html"))
+);
 
 const inlineCodeTemplate = Handlebars.compile(
     `<code>{{code}}</code>`
@@ -96,13 +98,13 @@ const inlineCodeTemplate = Handlebars.compile(
 
 // helper
 // commandGroup: a CommandGroup
-function getCommandGroupHtml(commandGroup) {
+function getCommandGroupHtml(commandGroup, merged) {
     let renderedCommands = [];
     let commands = commandGroup.commands;
 
     for (const c of commands) {
         let command = new Command(c);
-        let spoken = command.spoken;
+        let spoken = command.spoken.join(", ");
         let explanation = command.getExplanation();
         let renderedCommand = commandTemplate({
             spoken: spoken,
@@ -110,11 +112,19 @@ function getCommandGroupHtml(commandGroup) {
         });
         renderedCommands.push(renderedCommand);
     }
-
-    let result = commandGroupTemplate({
-        name: commandGroup.name,
-        commands: renderedCommands
-    });
+    let result;
+    if (merged) {
+        result = mergedCommandsTemplate({
+            name: commandGroup.name,
+            commands: renderedCommands
+        });
+    }
+    else {
+        result = commandGroupTemplate({
+            name: commandGroup.name,
+            commands: renderedCommands
+        });
+    }
 
     return result;
 }
@@ -131,12 +141,17 @@ let commandGroups = commandGroupFiles.map((commandGroup) => new CommandGroup(com
 
 // rendering and HTML output of CommandGroups
 for (const cg of commandGroups) {
-    let renderedcg = getCommandGroupHtml(cg);
+    let renderedcg = getCommandGroupHtml(cg, false);
     fs.writeFileSync("./build/commands/" + cg.name + ".html", renderedcg);
 }
 
 // list of Context objects
 let contexts = contextFiles.map((contextFile) => new Context(contextFile));
+// helper
+function getCommandsFromNames(names) {
+    let cgMatches = commandGroups.filter((cg) => names.includes(cg.name));
+    return cgMatches;
+}
 
 // rendering and HTML output of contexts
 for (const c of contexts) {
@@ -145,14 +160,14 @@ for (const c of contexts) {
     
     let extensions = (c.extensions === undefined || c.extensions.length === 0) ? "None" : c.extensions;
     let commandLink = (c.commands === undefined || c.commands.length === 0) ? "None" : 
-        commandGroupNames.map((cg) => "<a href=\"../commands/" + cg + ".html\">" + cg + "</a> <br>");
-    
+        // commandGroupNames.map((cg) => "<a href=\"../commands/" + cg + ".html\">" + cg + "</a> <br>");
+        commandGroupNames.map((cg) => "<a href=#" + cg + ">" + cg + "</a> <br>");
+    let cgMatches = getCommandsFromNames(commandGroupNames);
 
     let contextChange = [];
     for (const cc of c.contextChanges) {
         let token = (cc.token === undefined || cc.token .length === 0) ? "None" : 
             inlineCodeTemplate({code: cuteFormat(cc.token)});
-        // console.log(JSON.stringify(cc.token));
         let action = (cc.action === undefined || cc.action.length === 0) ? "None" : cc.action;
         let target = (cc.target === undefined || cc.target.length === 0) ? "None" : 
             inlineCodeTemplate({code: cuteFormat(cc.target)});
@@ -165,12 +180,18 @@ for (const c of contexts) {
             style: style
         }));
     }
-    // console.log(contextChange);
+
+    let mergedCommands = []
+    for (const cg of cgMatches) {
+        mergedCommands.push(getCommandGroupHtml(cg, true));
+    }
+
     let renderedContext = contextTemplate({
         name: name,
         extensions: extensions,
         contextChange: contextChange,
-        commandLink: commandLink
+        commandLink: commandLink,
+        mergedCommands: mergedCommands
     });
     fs.writeFileSync("./build/contexts/" + name + ".html", renderedContext);
 }

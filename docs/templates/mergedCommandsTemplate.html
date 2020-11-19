@@ -1,0 +1,12 @@
+<div class="tableContainer" id={{name}}>
+    <h3>{{name}}</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        {{#each commands}}
+        {{{this}}}
+        {{/each}}
+    </table>
+</div>

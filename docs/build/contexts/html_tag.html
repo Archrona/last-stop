@@ -51,21 +51,27 @@
 
 <body>
     <div class="sidenav" id="mySidebar">
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#clients">Clients</a>
-        <a href="#contact">Contact</a>
-        <button class="dropdown-btn">Dropdown
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
+            <div class="inside">
+                <h2>All Contexts</h2>
+                <a href="back_quoted_string_js.html">back_quoted_string_js</a>
+                <a href="basic.html">basic</a>
+                <a href="comment_multiple_line.html">comment_multiple_line</a>
+                <a href="comment_single_line.html">comment_single_line</a>
+                <a href="csharp.html">csharp</a>
+                <a href="css.html">css</a>
+                <a href="double_quoted_string.html">double_quoted_string</a>
+                <a href="html_comment.html">html_comment</a>
+                <a href="html_tag.html">html_tag</a>
+                <a href="html.html">html</a>
+                <a href="latex_math.html">latex_math</a>
+                <a href="latex.html">latex</a>
+                <a href="python.html">python</a>
+                <a href="single_quoted_string.html">single_quoted_string</a>
+                <a href="spoken_text.html">spoken_text</a>
+                <a href="text.html">text</a>
+                <a href="typescript.html">typescript</a>
+            </div>
         </div>
-        <a href="#contact">Search</a>
-    </div>
-
     <div id="main">
         <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
         <div class="mainContainer">
@@ -81,41 +87,41 @@
                         <th>Style</th>
                     </tr>
                     <tr>
-        <td><code>&gt;</code></td>
-        <td>push</td>
-        <td><code>typescript</code></td>
-        <td><code>html_tag</code></td>
-    </tr>
+            <td><code>&gt;</code></td>
+            <td>push</td>
+            <td><code>typescript</code></td>
+            <td><code>html_tag</code></td>
+        </tr>
                     <tr>
-        <td><code>&gt;</code></td>
-        <td>push</td>
-        <td><code>css</code></td>
-        <td><code>html_tag</code></td>
-    </tr>
+            <td><code>&gt;</code></td>
+            <td>push</td>
+            <td><code>css</code></td>
+            <td><code>html_tag</code></td>
+        </tr>
                     <tr>
-        <td><code>&gt;</code></td>
-        <td>pop</td>
-        <td>None</td>
-        <td><code>html_tag</code></td>
-    </tr>
+            <td><code>&gt;</code></td>
+            <td>pop</td>
+            <td>None</td>
+            <td><code>html_tag</code></td>
+        </tr>
                     <tr>
-        <td><code>&quot;</code></td>
-        <td>push</td>
-        <td><code>double_quoted_string</code></td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&quot;</code></td>
+            <td>push</td>
+            <td><code>double_quoted_string</code></td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>&#x27;</code></td>
-        <td>push</td>
-        <td><code>single_quoted_string</code></td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&#x27;</code></td>
+            <td>push</td>
+            <td><code>single_quoted_string</code></td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>&lt;!--</code></td>
-        <td>push</td>
-        <td><code>html_comment</code></td>
-        <td><code>comment</code></td>
-    </tr>
+            <td><code>&lt;!--</code></td>
+            <td>push</td>
+            <td><code>html_comment</code></td>
+            <td><code>comment</code></td>
+        </tr>
                 </table>
             </div>
             <div>
@@ -126,535 +132,6 @@
                 </div>
             </div>
             <div>
-                <div class="tableContainer" id=struct_html_tag>
-    <h3>struct_html_tag</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
-        </tr>
-        <tr>
-        <td>attribute, at</td>
-        <td>Inserts <code>$_&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>accept</td>
-        <td>Inserts <code>accept&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>accept character set, accept char set, accept charset</td>
-        <td>Inserts <code>accept-charset&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>access key, accesskey</td>
-        <td>Inserts <code>accesskey&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>action</td>
-        <td>Inserts <code>action&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>alternate, alt</td>
-        <td>Inserts <code>alt&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>asynchronous, async, a sink</td>
-        <td>Inserts <code>async</code></td>
-    </tr>
-        <tr>
-        <td>autocomplete, auto complete</td>
-        <td>Inserts <code>autocomplete&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>autofocus, auto focus</td>
-        <td>Inserts <code>autofocus</code></td>
-    </tr>
-        <tr>
-        <td>autoplay</td>
-        <td>Inserts <code>autoplay</code></td>
-    </tr>
-        <tr>
-        <td>character set, char set, charset</td>
-        <td>Inserts <code>charset&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>checked</td>
-        <td>Inserts <code>checked</code></td>
-    </tr>
-        <tr>
-        <td>class</td>
-        <td>Inserts <code>class&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>cols, calls, columns</td>
-        <td>Inserts <code>cols&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>colspan, call span, column span</td>
-        <td>Inserts <code>colspan&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>content</td>
-        <td>Inserts <code>content&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>content editable, contenteditable</td>
-        <td>Inserts <code>contenteditable&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>controls</td>
-        <td>Inserts <code>controls</code></td>
-    </tr>
-        <tr>
-        <td>coords, cords, coordinates</td>
-        <td>Inserts <code>coords&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>data</td>
-        <td>Inserts <code>data&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>date time, datetime</td>
-        <td>Inserts <code>datetime&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>default</td>
-        <td>Inserts <code>default</code></td>
-    </tr>
-        <tr>
-        <td>defer</td>
-        <td>Inserts <code>defer</code></td>
-    </tr>
-        <tr>
-        <td>dir, direction</td>
-        <td>Inserts <code>dir&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>dirname, direction name</td>
-        <td>Inserts <code>dirname&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>disabled</td>
-        <td>Inserts <code>disabled</code></td>
-    </tr>
-        <tr>
-        <td>draggable</td>
-        <td>Inserts <code>accept&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>enctype, encoding type</td>
-        <td>Inserts <code>enctype&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>for, four, 4</td>
-        <td>Inserts <code>for&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>form</td>
-        <td>Inserts <code>form&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>form action, formaction</td>
-        <td>Inserts <code>formaction&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>headers</td>
-        <td>Inserts <code>headers&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>height</td>
-        <td>Inserts <code>height&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>hidden</td>
-        <td>Inserts <code>hidden</code></td>
-    </tr>
-        <tr>
-        <td>href, refer, referring, refer to, referring to, reference</td>
-        <td>Inserts <code>href&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>http - equivalent, http - equiv, http equivalent, http equiv</td>
-        <td>Inserts <code>http-equiv&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>id</td>
-        <td>Inserts <code>id&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>ismap, is map</td>
-        <td>Inserts <code>ismap</code></td>
-    </tr>
-        <tr>
-        <td>kind</td>
-        <td>Inserts <code>kind&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>label</td>
-        <td>Inserts <code>label&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>language, lang</td>
-        <td>Inserts <code>lang&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>list</td>
-        <td>Inserts <code>list&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>loop</td>
-        <td>Inserts <code>loop</code></td>
-    </tr>
-        <tr>
-        <td>max, maximum</td>
-        <td>Inserts <code>max&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>max length, maximum length</td>
-        <td>Inserts <code>maxlength&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>media</td>
-        <td>Inserts <code>media&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>method</td>
-        <td>Inserts <code>method&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>multiple</td>
-        <td>Inserts <code>multiple</code></td>
-    </tr>
-        <tr>
-        <td>muted</td>
-        <td>Inserts <code>muted</code></td>
-    </tr>
-        <tr>
-        <td>name</td>
-        <td>Inserts <code>name&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>novalidate, no validate</td>
-        <td>Inserts <code>novalidate</code></td>
-    </tr>
-        <tr>
-        <td>on abort</td>
-        <td>Inserts <code>onabort&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on after print</td>
-        <td>Inserts <code>onafterprint&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on before print</td>
-        <td>Inserts <code>onbeforeprint&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on before unload</td>
-        <td>Inserts <code>onbeforeunload&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on blur</td>
-        <td>Inserts <code>onblur&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on can play</td>
-        <td>Inserts <code>oncanplay&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on can play through</td>
-        <td>Inserts <code>oncanplaythrough&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on change</td>
-        <td>Inserts <code>onchange&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on click</td>
-        <td>Inserts <code>onclick&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on context menu</td>
-        <td>Inserts <code>oncontextmenu&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on copy</td>
-        <td>Inserts <code>oncopy&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on cut</td>
-        <td>Inserts <code>oncut&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on double click</td>
-        <td>Inserts <code>ondblclick&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag</td>
-        <td>Inserts <code>ondrag&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag end, on drag and</td>
-        <td>Inserts <code>ondragend&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag enter</td>
-        <td>Inserts <code>ondragenter&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag leave</td>
-        <td>Inserts <code>ondragleave&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag over</td>
-        <td>Inserts <code>ondragover&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drag start</td>
-        <td>Inserts <code>ondragstart&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on drop</td>
-        <td>Inserts <code>ondrop&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on error</td>
-        <td>Inserts <code>onerror&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on focus</td>
-        <td>Inserts <code>onfocus&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on input</td>
-        <td>Inserts <code>oninput&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on invalid</td>
-        <td>Inserts <code>oninvalid&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on key down</td>
-        <td>Inserts <code>onkeydown&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on key press, on keypress</td>
-        <td>Inserts <code>onkeypress&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on key up</td>
-        <td>Inserts <code>onkeyup&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on load</td>
-        <td>Inserts <code>onload&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on loaded data</td>
-        <td>Inserts <code>onloadeddata&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse down</td>
-        <td>Inserts <code>onmousedown&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse move</td>
-        <td>Inserts <code>onmousemove&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse out</td>
-        <td>Inserts <code>onmouseout&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse over</td>
-        <td>Inserts <code>onmouseover&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse up</td>
-        <td>Inserts <code>onmouseup&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on mouse wheel</td>
-        <td>Inserts <code>onmousewheel&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on offline</td>
-        <td>Inserts <code>onoffline&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on online</td>
-        <td>Inserts <code>ononline&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on page hide</td>
-        <td>Inserts <code>onpagehide&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on page show</td>
-        <td>Inserts <code>onpageshow&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on paste</td>
-        <td>Inserts <code>onpaste&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on reset</td>
-        <td>Inserts <code>onreset&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on resize</td>
-        <td>Inserts <code>onresize&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on scroll</td>
-        <td>Inserts <code>onscroll&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on search</td>
-        <td>Inserts <code>onsearch&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on select</td>
-        <td>Inserts <code>onselect&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on storage</td>
-        <td>Inserts <code>onstorage&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on submit</td>
-        <td>Inserts <code>onsubmit&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on unload</td>
-        <td>Inserts <code>onunload&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>on wheel</td>
-        <td>Inserts <code>onwheel&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>pattern</td>
-        <td>Inserts <code>pattern&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>placeholder, place holder</td>
-        <td>Inserts <code>placeholder&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>poster</td>
-        <td>Inserts <code>poster&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>read only, read - only, readonly</td>
-        <td>Inserts <code>readonly</code></td>
-    </tr>
-        <tr>
-        <td>rel, relative, related, relate, relation, relationship</td>
-        <td>Inserts <code>rel&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>required</td>
-        <td>Inserts <code>required</code></td>
-    </tr>
-        <tr>
-        <td>rows, rose</td>
-        <td>Inserts <code>rows&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>row span, rowspan</td>
-        <td>Inserts <code>rowspan&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>scope</td>
-        <td>Inserts <code>scope&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>selected</td>
-        <td>Inserts <code>selected</code></td>
-    </tr>
-        <tr>
-        <td>shape</td>
-        <td>Inserts <code>shape&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>size</td>
-        <td>Inserts <code>size&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>sizes</td>
-        <td>Inserts <code>sizes&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>span</td>
-        <td>Inserts <code>span&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>spell check, spellcheck</td>
-        <td>Inserts <code>height&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>source, src</td>
-        <td>Inserts <code>src&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>source doc, source document, srcdoc</td>
-        <td>Inserts <code>srcdoc&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>source set, srcset</td>
-        <td>Inserts <code>srcset&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>start</td>
-        <td>Inserts <code>start&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>step</td>
-        <td>Inserts <code>step&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>style</td>
-        <td>Inserts <code>style&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>tab index, tabindex</td>
-        <td>Inserts <code>tabindex&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>target</td>
-        <td>Inserts <code>target&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>title</td>
-        <td>Inserts <code>title&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>translate</td>
-        <td>Inserts <code>translate&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>type</td>
-        <td>Inserts <code>type&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>use map, usemap</td>
-        <td>Inserts <code>usemap&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>value</td>
-        <td>Inserts <code>value&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>width, with</td>
-        <td>Inserts <code>width&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>wrap</td>
-        <td>Inserts <code>wrap&#x3D;&quot;$_\&quot;$_</code></td>
-    </tr>
-    </table>
-</div>
                 <div class="tableContainer" id=universal>
     <h3>universal</h3>
     <table>
@@ -663,173 +140,702 @@
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>stop, nop</td>
-        <td>Executes <code>nop</code></td>
-    </tr>
+            <td>stop, nop</td>
+            <td>Executes <code>nop</code></td>
+        </tr>
         <tr>
-        <td>blank, shove, space</td>
-        <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
-    </tr>
+            <td>blank, shove, space</td>
+            <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
+        </tr>
         <tr>
-        <td>step</td>
-        <td>Executes <code>step</code> with arguments <code>[1]</code></td>
-    </tr>
+            <td>step</td>
+            <td>Executes <code>step</code> with arguments <code>[1]</code></td>
+        </tr>
         <tr>
-        <td>jump</td>
-        <td>Executes <code>step</code> with arguments <code>[2]</code></td>
-    </tr>
+            <td>jump</td>
+            <td>Executes <code>step</code> with arguments <code>[2]</code></td>
+        </tr>
         <tr>
-        <td>leap, hurdle</td>
-        <td>Executes <code>step</code> with arguments <code>[3]</code></td>
-    </tr>
+            <td>leap, hurdle</td>
+            <td>Executes <code>step</code> with arguments <code>[3]</code></td>
+        </tr>
         <tr>
-        <td>step all, step everything</td>
-        <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>step all, step everything</td>
+            <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>go $location</td>
-        <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
-    </tr>
+            <td>go $location</td>
+            <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
+        </tr>
         <tr>
-        <td>go everything, go everywhere</td>
-        <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>go everything, go everywhere</td>
+            <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>yank that, yanks that, yanked that</td>
-        <td>Executes <code>cut</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>yank that, yanks that, yanked that</td>
+            <td>Executes <code>cut</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>grab that, grabs that, grabbed that, grabbing that</td>
-        <td>Executes <code>copy</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>grab that, grabs that, grabbed that, grabbing that</td>
+            <td>Executes <code>copy</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>spit that, spits that, spitz that, spitted that</td>
-        <td>Executes <code>paste</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>spit that, spits that, spitz that, spitted that</td>
+            <td>Executes <code>paste</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>grab everything</td>
-        <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>grab everything</td>
+            <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>yank everything</td>
-        <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>yank everything</td>
+            <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>sponge</td>
-        <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
-    </tr>
+            <td>sponge</td>
+            <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
+        </tr>
         <tr>
-        <td>glue</td>
-        <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
-    </tr>
+            <td>glue</td>
+            <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
+        </tr>
         <tr>
-        <td>sponge left</td>
-        <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
-    </tr>
+            <td>sponge left</td>
+            <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
+        </tr>
         <tr>
-        <td>sponge right</td>
-        <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
-    </tr>
+            <td>sponge right</td>
+            <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
+        </tr>
         <tr>
-        <td>sponge above</td>
-        <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
-    </tr>
+            <td>sponge above</td>
+            <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
+        </tr>
         <tr>
-        <td>sponge below</td>
-        <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
-    </tr>
+            <td>sponge below</td>
+            <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
+        </tr>
         <tr>
-        <td>halo</td>
-        <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
-    </tr>
+            <td>halo</td>
+            <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
+        </tr>
         <tr>
-        <td>dilate, halo sides, halo horizontal, halo horizontally</td>
-        <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
-    </tr>
+            <td>dilate, halo sides, halo horizontal, halo horizontally</td>
+            <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
+        </tr>
         <tr>
-        <td>halo above, halo up</td>
-        <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
-    </tr>
+            <td>halo above, halo up</td>
+            <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
+        </tr>
         <tr>
-        <td>halo below, halo down</td>
-        <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
-    </tr>
+            <td>halo below, halo down</td>
+            <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
+        </tr>
         <tr>
-        <td>halo left, halo before</td>
-        <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
-    </tr>
+            <td>halo left, halo before</td>
+            <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
+        </tr>
         <tr>
-        <td>halo right, halo after</td>
-        <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
-    </tr>
+            <td>halo right, halo after</td>
+            <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
+        </tr>
         <tr>
-        <td>chop above $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
-    </tr>
+            <td>chop above $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
+        </tr>
         <tr>
-        <td>chop $location, chop below $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
-    </tr>
+            <td>chop $location, chop below $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
+        </tr>
         <tr>
-        <td>dropout, drop out, drop forward</td>
-        <td>Inserts <code>$u</code></td>
-    </tr>
+            <td>dropout, drop out, drop forward</td>
+            <td>Inserts <code>$u</code></td>
+        </tr>
         <tr>
-        <td>drop in, drop back</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
+            <td>drop in, drop back</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
         <tr>
-        <td>drop, drop down</td>
-        <td>Inserts <code>$n</code></td>
-    </tr>
+            <td>drop, drop down</td>
+            <td>Inserts <code>$n</code></td>
+        </tr>
         <tr>
-        <td>ok, okay</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
-    </tr>
+            <td>ok, okay</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
+        </tr>
         <tr>
-        <td>expand</td>
-        <td>Inserts <code>$u$_$d</code></td>
-    </tr>
+            <td>expand</td>
+            <td>Inserts <code>$u$_$d</code></td>
+        </tr>
         <tr>
-        <td>change to typescript, change to type script, change to java script, change to javascript</td>
-        <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
-    </tr>
+            <td>change to typescript, change to type script, change to java script, change to javascript</td>
+            <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
+        </tr>
         <tr>
-        <td>change to text</td>
-        <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
-    </tr>
+            <td>change to text</td>
+            <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
+        </tr>
         <tr>
-        <td>change to html</td>
-        <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
-    </tr>
+            <td>change to html</td>
+            <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
+        </tr>
         <tr>
-        <td>change to css</td>
-        <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
-    </tr>
+            <td>change to css</td>
+            <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
+        </tr>
         <tr>
-        <td>change to latex</td>
-        <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
-    </tr>
+            <td>change to latex</td>
+            <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
+        </tr>
         <tr>
-        <td>change to python</td>
-        <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
-    </tr>
+            <td>change to python</td>
+            <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
+        </tr>
         <tr>
-        <td>change to cs, change to c sharp, change to see sharp</td>
-        <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
-    </tr>
+            <td>change to cs, change to c sharp, change to see sharp</td>
+            <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
+        </tr>
         <tr>
-        <td>please</td>
-        <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>please</td>
+            <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>back down, backdown</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
+            <td>back down, backdown</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
         <tr>
-        <td>back up, backup</td>
-        <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>back up, backup</td>
+            <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=struct_html_tag>
+    <h3>struct_html_tag</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>attribute, at</td>
+            <td>Inserts <code>$_&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>accept</td>
+            <td>Inserts <code>accept&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>accept character set, accept char set, accept charset</td>
+            <td>Inserts <code>accept-charset&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>access key, accesskey</td>
+            <td>Inserts <code>accesskey&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>action</td>
+            <td>Inserts <code>action&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>alternate, alt</td>
+            <td>Inserts <code>alt&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>asynchronous, async, a sink</td>
+            <td>Inserts <code>async</code></td>
+        </tr>
+        <tr>
+            <td>autocomplete, auto complete</td>
+            <td>Inserts <code>autocomplete&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>autofocus, auto focus</td>
+            <td>Inserts <code>autofocus</code></td>
+        </tr>
+        <tr>
+            <td>autoplay</td>
+            <td>Inserts <code>autoplay</code></td>
+        </tr>
+        <tr>
+            <td>character set, char set, charset</td>
+            <td>Inserts <code>charset&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>checked</td>
+            <td>Inserts <code>checked</code></td>
+        </tr>
+        <tr>
+            <td>class</td>
+            <td>Inserts <code>class&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>cols, calls, columns</td>
+            <td>Inserts <code>cols&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>colspan, call span, column span</td>
+            <td>Inserts <code>colspan&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>content</td>
+            <td>Inserts <code>content&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>content editable, contenteditable</td>
+            <td>Inserts <code>contenteditable&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>controls</td>
+            <td>Inserts <code>controls</code></td>
+        </tr>
+        <tr>
+            <td>coords, cords, coordinates</td>
+            <td>Inserts <code>coords&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>data</td>
+            <td>Inserts <code>data&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>date time, datetime</td>
+            <td>Inserts <code>datetime&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>default</td>
+            <td>Inserts <code>default</code></td>
+        </tr>
+        <tr>
+            <td>defer</td>
+            <td>Inserts <code>defer</code></td>
+        </tr>
+        <tr>
+            <td>dir, direction</td>
+            <td>Inserts <code>dir&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>dirname, direction name</td>
+            <td>Inserts <code>dirname&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>disabled</td>
+            <td>Inserts <code>disabled</code></td>
+        </tr>
+        <tr>
+            <td>draggable</td>
+            <td>Inserts <code>accept&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>enctype, encoding type</td>
+            <td>Inserts <code>enctype&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>for, four, 4</td>
+            <td>Inserts <code>for&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>form</td>
+            <td>Inserts <code>form&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>form action, formaction</td>
+            <td>Inserts <code>formaction&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>headers</td>
+            <td>Inserts <code>headers&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>height</td>
+            <td>Inserts <code>height&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>hidden</td>
+            <td>Inserts <code>hidden</code></td>
+        </tr>
+        <tr>
+            <td>href, refer, referring, refer to, referring to, reference</td>
+            <td>Inserts <code>href&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>http - equivalent, http - equiv, http equivalent, http equiv</td>
+            <td>Inserts <code>http-equiv&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>id</td>
+            <td>Inserts <code>id&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>ismap, is map</td>
+            <td>Inserts <code>ismap</code></td>
+        </tr>
+        <tr>
+            <td>kind</td>
+            <td>Inserts <code>kind&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>label</td>
+            <td>Inserts <code>label&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>language, lang</td>
+            <td>Inserts <code>lang&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>list</td>
+            <td>Inserts <code>list&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>loop</td>
+            <td>Inserts <code>loop</code></td>
+        </tr>
+        <tr>
+            <td>max, maximum</td>
+            <td>Inserts <code>max&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>max length, maximum length</td>
+            <td>Inserts <code>maxlength&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>media</td>
+            <td>Inserts <code>media&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>method</td>
+            <td>Inserts <code>method&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>multiple</td>
+            <td>Inserts <code>multiple</code></td>
+        </tr>
+        <tr>
+            <td>muted</td>
+            <td>Inserts <code>muted</code></td>
+        </tr>
+        <tr>
+            <td>name</td>
+            <td>Inserts <code>name&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>novalidate, no validate</td>
+            <td>Inserts <code>novalidate</code></td>
+        </tr>
+        <tr>
+            <td>on abort</td>
+            <td>Inserts <code>onabort&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on after print</td>
+            <td>Inserts <code>onafterprint&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on before print</td>
+            <td>Inserts <code>onbeforeprint&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on before unload</td>
+            <td>Inserts <code>onbeforeunload&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on blur</td>
+            <td>Inserts <code>onblur&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on can play</td>
+            <td>Inserts <code>oncanplay&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on can play through</td>
+            <td>Inserts <code>oncanplaythrough&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on change</td>
+            <td>Inserts <code>onchange&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on click</td>
+            <td>Inserts <code>onclick&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on context menu</td>
+            <td>Inserts <code>oncontextmenu&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on copy</td>
+            <td>Inserts <code>oncopy&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on cut</td>
+            <td>Inserts <code>oncut&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on double click</td>
+            <td>Inserts <code>ondblclick&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag</td>
+            <td>Inserts <code>ondrag&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag end, on drag and</td>
+            <td>Inserts <code>ondragend&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag enter</td>
+            <td>Inserts <code>ondragenter&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag leave</td>
+            <td>Inserts <code>ondragleave&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag over</td>
+            <td>Inserts <code>ondragover&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drag start</td>
+            <td>Inserts <code>ondragstart&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on drop</td>
+            <td>Inserts <code>ondrop&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on error</td>
+            <td>Inserts <code>onerror&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on focus</td>
+            <td>Inserts <code>onfocus&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on input</td>
+            <td>Inserts <code>oninput&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on invalid</td>
+            <td>Inserts <code>oninvalid&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on key down</td>
+            <td>Inserts <code>onkeydown&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on key press, on keypress</td>
+            <td>Inserts <code>onkeypress&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on key up</td>
+            <td>Inserts <code>onkeyup&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on load</td>
+            <td>Inserts <code>onload&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on loaded data</td>
+            <td>Inserts <code>onloadeddata&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse down</td>
+            <td>Inserts <code>onmousedown&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse move</td>
+            <td>Inserts <code>onmousemove&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse out</td>
+            <td>Inserts <code>onmouseout&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse over</td>
+            <td>Inserts <code>onmouseover&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse up</td>
+            <td>Inserts <code>onmouseup&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on mouse wheel</td>
+            <td>Inserts <code>onmousewheel&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on offline</td>
+            <td>Inserts <code>onoffline&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on online</td>
+            <td>Inserts <code>ononline&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on page hide</td>
+            <td>Inserts <code>onpagehide&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on page show</td>
+            <td>Inserts <code>onpageshow&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on paste</td>
+            <td>Inserts <code>onpaste&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on reset</td>
+            <td>Inserts <code>onreset&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on resize</td>
+            <td>Inserts <code>onresize&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on scroll</td>
+            <td>Inserts <code>onscroll&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on search</td>
+            <td>Inserts <code>onsearch&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on select</td>
+            <td>Inserts <code>onselect&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on storage</td>
+            <td>Inserts <code>onstorage&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on submit</td>
+            <td>Inserts <code>onsubmit&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on unload</td>
+            <td>Inserts <code>onunload&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>on wheel</td>
+            <td>Inserts <code>onwheel&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>pattern</td>
+            <td>Inserts <code>pattern&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>placeholder, place holder</td>
+            <td>Inserts <code>placeholder&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>poster</td>
+            <td>Inserts <code>poster&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>read only, read - only, readonly</td>
+            <td>Inserts <code>readonly</code></td>
+        </tr>
+        <tr>
+            <td>rel, relative, related, relate, relation, relationship</td>
+            <td>Inserts <code>rel&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>required</td>
+            <td>Inserts <code>required</code></td>
+        </tr>
+        <tr>
+            <td>rows, rose</td>
+            <td>Inserts <code>rows&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>row span, rowspan</td>
+            <td>Inserts <code>rowspan&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>scope</td>
+            <td>Inserts <code>scope&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>selected</td>
+            <td>Inserts <code>selected</code></td>
+        </tr>
+        <tr>
+            <td>shape</td>
+            <td>Inserts <code>shape&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>size</td>
+            <td>Inserts <code>size&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>sizes</td>
+            <td>Inserts <code>sizes&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>span</td>
+            <td>Inserts <code>span&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>spell check, spellcheck</td>
+            <td>Inserts <code>height&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>source, src</td>
+            <td>Inserts <code>src&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>source doc, source document, srcdoc</td>
+            <td>Inserts <code>srcdoc&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>source set, srcset</td>
+            <td>Inserts <code>srcset&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>start</td>
+            <td>Inserts <code>start&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>step</td>
+            <td>Inserts <code>step&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>style</td>
+            <td>Inserts <code>style&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>tab index, tabindex</td>
+            <td>Inserts <code>tabindex&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>target</td>
+            <td>Inserts <code>target&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>title</td>
+            <td>Inserts <code>title&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>translate</td>
+            <td>Inserts <code>translate&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>type</td>
+            <td>Inserts <code>type&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>use map, usemap</td>
+            <td>Inserts <code>usemap&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>value</td>
+            <td>Inserts <code>value&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>width, with</td>
+            <td>Inserts <code>width&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>wrap</td>
+            <td>Inserts <code>wrap&#x3D;&quot;$_\&quot;$_</code></td>
+        </tr>
     </table>
 </div>
             </div>

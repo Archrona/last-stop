@@ -51,21 +51,27 @@
 
 <body>
     <div class="sidenav" id="mySidebar">
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#clients">Clients</a>
-        <a href="#contact">Contact</a>
-        <button class="dropdown-btn">Dropdown
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
+            <div class="inside">
+                <h2>All Contexts</h2>
+                <a href="back_quoted_string_js.html">back_quoted_string_js</a>
+                <a href="basic.html">basic</a>
+                <a href="comment_multiple_line.html">comment_multiple_line</a>
+                <a href="comment_single_line.html">comment_single_line</a>
+                <a href="csharp.html">csharp</a>
+                <a href="css.html">css</a>
+                <a href="double_quoted_string.html">double_quoted_string</a>
+                <a href="html_comment.html">html_comment</a>
+                <a href="html_tag.html">html_tag</a>
+                <a href="html.html">html</a>
+                <a href="latex_math.html">latex_math</a>
+                <a href="latex.html">latex</a>
+                <a href="python.html">python</a>
+                <a href="single_quoted_string.html">single_quoted_string</a>
+                <a href="spoken_text.html">spoken_text</a>
+                <a href="text.html">text</a>
+                <a href="typescript.html">typescript</a>
+            </div>
         </div>
-        <a href="#contact">Search</a>
-    </div>
-
     <div id="main">
         <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
         <div class="mainContainer">
@@ -81,17 +87,17 @@
                         <th>Style</th>
                     </tr>
                     <tr>
-        <td><code>&#x60;</code></td>
-        <td>pop</td>
-        <td>None</td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&#x60;</code></td>
+            <td>pop</td>
+            <td>None</td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>${</code></td>
-        <td>push</td>
-        <td><code>typescript</code></td>
-        <td><code>string_escape</code></td>
-    </tr>
+            <td><code>${</code></td>
+            <td>push</td>
+            <td><code>typescript</code></td>
+            <td><code>string_escape</code></td>
+        </tr>
                 </table>
             </div>
             <div>
@@ -104,50 +110,181 @@
                 </div>
             </div>
             <div>
-                <div class="tableContainer" id=eol_semi>
-    <h3>eol_semi</h3>
+                <div class="tableContainer" id=universal>
+    <h3>universal</h3>
     <table>
         <tr class="tableHeading">
             <th class="leftCol">Spoken</th>
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>finish, finished</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[;$n]</code></td>
-    </tr>
-        <tr>
-        <td>naked finish, naked finished</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
-    </tr>
-        <tr>
-        <td>and then</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[,$n]</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=string_escapes>
-    <h3>string_escapes</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>stop, nop</td>
+            <td>Executes <code>nop</code></td>
         </tr>
         <tr>
-        <td>settle</td>
-        <td>Inserts <code>\\n</code></td>
-    </tr>
+            <td>blank, shove, space</td>
+            <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
+        </tr>
         <tr>
-        <td>brindle</td>
-        <td>Inserts <code>\\t</code></td>
-    </tr>
+            <td>step</td>
+            <td>Executes <code>step</code> with arguments <code>[1]</code></td>
+        </tr>
         <tr>
-        <td>dorsal</td>
-        <td>Inserts <code>\\\\</code></td>
-    </tr>
+            <td>jump</td>
+            <td>Executes <code>step</code> with arguments <code>[2]</code></td>
+        </tr>
         <tr>
-        <td>insertion point</td>
-        <td>Inserts <code>$$_</code></td>
-    </tr>
+            <td>leap, hurdle</td>
+            <td>Executes <code>step</code> with arguments <code>[3]</code></td>
+        </tr>
+        <tr>
+            <td>step all, step everything</td>
+            <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>go $location</td>
+            <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
+        </tr>
+        <tr>
+            <td>go everything, go everywhere</td>
+            <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>yank that, yanks that, yanked that</td>
+            <td>Executes <code>cut</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>grab that, grabs that, grabbed that, grabbing that</td>
+            <td>Executes <code>copy</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>spit that, spits that, spitz that, spitted that</td>
+            <td>Executes <code>paste</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>grab everything</td>
+            <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>yank everything</td>
+            <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>sponge</td>
+            <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
+        </tr>
+        <tr>
+            <td>glue</td>
+            <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
+        </tr>
+        <tr>
+            <td>sponge left</td>
+            <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
+        </tr>
+        <tr>
+            <td>sponge right</td>
+            <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
+        </tr>
+        <tr>
+            <td>sponge above</td>
+            <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
+        </tr>
+        <tr>
+            <td>sponge below</td>
+            <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
+        </tr>
+        <tr>
+            <td>halo</td>
+            <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
+        </tr>
+        <tr>
+            <td>dilate, halo sides, halo horizontal, halo horizontally</td>
+            <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
+        </tr>
+        <tr>
+            <td>halo above, halo up</td>
+            <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
+        </tr>
+        <tr>
+            <td>halo below, halo down</td>
+            <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
+        </tr>
+        <tr>
+            <td>halo left, halo before</td>
+            <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
+        </tr>
+        <tr>
+            <td>halo right, halo after</td>
+            <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
+        </tr>
+        <tr>
+            <td>chop above $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
+        </tr>
+        <tr>
+            <td>chop $location, chop below $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
+        </tr>
+        <tr>
+            <td>dropout, drop out, drop forward</td>
+            <td>Inserts <code>$u</code></td>
+        </tr>
+        <tr>
+            <td>drop in, drop back</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
+        <tr>
+            <td>drop, drop down</td>
+            <td>Inserts <code>$n</code></td>
+        </tr>
+        <tr>
+            <td>ok, okay</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
+        </tr>
+        <tr>
+            <td>expand</td>
+            <td>Inserts <code>$u$_$d</code></td>
+        </tr>
+        <tr>
+            <td>change to typescript, change to type script, change to java script, change to javascript</td>
+            <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
+        </tr>
+        <tr>
+            <td>change to text</td>
+            <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
+        </tr>
+        <tr>
+            <td>change to html</td>
+            <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
+        </tr>
+        <tr>
+            <td>change to css</td>
+            <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
+        </tr>
+        <tr>
+            <td>change to latex</td>
+            <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
+        </tr>
+        <tr>
+            <td>change to python</td>
+            <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
+        </tr>
+        <tr>
+            <td>change to cs, change to c sharp, change to see sharp</td>
+            <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
+        </tr>
+        <tr>
+            <td>please</td>
+            <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>back down, backdown</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
+        <tr>
+            <td>back up, backup</td>
+            <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
+        </tr>
     </table>
 </div>
                 <div class="tableContainer" id=string_template_js>
@@ -158,186 +295,55 @@
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>template</td>
-        <td>Inserts <code>$${$_}$_</code></td>
-    </tr>
+            <td>template</td>
+            <td>Inserts <code>$${$_}$_</code></td>
+        </tr>
     </table>
 </div>
-                <div class="tableContainer" id=universal>
-    <h3>universal</h3>
+                <div class="tableContainer" id=string_escapes>
+    <h3>string_escapes</h3>
     <table>
         <tr class="tableHeading">
             <th class="leftCol">Spoken</th>
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>stop, nop</td>
-        <td>Executes <code>nop</code></td>
-    </tr>
+            <td>settle</td>
+            <td>Inserts <code>\\n</code></td>
+        </tr>
         <tr>
-        <td>blank, shove, space</td>
-        <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
-    </tr>
+            <td>brindle</td>
+            <td>Inserts <code>\\t</code></td>
+        </tr>
         <tr>
-        <td>step</td>
-        <td>Executes <code>step</code> with arguments <code>[1]</code></td>
-    </tr>
+            <td>dorsal</td>
+            <td>Inserts <code>\\\\</code></td>
+        </tr>
         <tr>
-        <td>jump</td>
-        <td>Executes <code>step</code> with arguments <code>[2]</code></td>
-    </tr>
+            <td>insertion point</td>
+            <td>Inserts <code>$$_</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=eol_semi>
+    <h3>eol_semi</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
         <tr>
-        <td>leap, hurdle</td>
-        <td>Executes <code>step</code> with arguments <code>[3]</code></td>
-    </tr>
+            <td>finish, finished</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[;$n]</code></td>
+        </tr>
         <tr>
-        <td>step all, step everything</td>
-        <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>naked finish, naked finished</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
+        </tr>
         <tr>
-        <td>go $location</td>
-        <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
-    </tr>
-        <tr>
-        <td>go everything, go everywhere</td>
-        <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>yank that, yanks that, yanked that</td>
-        <td>Executes <code>cut</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>grab that, grabs that, grabbed that, grabbing that</td>
-        <td>Executes <code>copy</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>spit that, spits that, spitz that, spitted that</td>
-        <td>Executes <code>paste</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>grab everything</td>
-        <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>yank everything</td>
-        <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>sponge</td>
-        <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
-    </tr>
-        <tr>
-        <td>glue</td>
-        <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
-    </tr>
-        <tr>
-        <td>sponge left</td>
-        <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
-    </tr>
-        <tr>
-        <td>sponge right</td>
-        <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
-    </tr>
-        <tr>
-        <td>sponge above</td>
-        <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
-    </tr>
-        <tr>
-        <td>sponge below</td>
-        <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
-    </tr>
-        <tr>
-        <td>halo</td>
-        <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
-    </tr>
-        <tr>
-        <td>dilate, halo sides, halo horizontal, halo horizontally</td>
-        <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
-    </tr>
-        <tr>
-        <td>halo above, halo up</td>
-        <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
-    </tr>
-        <tr>
-        <td>halo below, halo down</td>
-        <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
-    </tr>
-        <tr>
-        <td>halo left, halo before</td>
-        <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
-    </tr>
-        <tr>
-        <td>halo right, halo after</td>
-        <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
-    </tr>
-        <tr>
-        <td>chop above $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
-    </tr>
-        <tr>
-        <td>chop $location, chop below $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
-    </tr>
-        <tr>
-        <td>dropout, drop out, drop forward</td>
-        <td>Inserts <code>$u</code></td>
-    </tr>
-        <tr>
-        <td>drop in, drop back</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
-        <tr>
-        <td>drop, drop down</td>
-        <td>Inserts <code>$n</code></td>
-    </tr>
-        <tr>
-        <td>ok, okay</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
-    </tr>
-        <tr>
-        <td>expand</td>
-        <td>Inserts <code>$u$_$d</code></td>
-    </tr>
-        <tr>
-        <td>change to typescript, change to type script, change to java script, change to javascript</td>
-        <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
-    </tr>
-        <tr>
-        <td>change to text</td>
-        <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
-    </tr>
-        <tr>
-        <td>change to html</td>
-        <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
-    </tr>
-        <tr>
-        <td>change to css</td>
-        <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
-    </tr>
-        <tr>
-        <td>change to latex</td>
-        <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
-    </tr>
-        <tr>
-        <td>change to python</td>
-        <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
-    </tr>
-        <tr>
-        <td>change to cs, change to c sharp, change to see sharp</td>
-        <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
-    </tr>
-        <tr>
-        <td>please</td>
-        <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
-    </tr>
-        <tr>
-        <td>back down, backdown</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
-        <tr>
-        <td>back up, backup</td>
-        <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>and then</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[,$n]</code></td>
+        </tr>
     </table>
 </div>
             </div>

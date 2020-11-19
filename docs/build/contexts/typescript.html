@@ -51,21 +51,27 @@
 
 <body>
     <div class="sidenav" id="mySidebar">
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#clients">Clients</a>
-        <a href="#contact">Contact</a>
-        <button class="dropdown-btn">Dropdown
-            <i class="fa fa-caret-down"></i>
-        </button>
-        <div class="dropdown-container">
-            <a href="#">Link 1</a>
-            <a href="#">Link 2</a>
-            <a href="#">Link 3</a>
+            <div class="inside">
+                <h2>All Contexts</h2>
+                <a href="back_quoted_string_js.html">back_quoted_string_js</a>
+                <a href="basic.html">basic</a>
+                <a href="comment_multiple_line.html">comment_multiple_line</a>
+                <a href="comment_single_line.html">comment_single_line</a>
+                <a href="csharp.html">csharp</a>
+                <a href="css.html">css</a>
+                <a href="double_quoted_string.html">double_quoted_string</a>
+                <a href="html_comment.html">html_comment</a>
+                <a href="html_tag.html">html_tag</a>
+                <a href="html.html">html</a>
+                <a href="latex_math.html">latex_math</a>
+                <a href="latex.html">latex</a>
+                <a href="python.html">python</a>
+                <a href="single_quoted_string.html">single_quoted_string</a>
+                <a href="spoken_text.html">spoken_text</a>
+                <a href="text.html">text</a>
+                <a href="typescript.html">typescript</a>
+            </div>
         </div>
-        <a href="#contact">Search</a>
-    </div>
-
     <div id="main">
         <button class="togglebtn" onclick="toggleNav()">&#9776;</button>
         <div class="mainContainer">
@@ -81,47 +87,47 @@
                         <th>Style</th>
                     </tr>
                     <tr>
-        <td><code>&quot;</code></td>
-        <td>push</td>
-        <td><code>double_quoted_string</code></td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&quot;</code></td>
+            <td>push</td>
+            <td><code>double_quoted_string</code></td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>&#x27;</code></td>
-        <td>push</td>
-        <td><code>single_quoted_string</code></td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&#x27;</code></td>
+            <td>push</td>
+            <td><code>single_quoted_string</code></td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>&#x60;</code></td>
-        <td>push</td>
-        <td><code>back_quoted_string_js</code></td>
-        <td><code>string_delimiter</code></td>
-    </tr>
+            <td><code>&#x60;</code></td>
+            <td>push</td>
+            <td><code>back_quoted_string_js</code></td>
+            <td><code>string_delimiter</code></td>
+        </tr>
                     <tr>
-        <td><code>//</code></td>
-        <td>push</td>
-        <td><code>comment_single_line</code></td>
-        <td><code>comment</code></td>
-    </tr>
+            <td><code>//</code></td>
+            <td>push</td>
+            <td><code>comment_single_line</code></td>
+            <td><code>comment</code></td>
+        </tr>
                     <tr>
-        <td><code>/*</code></td>
-        <td>push</td>
-        <td><code>comment_multiple_line</code></td>
-        <td><code>comment</code></td>
-    </tr>
+            <td><code>/*</code></td>
+            <td>push</td>
+            <td><code>comment_multiple_line</code></td>
+            <td><code>comment</code></td>
+        </tr>
                     <tr>
-        <td><code>}</code></td>
-        <td>pop</td>
-        <td>None</td>
-        <td><code>string_escape</code></td>
-    </tr>
+            <td><code>}</code></td>
+            <td>pop</td>
+            <td>None</td>
+            <td><code>string_escape</code></td>
+        </tr>
                     <tr>
-        <td><code>&lt;</code></td>
-        <td>pop</td>
-        <td>None</td>
-        <td><code>html_attribute</code></td>
-    </tr>
+            <td><code>&lt;</code></td>
+            <td>pop</td>
+            <td>None</td>
+            <td><code>html_attribute</code></td>
+        </tr>
                 </table>
             </div>
             <div>
@@ -141,585 +147,181 @@
                 </div>
             </div>
             <div>
-                <div class="tableContainer" id=comment_semi>
-    <h3>comment_semi</h3>
+                <div class="tableContainer" id=universal>
+    <h3>universal</h3>
     <table>
         <tr class="tableHeading">
             <th class="leftCol">Spoken</th>
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>remark, comment</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[// ]</code></td>
-    </tr>
-        <tr>
-        <td>big remark, big comment, multiline remark, multiline comment</td>
-        <td>Inserts <code>/* $_ */</code></td>
-    </tr>
-        <tr>
-        <td>doc remark, dock remark, documentation remark</td>
-        <td>Inserts <code>/**$n * $_$n*/$_</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=eol_semi>
-    <h3>eol_semi</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>stop, nop</td>
+            <td>Executes <code>nop</code></td>
         </tr>
         <tr>
-        <td>finish, finished</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[;$n]</code></td>
-    </tr>
-        <tr>
-        <td>naked finish, naked finished</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
-    </tr>
-        <tr>
-        <td>and then</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[,$n]</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=eq_triple>
-    <h3>eq_triple</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>blank, shove, space</td>
+            <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
         </tr>
         <tr>
-        <td>equals, is equal, is equal to</td>
-        <td>Inserts <code>&#x3D;&#x3D;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>not equals, is not equal, is not equal to</td>
-        <td>Inserts <code>!&#x3D;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>loose equals, loose is equal, loose is equal to</td>
-        <td>Inserts <code>&#x3D;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>loose not equals, loose is not equal, loose is not equal to</td>
-        <td>Inserts <code>!&#x3D;</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=grouping_usual>
-    <h3>grouping_usual</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>step</td>
+            <td>Executes <code>step</code> with arguments <code>[1]</code></td>
         </tr>
         <tr>
-        <td>group</td>
-        <td>Inserts <code>($_)$_</code></td>
-    </tr>
-        <tr>
-        <td>of</td>
-        <td>Inserts <code>$g($_)$_</code></td>
-    </tr>
-        <tr>
-        <td>call</td>
-        <td>Inserts <code>$g()</code></td>
-    </tr>
-        <tr>
-        <td>list</td>
-        <td>Inserts <code>[$_]$_</code></td>
-    </tr>
-        <tr>
-        <td>at</td>
-        <td>Inserts <code>$g[$_]$_</code></td>
-    </tr>
-        <tr>
-        <td>record</td>
-        <td>Inserts <code>{ $_ }$_</code></td>
-    </tr>
-        <tr>
-        <td>block</td>
-        <td>Inserts <code>{$u$_$d}$_</code></td>
-    </tr>
-        <tr>
-        <td>quotes, say, says</td>
-        <td>Inserts <code>&quot;$_\&quot;$_</code></td>
-    </tr>
-        <tr>
-        <td>droplets, droplet, drops, speak, speaks</td>
-        <td>Inserts <code>&#x27;$_&#x27;$_</code></td>
-    </tr>
-        <tr>
-        <td>backs, bax, whisper, whispers</td>
-        <td>Inserts <code>&#x60;$_&#x60;$_</code></td>
-    </tr>
-        <tr>
-        <td>slashes</td>
-        <td>Inserts <code>/$_/$_</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=idioms_jest>
-    <h3>idioms_jest</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>jump</td>
+            <td>Executes <code>step</code> with arguments <code>[2]</code></td>
         </tr>
         <tr>
-        <td>jest test case, just test case</td>
-        <td>Inserts <code>test($_, () &#x3D;&gt; {$u$_$d});$n$_</code></td>
-    </tr>
-        <tr>
-        <td>expect to be</td>
-        <td>Inserts <code>expect($_)$_.toBe($_)</code></td>
-    </tr>
-        <tr>
-        <td>expect to equal, expect to equals</td>
-        <td>Inserts <code>expect($_)$_.toEqual($_)</code></td>
-    </tr>
-        <tr>
-        <td>expect to throw</td>
-        <td>Inserts <code>expect(() &#x3D;&gt; {$u$_$d}).toThrow($_)</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=numbers>
-    <h3>numbers</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>leap, hurdle</td>
+            <td>Executes <code>step</code> with arguments <code>[3]</code></td>
         </tr>
         <tr>
-        <td>zero</td>
-        <td>Inserts <code>0</code></td>
-    </tr>
-        <tr>
-        <td>one, won</td>
-        <td>Inserts <code>1</code></td>
-    </tr>
-        <tr>
-        <td>two</td>
-        <td>Inserts <code>2</code></td>
-    </tr>
-        <tr>
-        <td>three</td>
-        <td>Inserts <code>3</code></td>
-    </tr>
-        <tr>
-        <td>four</td>
-        <td>Inserts <code>4</code></td>
-    </tr>
-        <tr>
-        <td>five</td>
-        <td>Inserts <code>5</code></td>
-    </tr>
-        <tr>
-        <td>sex, six, sicks</td>
-        <td>Inserts <code>6</code></td>
-    </tr>
-        <tr>
-        <td>seven</td>
-        <td>Inserts <code>7</code></td>
-    </tr>
-        <tr>
-        <td>eight, ate</td>
-        <td>Inserts <code>8</code></td>
-    </tr>
-        <tr>
-        <td>nine, nein</td>
-        <td>Inserts <code>9</code></td>
-    </tr>
-        <tr>
-        <td>ten</td>
-        <td>Inserts <code>10</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=op_usual>
-    <h3>op_usual</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>step all, step everything</td>
+            <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
         </tr>
         <tr>
-        <td>is, our, are, equal, be</td>
-        <td>Inserts <code>&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>., dot</td>
-        <td>Inserts <code>.</code></td>
-    </tr>
-        <tr>
-        <td>arrow, aero</td>
-        <td>Inserts <code>-&gt;</code></td>
-    </tr>
-        <tr>
-        <td>becomes, maps to</td>
-        <td>Inserts <code>&#x3D;&gt;</code></td>
-    </tr>
-        <tr>
-        <td>spread</td>
-        <td>Inserts <code>...</code></td>
-    </tr>
-        <tr>
-        <td>below, is below, less than, is less than, smaller than, is smaller than</td>
-        <td>Inserts <code>&lt;</code></td>
-    </tr>
-        <tr>
-        <td>above, is above, greater than, is greater than, is bigger than, bigger than</td>
-        <td>Inserts <code>&gt;</code></td>
-    </tr>
-        <tr>
-        <td>at most, is at most, less than or equal to, is less than or equal to, smaller than or equal to, is smaller than or equal to</td>
-        <td>Inserts <code>&lt;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>at least, is at least, greater than or equal to, is greater than or equal to, bigger than or equal to, is bigger than or equal to</td>
-        <td>Inserts <code>&gt;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>plus</td>
-        <td>Inserts <code>+</code></td>
-    </tr>
-        <tr>
-        <td>minas, minus</td>
-        <td>Inserts <code>-</code></td>
-    </tr>
-        <tr>
-        <td>times</td>
-        <td>Inserts <code>*</code></td>
-    </tr>
-        <tr>
-        <td>divide, divided by</td>
-        <td>Inserts <code>/</code></td>
-    </tr>
-        <tr>
-        <td>modulo, remainder</td>
-        <td>Inserts <code>%</code></td>
-    </tr>
-        <tr>
-        <td>exponent</td>
-        <td>Inserts <code>**</code></td>
-    </tr>
-        <tr>
-        <td>shift left</td>
-        <td>Inserts <code>&lt;&lt;</code></td>
-    </tr>
-        <tr>
-        <td>shift right, shift write</td>
-        <td>Inserts <code>&gt;&gt;</code></td>
-    </tr>
-        <tr>
-        <td>unsigned shift right, unsigned shift write</td>
-        <td>Inserts <code>&gt;&gt;&gt;</code></td>
-    </tr>
-        <tr>
-        <td>plus equals</td>
-        <td>Inserts <code>+&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>minas equals, minus equals</td>
-        <td>Inserts <code>-&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>times equals</td>
-        <td>Inserts <code>*&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>divide equals, divided by equals</td>
-        <td>Inserts <code>/&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>modulo equals, remainder equals</td>
-        <td>Inserts <code>%&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>exponent equals</td>
-        <td>Inserts <code>**&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>shift left equals</td>
-        <td>Inserts <code>&lt;&lt;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>shift right equals, shift write equals</td>
-        <td>Inserts <code>&gt;&gt;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>unsigned shift right equals, unsigned shift write equals</td>
-        <td>Inserts <code>&gt;&gt;&gt;&#x3D;</code></td>
-    </tr>
-        <tr>
-        <td>increment, plus plus</td>
-        <td>Inserts <code>++</code></td>
-    </tr>
-        <tr>
-        <td>decrement, minus minus</td>
-        <td>Inserts <code>--</code></td>
-    </tr>
-        <tr>
-        <td>logical and, land</td>
-        <td>Inserts <code>&amp;&amp;</code></td>
-    </tr>
-        <tr>
-        <td>logical or, logical ore, lore</td>
-        <td>Inserts <code>||</code></td>
-    </tr>
-        <tr>
-        <td>logical not, not</td>
-        <td>Inserts <code>!</code></td>
-    </tr>
-        <tr>
-        <td>bitwise and, band</td>
-        <td>Inserts <code>&amp;</code></td>
-    </tr>
-        <tr>
-        <td>bitwise or, bore, boar</td>
-        <td>Inserts <code>|</code></td>
-    </tr>
-        <tr>
-        <td>bitwise not</td>
-        <td>Inserts <code>~</code></td>
-    </tr>
-        <tr>
-        <td>exclusive or, exclusive ore, bitwise exclusive or, xor, bitwise xor</td>
-        <td>Inserts <code>^</code></td>
-    </tr>
-        <tr>
-        <td>branch</td>
-        <td>Inserts <code>$_ ? $_ : $_</code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=struct_js>
-    <h3>struct_js</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>go $location</td>
+            <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
         </tr>
         <tr>
-        <td>a sink, async, asynchronous</td>
-        <td>Inserts <code>async</code></td>
-    </tr>
-        <tr>
-        <td>await, a weight, a wait</td>
-        <td>Inserts <code>await</code></td>
-    </tr>
-        <tr>
-        <td>class</td>
-        <td>Inserts <code>class $_ {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>constructor</td>
-        <td>Inserts <code>constructor($_) {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>delete, deletion</td>
-        <td>Inserts <code>delete</code></td>
-    </tr>
-        <tr>
-        <td>export</td>
-        <td>Inserts <code>export</code></td>
-    </tr>
-        <tr>
-        <td>export default</td>
-        <td>Inserts <code>export default</code></td>
-    </tr>
-        <tr>
-        <td>extends</td>
-        <td>Inserts <code>extends</code></td>
-    </tr>
-        <tr>
-        <td>for in, four in</td>
-        <td>Inserts <code>for ($_ in $_) {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>four of, for of, for all of, four all of</td>
-        <td>Inserts <code>for ($_ of $_) {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>iterate</td>
-        <td>Inserts <code>for (let $_; $_; $_++) {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>function</td>
-        <td>Inserts <code>function $_ {$u$_$d}$n$_</code></td>
-    </tr>
-        <tr>
-        <td>lambda function</td>
-        <td>Inserts <code>function ($_) {$_} $_</code></td>
-    </tr>
-        <tr>
-        <td>lambda</td>
-        <td>Inserts <code>($_) &#x3D;&gt; $_</code></td>
-    </tr>
-        <tr>
-        <td>import</td>
-        <td>Inserts <code>import</code></td>
-    </tr>
-        <tr>
-        <td>import type</td>
-        <td>Inserts <code>import type</code></td>
-    </tr>
-        <tr>
-        <td>import all</td>
-        <td>Inserts <code>import * as $_ from $_</code></td>
-    </tr>
-        <tr>
-        <td>import from</td>
-        <td>Inserts <code>import { $_ } from $_</code></td>
-    </tr>
-        <tr>
-        <td>in</td>
-        <td>Inserts <code>in</code></td>
-    </tr>
-        <tr>
-        <td>instance of, instanceof, is an instance of</td>
-        <td>Inserts <code>instanceof</code></td>
-    </tr>
-        <tr>
-        <td>let</td>
-        <td>Inserts <code>let</code></td>
-    </tr>
-        <tr>
-        <td>my, mai</td>
-        <td>Inserts <code>this.$_</code></td>
-    </tr>
-        <tr>
-        <td>super</td>
-        <td>Inserts <code>super</code></td>
-    </tr>
-        <tr>
-        <td>type of, the type of, typeof</td>
-        <td>Inserts <code>typeof</code></td>
-    </tr>
-        <tr>
-        <td>undefined</td>
-        <td>Inserts <code>undefined</code></td>
-    </tr>
-        <tr>
-        <td>var, variable</td>
-        <td>Inserts <code>var</code></td>
-    </tr>
-        <tr>
-        <td>yield</td>
-        <td>Inserts <code>yield</code></td>
-    </tr>
-        <tr>
-        <td>of type, with type, with</td>
-        <td>Inserts <code>$g&lt;$_&gt;$_$g</code></td>
-    </tr>
-        <tr>
-        <td>as</td>
-        <td>Inserts <code>$g: </code></td>
-    </tr>
-    </table>
-</div>
-                <div class="tableContainer" id=struct_semi>
-    <h3>struct_semi</h3>
-    <table>
-        <tr class="tableHeading">
-            <th class="leftCol">Spoken</th>
-            <th class="rightCol">Definition</th>
+            <td>go everything, go everywhere</td>
+            <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
         </tr>
         <tr>
-        <td>break, brake</td>
-        <td>Inserts <code>break</code></td>
-    </tr>
+            <td>yank that, yanks that, yanked that</td>
+            <td>Executes <code>cut</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>case</td>
-        <td>Inserts <code>case $_:$u$_$d$_</code></td>
-    </tr>
+            <td>grab that, grabs that, grabbed that, grabbing that</td>
+            <td>Executes <code>copy</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>catch</td>
-        <td>Inserts <code>catch ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>spit that, spits that, spitz that, spitted that</td>
+            <td>Executes <code>paste</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>constant, const</td>
-        <td>Inserts <code>const</code></td>
-    </tr>
+            <td>grab everything</td>
+            <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>continue</td>
-        <td>Inserts <code>continue</code></td>
-    </tr>
+            <td>yank everything</td>
+            <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
+        </tr>
         <tr>
-        <td>default, the default, the fault</td>
-        <td>Inserts <code>default:$u$_$d$_</code></td>
-    </tr>
+            <td>sponge</td>
+            <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
+        </tr>
         <tr>
-        <td>do, due</td>
-        <td>Inserts <code>do {$u$_$d} while ($_);$n$_</code></td>
-    </tr>
+            <td>glue</td>
+            <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
+        </tr>
         <tr>
-        <td>else</td>
-        <td>Inserts <code>else {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>sponge left</td>
+            <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
+        </tr>
         <tr>
-        <td>else if</td>
-        <td>Inserts <code>else if ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>sponge right</td>
+            <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
+        </tr>
         <tr>
-        <td>false</td>
-        <td>Inserts <code>false</code></td>
-    </tr>
+            <td>sponge above</td>
+            <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
+        </tr>
         <tr>
-        <td>finally</td>
-        <td>Inserts <code>finally {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>sponge below</td>
+            <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
+        </tr>
         <tr>
-        <td>for, for loop, four loop, fore loop</td>
-        <td>Inserts <code>for ($_; $_; $_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>halo</td>
+            <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
+        </tr>
         <tr>
-        <td>if</td>
-        <td>Inserts <code>if ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>dilate, halo sides, halo horizontal, halo horizontally</td>
+            <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
+        </tr>
         <tr>
-        <td>new, knew</td>
-        <td>Inserts <code>new</code></td>
-    </tr>
+            <td>halo above, halo up</td>
+            <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
+        </tr>
         <tr>
-        <td>null, nothing</td>
-        <td>Inserts <code>null</code></td>
-    </tr>
+            <td>halo below, halo down</td>
+            <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
+        </tr>
         <tr>
-        <td>return</td>
-        <td>Inserts <code>return</code></td>
-    </tr>
+            <td>halo left, halo before</td>
+            <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
+        </tr>
         <tr>
-        <td>switch</td>
-        <td>Inserts <code>switch ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>halo right, halo after</td>
+            <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
+        </tr>
         <tr>
-        <td>this, myself, me</td>
-        <td>Inserts <code>this</code></td>
-    </tr>
+            <td>chop above $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
+        </tr>
         <tr>
-        <td>throw</td>
-        <td>Inserts <code>throw</code></td>
-    </tr>
+            <td>chop $location, chop below $location</td>
+            <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
+        </tr>
         <tr>
-        <td>true</td>
-        <td>Inserts <code>true</code></td>
-    </tr>
+            <td>dropout, drop out, drop forward</td>
+            <td>Inserts <code>$u</code></td>
+        </tr>
         <tr>
-        <td>try</td>
-        <td>Inserts <code>try {$u$_$d}$ncatch ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>drop in, drop back</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
         <tr>
-        <td>void</td>
-        <td>Inserts <code>void</code></td>
-    </tr>
+            <td>drop, drop down</td>
+            <td>Inserts <code>$n</code></td>
+        </tr>
         <tr>
-        <td>while</td>
-        <td>Inserts <code>while ($_) {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>ok, okay</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
+        </tr>
+        <tr>
+            <td>expand</td>
+            <td>Inserts <code>$u$_$d</code></td>
+        </tr>
+        <tr>
+            <td>change to typescript, change to type script, change to java script, change to javascript</td>
+            <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
+        </tr>
+        <tr>
+            <td>change to text</td>
+            <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
+        </tr>
+        <tr>
+            <td>change to html</td>
+            <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
+        </tr>
+        <tr>
+            <td>change to css</td>
+            <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
+        </tr>
+        <tr>
+            <td>change to latex</td>
+            <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
+        </tr>
+        <tr>
+            <td>change to python</td>
+            <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
+        </tr>
+        <tr>
+            <td>change to cs, change to c sharp, change to see sharp</td>
+            <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
+        </tr>
+        <tr>
+            <td>please</td>
+            <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
+        </tr>
+        <tr>
+            <td>back down, backdown</td>
+            <td>Inserts <code>$d</code></td>
+        </tr>
+        <tr>
+            <td>back up, backup</td>
+            <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
+        </tr>
     </table>
 </div>
                 <div class="tableContainer" id=struct_ts>
@@ -730,270 +332,674 @@
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>abstract</td>
-        <td>Inserts <code>abstract</code></td>
-    </tr>
+            <td>abstract</td>
+            <td>Inserts <code>abstract</code></td>
+        </tr>
         <tr>
-        <td>declare</td>
-        <td>Inserts <code>declare</code></td>
-    </tr>
+            <td>declare</td>
+            <td>Inserts <code>declare</code></td>
+        </tr>
         <tr>
-        <td>enumeration, enumerate, enum</td>
-        <td>Inserts <code>enum $_ {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>enumeration, enumerate, enum</td>
+            <td>Inserts <code>enum $_ {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>implements, implement</td>
-        <td>Inserts <code>implements</code></td>
-    </tr>
+            <td>implements, implement</td>
+            <td>Inserts <code>implements</code></td>
+        </tr>
         <tr>
-        <td>interface</td>
-        <td>Inserts <code>interface $_ {$u$_$d}$n$_</code></td>
-    </tr>
+            <td>interface</td>
+            <td>Inserts <code>interface $_ {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>read only, readonly</td>
-        <td>Inserts <code>readonly</code></td>
-    </tr>
+            <td>read only, readonly</td>
+            <td>Inserts <code>readonly</code></td>
+        </tr>
         <tr>
-        <td>protected</td>
-        <td>Inserts <code>protected</code></td>
-    </tr>
+            <td>protected</td>
+            <td>Inserts <code>protected</code></td>
+        </tr>
         <tr>
-        <td>private</td>
-        <td>Inserts <code>private</code></td>
-    </tr>
+            <td>private</td>
+            <td>Inserts <code>private</code></td>
+        </tr>
         <tr>
-        <td>public</td>
-        <td>Inserts <code>public</code></td>
-    </tr>
+            <td>public</td>
+            <td>Inserts <code>public</code></td>
+        </tr>
         <tr>
-        <td>static</td>
-        <td>Inserts <code>static</code></td>
-    </tr>
+            <td>static</td>
+            <td>Inserts <code>static</code></td>
+        </tr>
         <tr>
-        <td>type</td>
-        <td>Inserts <code>type</code></td>
-    </tr>
+            <td>type</td>
+            <td>Inserts <code>type</code></td>
+        </tr>
         <tr>
-        <td>maybe</td>
-        <td>Inserts <code>$g?</code></td>
-    </tr>
+            <td>maybe</td>
+            <td>Inserts <code>$g?</code></td>
+        </tr>
         <tr>
-        <td>cast, cast as, cast to</td>
-        <td>Inserts <code>as</code></td>
-    </tr>
+            <td>cast, cast as, cast to</td>
+            <td>Inserts <code>as</code></td>
+        </tr>
         <tr>
-        <td>any</td>
-        <td>Inserts <code>any</code></td>
-    </tr>
+            <td>any</td>
+            <td>Inserts <code>any</code></td>
+        </tr>
         <tr>
-        <td>never</td>
-        <td>Inserts <code>never</code></td>
-    </tr>
+            <td>never</td>
+            <td>Inserts <code>never</code></td>
+        </tr>
         <tr>
-        <td>object</td>
-        <td>Inserts <code>object</code></td>
-    </tr>
+            <td>object</td>
+            <td>Inserts <code>object</code></td>
+        </tr>
         <tr>
-        <td>number</td>
-        <td>Inserts <code>number</code></td>
-    </tr>
+            <td>number</td>
+            <td>Inserts <code>number</code></td>
+        </tr>
         <tr>
-        <td>big integer, big int</td>
-        <td>Inserts <code>bigint</code></td>
-    </tr>
+            <td>big integer, big int</td>
+            <td>Inserts <code>bigint</code></td>
+        </tr>
         <tr>
-        <td>symbol</td>
-        <td>Inserts <code>symbol</code></td>
-    </tr>
+            <td>symbol</td>
+            <td>Inserts <code>symbol</code></td>
+        </tr>
         <tr>
-        <td>string</td>
-        <td>Inserts <code>string</code></td>
-    </tr>
+            <td>string</td>
+            <td>Inserts <code>string</code></td>
+        </tr>
         <tr>
-        <td>boolean, bullion, bool</td>
-        <td>Inserts <code>boolean</code></td>
-    </tr>
+            <td>boolean, bullion, bool</td>
+            <td>Inserts <code>boolean</code></td>
+        </tr>
         <tr>
-        <td>array, a ray</td>
-        <td>Inserts <code>Array&lt;$_&gt;$_$g</code></td>
-    </tr>
+            <td>array, a ray</td>
+            <td>Inserts <code>Array&lt;$_&gt;$_$g</code></td>
+        </tr>
     </table>
 </div>
-                <div class="tableContainer" id=universal>
-    <h3>universal</h3>
+                <div class="tableContainer" id=struct_semi>
+    <h3>struct_semi</h3>
     <table>
         <tr class="tableHeading">
             <th class="leftCol">Spoken</th>
             <th class="rightCol">Definition</th>
         </tr>
         <tr>
-        <td>stop, nop</td>
-        <td>Executes <code>nop</code></td>
-    </tr>
+            <td>break, brake</td>
+            <td>Inserts <code>break</code></td>
+        </tr>
         <tr>
-        <td>blank, shove, space</td>
-        <td>Executes <code>insertExact</code> with arguments <code>[ ]</code></td>
-    </tr>
+            <td>case</td>
+            <td>Inserts <code>case $_:$u$_$d$_</code></td>
+        </tr>
         <tr>
-        <td>step</td>
-        <td>Executes <code>step</code> with arguments <code>[1]</code></td>
-    </tr>
+            <td>catch</td>
+            <td>Inserts <code>catch ($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>jump</td>
-        <td>Executes <code>step</code> with arguments <code>[2]</code></td>
-    </tr>
+            <td>constant, const</td>
+            <td>Inserts <code>const</code></td>
+        </tr>
         <tr>
-        <td>leap, hurdle</td>
-        <td>Executes <code>step</code> with arguments <code>[3]</code></td>
-    </tr>
+            <td>continue</td>
+            <td>Inserts <code>continue</code></td>
+        </tr>
         <tr>
-        <td>step all, step everything</td>
-        <td>Executes <code>stepAll</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>default, the default, the fault</td>
+            <td>Inserts <code>default:$u$_$d$_</code></td>
+        </tr>
         <tr>
-        <td>go $location</td>
-        <td>Executes <code>go</code> with arguments <code>[$1]</code></td>
-    </tr>
+            <td>do, due</td>
+            <td>Inserts <code>do {$u$_$d} while ($_);$n$_</code></td>
+        </tr>
         <tr>
-        <td>go everything, go everywhere</td>
-        <td>Executes <code>selectAll</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>else</td>
+            <td>Inserts <code>else {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>yank that, yanks that, yanked that</td>
-        <td>Executes <code>cut</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>else if</td>
+            <td>Inserts <code>else if ($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>grab that, grabs that, grabbed that, grabbing that</td>
-        <td>Executes <code>copy</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>false</td>
+            <td>Inserts <code>false</code></td>
+        </tr>
         <tr>
-        <td>spit that, spits that, spitz that, spitted that</td>
-        <td>Executes <code>paste</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>finally</td>
+            <td>Inserts <code>finally {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>grab everything</td>
-        <td>Executes <code>selectAllAndCopy</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>for, for loop, four loop, fore loop</td>
+            <td>Inserts <code>for ($_; $_; $_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>yank everything</td>
-        <td>Executes <code>selectAllAndCut</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>if</td>
+            <td>Inserts <code>if ($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>sponge</td>
-        <td>Executes <code>sponge</code> with arguments <code>[ud]</code></td>
-    </tr>
+            <td>new, knew</td>
+            <td>Inserts <code>new</code></td>
+        </tr>
         <tr>
-        <td>glue</td>
-        <td>Executes <code>sponge</code> with arguments <code>[lr]</code></td>
-    </tr>
+            <td>null, nothing</td>
+            <td>Inserts <code>null</code></td>
+        </tr>
         <tr>
-        <td>sponge left</td>
-        <td>Executes <code>sponge</code> with arguments <code>[l]</code></td>
-    </tr>
+            <td>return</td>
+            <td>Inserts <code>return</code></td>
+        </tr>
         <tr>
-        <td>sponge right</td>
-        <td>Executes <code>sponge</code> with arguments <code>[r]</code></td>
-    </tr>
+            <td>switch</td>
+            <td>Inserts <code>switch ($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>sponge above</td>
-        <td>Executes <code>sponge</code> with arguments <code>[u]</code></td>
-    </tr>
+            <td>this, myself, me</td>
+            <td>Inserts <code>this</code></td>
+        </tr>
         <tr>
-        <td>sponge below</td>
-        <td>Executes <code>sponge</code> with arguments <code>[d]</code></td>
-    </tr>
+            <td>throw</td>
+            <td>Inserts <code>throw</code></td>
+        </tr>
         <tr>
-        <td>halo</td>
-        <td>Executes <code>halo</code> with arguments <code>[ud]</code></td>
-    </tr>
+            <td>true</td>
+            <td>Inserts <code>true</code></td>
+        </tr>
         <tr>
-        <td>dilate, halo sides, halo horizontal, halo horizontally</td>
-        <td>Executes <code>halo</code> with arguments <code>[lr]</code></td>
-    </tr>
+            <td>try</td>
+            <td>Inserts <code>try {$u$_$d}$ncatch ($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>halo above, halo up</td>
-        <td>Executes <code>halo</code> with arguments <code>[u]</code></td>
-    </tr>
+            <td>void</td>
+            <td>Inserts <code>void</code></td>
+        </tr>
         <tr>
-        <td>halo below, halo down</td>
-        <td>Executes <code>halo</code> with arguments <code>[d]</code></td>
-    </tr>
+            <td>while</td>
+            <td>Inserts <code>while ($_) {$u$_$d}$n$_</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=struct_js>
+    <h3>struct_js</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
         <tr>
-        <td>halo left, halo before</td>
-        <td>Executes <code>halo</code> with arguments <code>[l]</code></td>
-    </tr>
+            <td>a sink, async, asynchronous</td>
+            <td>Inserts <code>async</code></td>
+        </tr>
         <tr>
-        <td>halo right, halo after</td>
-        <td>Executes <code>halo</code> with arguments <code>[r]</code></td>
-    </tr>
+            <td>await, a weight, a wait</td>
+            <td>Inserts <code>await</code></td>
+        </tr>
         <tr>
-        <td>chop above $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[above, $1]</code></td>
-    </tr>
+            <td>class</td>
+            <td>Inserts <code>class $_ {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>chop $location, chop below $location</td>
-        <td>Executes <code>insertBetweenLines</code> with arguments <code>[below, $1]</code></td>
-    </tr>
+            <td>constructor</td>
+            <td>Inserts <code>constructor($_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>dropout, drop out, drop forward</td>
-        <td>Inserts <code>$u</code></td>
-    </tr>
+            <td>delete, deletion</td>
+            <td>Inserts <code>delete</code></td>
+        </tr>
         <tr>
-        <td>drop in, drop back</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
+            <td>export</td>
+            <td>Inserts <code>export</code></td>
+        </tr>
         <tr>
-        <td>drop, drop down</td>
-        <td>Inserts <code>$n</code></td>
-    </tr>
+            <td>export default</td>
+            <td>Inserts <code>export default</code></td>
+        </tr>
         <tr>
-        <td>ok, okay</td>
-        <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
-    </tr>
+            <td>extends</td>
+            <td>Inserts <code>extends</code></td>
+        </tr>
         <tr>
-        <td>expand</td>
-        <td>Inserts <code>$u$_$d</code></td>
-    </tr>
+            <td>for in, four in</td>
+            <td>Inserts <code>for ($_ in $_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>change to typescript, change to type script, change to java script, change to javascript</td>
-        <td>Executes <code>setContext</code> with arguments <code>[typescript]</code></td>
-    </tr>
+            <td>four of, for of, for all of, four all of</td>
+            <td>Inserts <code>for ($_ of $_) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>change to text</td>
-        <td>Executes <code>setContext</code> with arguments <code>[text]</code></td>
-    </tr>
+            <td>iterate</td>
+            <td>Inserts <code>for (let $_; $_; $_++) {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>change to html</td>
-        <td>Executes <code>setContext</code> with arguments <code>[html]</code></td>
-    </tr>
+            <td>function</td>
+            <td>Inserts <code>function $_ {$u$_$d}$n$_</code></td>
+        </tr>
         <tr>
-        <td>change to css</td>
-        <td>Executes <code>setContext</code> with arguments <code>[css]</code></td>
-    </tr>
+            <td>lambda function</td>
+            <td>Inserts <code>function ($_) {$_} $_</code></td>
+        </tr>
         <tr>
-        <td>change to latex</td>
-        <td>Executes <code>setContext</code> with arguments <code>[latex]</code></td>
-    </tr>
+            <td>lambda</td>
+            <td>Inserts <code>($_) &#x3D;&gt; $_</code></td>
+        </tr>
         <tr>
-        <td>change to python</td>
-        <td>Executes <code>setContext</code> with arguments <code>[python]</code></td>
-    </tr>
+            <td>import</td>
+            <td>Inserts <code>import</code></td>
+        </tr>
         <tr>
-        <td>change to cs, change to c sharp, change to see sharp</td>
-        <td>Executes <code>setContext</code> with arguments <code>[csharp]</code></td>
-    </tr>
+            <td>import type</td>
+            <td>Inserts <code>import type</code></td>
+        </tr>
         <tr>
-        <td>please</td>
-        <td>Executes <code>doCommit</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>import all</td>
+            <td>Inserts <code>import * as $_ from $_</code></td>
+        </tr>
         <tr>
-        <td>back down, backdown</td>
-        <td>Inserts <code>$d</code></td>
-    </tr>
+            <td>import from</td>
+            <td>Inserts <code>import { $_ } from $_</code></td>
+        </tr>
         <tr>
-        <td>back up, backup</td>
-        <td>Executes <code>dedent</code> with arguments <code>[]</code></td>
-    </tr>
+            <td>in</td>
+            <td>Inserts <code>in</code></td>
+        </tr>
+        <tr>
+            <td>instance of, instanceof, is an instance of</td>
+            <td>Inserts <code>instanceof</code></td>
+        </tr>
+        <tr>
+            <td>let</td>
+            <td>Inserts <code>let</code></td>
+        </tr>
+        <tr>
+            <td>my, mai</td>
+            <td>Inserts <code>this.$_</code></td>
+        </tr>
+        <tr>
+            <td>super</td>
+            <td>Inserts <code>super</code></td>
+        </tr>
+        <tr>
+            <td>type of, the type of, typeof</td>
+            <td>Inserts <code>typeof</code></td>
+        </tr>
+        <tr>
+            <td>undefined</td>
+            <td>Inserts <code>undefined</code></td>
+        </tr>
+        <tr>
+            <td>var, variable</td>
+            <td>Inserts <code>var</code></td>
+        </tr>
+        <tr>
+            <td>yield</td>
+            <td>Inserts <code>yield</code></td>
+        </tr>
+        <tr>
+            <td>of type, with type, with</td>
+            <td>Inserts <code>$g&lt;$_&gt;$_$g</code></td>
+        </tr>
+        <tr>
+            <td>as</td>
+            <td>Inserts <code>$g: </code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=op_usual>
+    <h3>op_usual</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>is, our, are, equal, be</td>
+            <td>Inserts <code>&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>., dot</td>
+            <td>Inserts <code>.</code></td>
+        </tr>
+        <tr>
+            <td>arrow, aero</td>
+            <td>Inserts <code>-&gt;</code></td>
+        </tr>
+        <tr>
+            <td>becomes, maps to</td>
+            <td>Inserts <code>&#x3D;&gt;</code></td>
+        </tr>
+        <tr>
+            <td>spread</td>
+            <td>Inserts <code>...</code></td>
+        </tr>
+        <tr>
+            <td>below, is below, less than, is less than, smaller than, is smaller than</td>
+            <td>Inserts <code>&lt;</code></td>
+        </tr>
+        <tr>
+            <td>above, is above, greater than, is greater than, is bigger than, bigger than</td>
+            <td>Inserts <code>&gt;</code></td>
+        </tr>
+        <tr>
+            <td>at most, is at most, less than or equal to, is less than or equal to, smaller than or equal to, is smaller than or equal to</td>
+            <td>Inserts <code>&lt;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>at least, is at least, greater than or equal to, is greater than or equal to, bigger than or equal to, is bigger than or equal to</td>
+            <td>Inserts <code>&gt;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>plus</td>
+            <td>Inserts <code>+</code></td>
+        </tr>
+        <tr>
+            <td>minas, minus</td>
+            <td>Inserts <code>-</code></td>
+        </tr>
+        <tr>
+            <td>times</td>
+            <td>Inserts <code>*</code></td>
+        </tr>
+        <tr>
+            <td>divide, divided by</td>
+            <td>Inserts <code>/</code></td>
+        </tr>
+        <tr>
+            <td>modulo, remainder</td>
+            <td>Inserts <code>%</code></td>
+        </tr>
+        <tr>
+            <td>exponent</td>
+            <td>Inserts <code>**</code></td>
+        </tr>
+        <tr>
+            <td>shift left</td>
+            <td>Inserts <code>&lt;&lt;</code></td>
+        </tr>
+        <tr>
+            <td>shift right, shift write</td>
+            <td>Inserts <code>&gt;&gt;</code></td>
+        </tr>
+        <tr>
+            <td>unsigned shift right, unsigned shift write</td>
+            <td>Inserts <code>&gt;&gt;&gt;</code></td>
+        </tr>
+        <tr>
+            <td>plus equals</td>
+            <td>Inserts <code>+&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>minas equals, minus equals</td>
+            <td>Inserts <code>-&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>times equals</td>
+            <td>Inserts <code>*&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>divide equals, divided by equals</td>
+            <td>Inserts <code>/&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>modulo equals, remainder equals</td>
+            <td>Inserts <code>%&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>exponent equals</td>
+            <td>Inserts <code>**&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>shift left equals</td>
+            <td>Inserts <code>&lt;&lt;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>shift right equals, shift write equals</td>
+            <td>Inserts <code>&gt;&gt;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>unsigned shift right equals, unsigned shift write equals</td>
+            <td>Inserts <code>&gt;&gt;&gt;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>increment, plus plus</td>
+            <td>Inserts <code>++</code></td>
+        </tr>
+        <tr>
+            <td>decrement, minus minus</td>
+            <td>Inserts <code>--</code></td>
+        </tr>
+        <tr>
+            <td>logical and, land</td>
+            <td>Inserts <code>&amp;&amp;</code></td>
+        </tr>
+        <tr>
+            <td>logical or, logical ore, lore</td>
+            <td>Inserts <code>||</code></td>
+        </tr>
+        <tr>
+            <td>logical not, not</td>
+            <td>Inserts <code>!</code></td>
+        </tr>
+        <tr>
+            <td>bitwise and, band</td>
+            <td>Inserts <code>&amp;</code></td>
+        </tr>
+        <tr>
+            <td>bitwise or, bore, boar</td>
+            <td>Inserts <code>|</code></td>
+        </tr>
+        <tr>
+            <td>bitwise not</td>
+            <td>Inserts <code>~</code></td>
+        </tr>
+        <tr>
+            <td>exclusive or, exclusive ore, bitwise exclusive or, xor, bitwise xor</td>
+            <td>Inserts <code>^</code></td>
+        </tr>
+        <tr>
+            <td>branch</td>
+            <td>Inserts <code>$_ ? $_ : $_</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=numbers>
+    <h3>numbers</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>zero</td>
+            <td>Inserts <code>0</code></td>
+        </tr>
+        <tr>
+            <td>one, won</td>
+            <td>Inserts <code>1</code></td>
+        </tr>
+        <tr>
+            <td>two</td>
+            <td>Inserts <code>2</code></td>
+        </tr>
+        <tr>
+            <td>three</td>
+            <td>Inserts <code>3</code></td>
+        </tr>
+        <tr>
+            <td>four</td>
+            <td>Inserts <code>4</code></td>
+        </tr>
+        <tr>
+            <td>five</td>
+            <td>Inserts <code>5</code></td>
+        </tr>
+        <tr>
+            <td>sex, six, sicks</td>
+            <td>Inserts <code>6</code></td>
+        </tr>
+        <tr>
+            <td>seven</td>
+            <td>Inserts <code>7</code></td>
+        </tr>
+        <tr>
+            <td>eight, ate</td>
+            <td>Inserts <code>8</code></td>
+        </tr>
+        <tr>
+            <td>nine, nein</td>
+            <td>Inserts <code>9</code></td>
+        </tr>
+        <tr>
+            <td>ten</td>
+            <td>Inserts <code>10</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=idioms_jest>
+    <h3>idioms_jest</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>jest test case, just test case</td>
+            <td>Inserts <code>test($_, () &#x3D;&gt; {$u$_$d});$n$_</code></td>
+        </tr>
+        <tr>
+            <td>expect to be</td>
+            <td>Inserts <code>expect($_)$_.toBe($_)</code></td>
+        </tr>
+        <tr>
+            <td>expect to equal, expect to equals</td>
+            <td>Inserts <code>expect($_)$_.toEqual($_)</code></td>
+        </tr>
+        <tr>
+            <td>expect to throw</td>
+            <td>Inserts <code>expect(() &#x3D;&gt; {$u$_$d}).toThrow($_)</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=grouping_usual>
+    <h3>grouping_usual</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>group</td>
+            <td>Inserts <code>($_)$_</code></td>
+        </tr>
+        <tr>
+            <td>of</td>
+            <td>Inserts <code>$g($_)$_</code></td>
+        </tr>
+        <tr>
+            <td>call</td>
+            <td>Inserts <code>$g()</code></td>
+        </tr>
+        <tr>
+            <td>list</td>
+            <td>Inserts <code>[$_]$_</code></td>
+        </tr>
+        <tr>
+            <td>at</td>
+            <td>Inserts <code>$g[$_]$_</code></td>
+        </tr>
+        <tr>
+            <td>record</td>
+            <td>Inserts <code>{ $_ }$_</code></td>
+        </tr>
+        <tr>
+            <td>block</td>
+            <td>Inserts <code>{$u$_$d}$_</code></td>
+        </tr>
+        <tr>
+            <td>quotes, say, says</td>
+            <td>Inserts <code>&quot;$_\&quot;$_</code></td>
+        </tr>
+        <tr>
+            <td>droplets, droplet, drops, speak, speaks</td>
+            <td>Inserts <code>&#x27;$_&#x27;$_</code></td>
+        </tr>
+        <tr>
+            <td>backs, bax, whisper, whispers</td>
+            <td>Inserts <code>&#x60;$_&#x60;$_</code></td>
+        </tr>
+        <tr>
+            <td>slashes</td>
+            <td>Inserts <code>/$_/$_</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=eq_triple>
+    <h3>eq_triple</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>equals, is equal, is equal to</td>
+            <td>Inserts <code>&#x3D;&#x3D;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>not equals, is not equal, is not equal to</td>
+            <td>Inserts <code>!&#x3D;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>loose equals, loose is equal, loose is equal to</td>
+            <td>Inserts <code>&#x3D;&#x3D;</code></td>
+        </tr>
+        <tr>
+            <td>loose not equals, loose is not equal, loose is not equal to</td>
+            <td>Inserts <code>!&#x3D;</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=eol_semi>
+    <h3>eol_semi</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>finish, finished</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[;$n]</code></td>
+        </tr>
+        <tr>
+            <td>naked finish, naked finished</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[$n]</code></td>
+        </tr>
+        <tr>
+            <td>and then</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[,$n]</code></td>
+        </tr>
+    </table>
+</div>
+                <div class="tableContainer" id=comment_semi>
+    <h3>comment_semi</h3>
+    <table>
+        <tr class="tableHeading">
+            <th class="leftCol">Spoken</th>
+            <th class="rightCol">Definition</th>
+        </tr>
+        <tr>
+            <td>remark, comment</td>
+            <td>Executes <code>insertAtEOL</code> with arguments <code>[// ]</code></td>
+        </tr>
+        <tr>
+            <td>big remark, big comment, multiline remark, multiline comment</td>
+            <td>Inserts <code>/* $_ */</code></td>
+        </tr>
+        <tr>
+            <td>doc remark, dock remark, documentation remark</td>
+            <td>Inserts <code>/**$n * $_$n*/$_</code></td>
+        </tr>
     </table>
 </div>
             </div>
